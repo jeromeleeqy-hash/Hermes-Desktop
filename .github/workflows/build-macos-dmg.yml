@@ -1,0 +1,58 @@
+name: Publish desktop source and build macOS ARM64 DMG
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag containing the 1.8.3 BuildKit
+        required: true
+        default: v1.8.3
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  macos-dmg:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Publish the verified release source into the repository
+        run: |
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'Hermes-Windows-1.8.3-source.zip' --dir "$RUNNER_TEMP/hermes-source"
+          unzip -q "$RUNNER_TEMP/hermes-source/Hermes-Windows-1.8.3-source.zip" -d "$RUNNER_TEMP/hermes-source"
+          source_dir="$RUNNER_TEMP/hermes-source/Hermes-Windows-1.8.3-source"
+          (cd "$source_dir" && shasum -a 256 -c docs/SOURCE-SHA256.txt)
+          cp -R "$source_dir"/. .
+          chmod +x gradlew
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish Hermes Desktop 1.8.3 UI revision 3 source'
+            git push origin HEAD:main
+          fi
+      - name: Check Apple Silicon host
+        run: test "$(uname -m)" = arm64
+      - name: Download the published and checksummed build kit
+        run: |
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'Hermes-macOS-arm64-1.8.3-BuildKit.zip' --dir incoming
+          unzip -q incoming/Hermes-macOS-arm64-1.8.3-BuildKit.zip -d buildkit
+      - name: Build and verify app and DMG on macOS
+        working-directory: buildkit/Hermes-macOS-arm64-1.8.3-BuildKit
+        run: /bin/bash Build-Mac-App.command
+      - name: Attach the verified DMG to the same release
+        working-directory: buildkit/Hermes-macOS-arm64-1.8.3-BuildKit
+        run: |
+          dmgs=(output/*/Hermes-macOS-arm64-1.8.3.dmg)
+          test "${#dmgs[@]}" -eq 1
+          test -f "${dmgs[0]}"
+          shasum -a 256 "${dmgs[0]}" > Hermes-macOS-arm64-1.8.3.dmg.sha256
+          gh release upload "$RELEASE_TAG" "${dmgs[0]}" Hermes-macOS-arm64-1.8.3.dmg.sha256 --repo "$GITHUB_REPOSITORY"
