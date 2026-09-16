@@ -17,11 +17,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source.zip --dir source-download
+        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source-r1.zip --dir source-download
       - uses: actions/upload-artifact@v4
         with:
           name: approved-source-1.8.4
-          path: source-download/Hermes-Desktop-1.8.4-source.zip
+          path: source-download/Hermes-Desktop-1.8.4-source-r1.zip
           if-no-files-found: error
   desktop:
     needs: source
@@ -46,14 +46,14 @@ jobs:
         run: |
           from pathlib import Path
           import hashlib, zipfile
-          p = Path('source-download/Hermes-Desktop-1.8.4-source.zip')
-          assert hashlib.sha256(p.read_bytes()).hexdigest() == '772c1d81273efcc9a6dae8fedd72762a13a8ee3959ea67a145ca20119a63a699', 'Source checksum mismatch'
+          p = Path('source-download/Hermes-Desktop-1.8.4-source-r1.zip')
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == '8cf3b40e9be79b77c89c0b5775e3af89fd89444f207d99302841977bf764c1db', 'Source checksum mismatch'
           with zipfile.ZipFile(p) as z:
               z.extractall('source')
       - name: Windows tests
         if: runner.os == 'Windows'
         working-directory: source/Hermes-Desktop-1.8.4-source
-        run: .\gradlew.bat test --no-daemon --console=plain
+        run: .\gradlew.bat test -PheadlessTests=true --no-daemon --console=plain
       - name: Windows installers and portable app
         if: runner.os == 'Windows'
         working-directory: source/Hermes-Desktop-1.8.4-source
@@ -65,7 +65,7 @@ jobs:
           test "$(uname -m)" = arm64
           chmod +x gradlew
           bash packaging/prepare-native.sh
-          ./gradlew test packageDmg --no-daemon --console=plain
+          ./gradlew test packageDmg -PheadlessTests=true --no-daemon --console=plain
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
