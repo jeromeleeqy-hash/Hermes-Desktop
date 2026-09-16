@@ -1,0 +1,70 @@
+name: Build Hermes 1.8.4 installers
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-installers-1.8.4.yml'
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Download approved source from build draft
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source.zip --dir source-download
+      - name: Verify and extract source
+        shell: python
+        run: |
+          from pathlib import Path
+          import hashlib, zipfile
+          p = Path('source-download/Hermes-Desktop-1.8.4-source.zip')
+          assert hashlib.sha256(p.read_bytes()).hexdigest() == '772c1d81273efcc9a6dae8fedd72762a13a8ee3959ea67a145ca20119a63a699', 'Source checksum mismatch'
+          with zipfile.ZipFile(p) as z:
+              z.extractall('source')
+      - name: Windows tests
+        if: runner.os == 'Windows'
+        working-directory: source/Hermes-Desktop-1.8.4-source
+        run: .\gradlew.bat test --no-daemon --console=plain
+      - name: Windows installers and portable app
+        if: runner.os == 'Windows'
+        working-directory: source/Hermes-Desktop-1.8.4-source
+        run: .\gradlew.bat packageExe packageMsi packageWindowsPortable --no-daemon --console=plain
+      - name: macOS ARM64 tests and DMG
+        if: runner.os == 'macOS'
+        working-directory: source/Hermes-Desktop-1.8.4-source
+        run: |
+          test "$(uname -m)" = arm64
+          chmod +x gradlew
+          bash packaging/prepare-native.sh
+          ./gradlew test packageDmg --no-daemon --console=plain
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hermes-1.8.4-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            source/Hermes-Desktop-1.8.4-source/build/windows/*.zip
+            source/Hermes-Desktop-1.8.4-source/build/compose/binaries/main/exe/*.exe
+            source/Hermes-Desktop-1.8.4-source/build/compose/binaries/main/msi/*.msi
+            source/Hermes-Desktop-1.8.4-source/build/compose/binaries/main/dmg/*.dmg
+          if-no-files-found: error
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hermes-1.8.4-test-reports-${{ runner.os }}
+          path: source/Hermes-Desktop-1.8.4-source/build/reports/tests/
+          if-no-files-found: ignore
