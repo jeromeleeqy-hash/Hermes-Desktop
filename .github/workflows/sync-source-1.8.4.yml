@@ -1,0 +1,93 @@
+name: Sync verified Hermes 1.8.4 source
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/sync-source-1.8.4.yml'
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Download exact tested source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source-r1.zip --dir "$RUNNER_TEMP/hermes-source"
+      - name: Verify and copy source
+        shell: python
+        run: |
+          from pathlib import Path
+          import os, hashlib, zipfile, shutil
+          temp = Path(os.environ['RUNNER_TEMP']) / 'hermes-source'
+          archive = temp / 'Hermes-Desktop-1.8.4-source-r1.zip'
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == '8cf3b40e9be79b77c89c0b5775e3af89fd89444f207d99302841977bf764c1db'
+          with zipfile.ZipFile(archive) as z:
+              z.extractall(temp / 'unpacked')
+          source = temp / 'unpacked/Hermes-Desktop-1.8.4-source'
+          shutil.copytree(source, Path.cwd(), dirs_exist_ok=True)
+          Path('README.md').write_text('''# Hermes Desktop
+
+          Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。
+
+          当前版本：**1.8.4**。安装包和完整源码见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
+
+          ## 核心功能
+
+          - 会话管理：工作空间与项目、多会话、搜索置顶、会话大纲、引用与运行中追加要求。
+          - 工作台：快速交办任务、继续最近会话、查看近期成果。
+          - 任务中心：审批与澄清、待处理请求、执行进度、完成记录、定时任务。
+          - 文件工作区：附件预览、图片与常见文档预览、Markdown 编辑与本机草稿。
+          - 桌面助手：悬浮球、小窗、截图、语音输入、托盘与 Mac 菜单栏入口。
+          - AI 配置：模型供应商、默认与备用模型、思考强度、专家会审、Skills、工具集及 MCP。
+          - 个性化：主题、字号、头像、回复风格、长期记忆和助理设定。
+
+          使用需要连接已部署的 Hermes Agent，模型、工具与语音能力取决于服务器配置。
+
+          ## 1.8.4 更新
+
+          - 整合悬浮球鼠标移入移出闪烁修复。
+          - 按服务器能力提供思考强度选择，并显示实际生效的模型状态。
+          - 完善待处理请求及取消、过期状态展示。
+          - 增加连接健康检查、断线恢复、登录过期恢复；保留草稿与附件，避免自动重复发送任务。
+          - 展示 MCP 连接和授权状态，支持服务器提供的授权入口。
+          - 改善 HEIC/HEIF/AVIF 预览，支持添加 PNG 副本；解码取决于系统能力。
+
+          ## 下载与构建
+
+          Windows 优先选择 Setup.exe，另提供 MSI 和便携 ZIP；Mac M 系列使用 DMG。安装包内置 Java，无需另装 JDK。
+
+          本仓库已同步安装包使用的完整源码。开发构建需要 JDK 21：
+
+          ```sh
+          # Windows
+          gradlew.bat test -PheadlessTests=true
+          gradlew.bat packageExe packageMsi packageWindowsPortable
+          # macOS
+          bash packaging/prepare-native.sh
+          bash gradlew test packageDmg -PheadlessTests=true
+          ```
+
+          `-PheadlessTests=true` 用于云端离屏测试；省略该参数可在真实交互桌面运行原生窗口检查。
+
+          ## 验证
+
+          [成功构建记录](https://github.com/jeromeleeqy-hash/Hermes-Desktop/actions/runs/35096879478)：Windows 255 项测试，253 通过、0 失败、2 跳过；Mac 255 项，251 通过、0 失败、4 跳过。
+
+          尚未完成用户 Windows/macOS 27 真机安装和真实网关联调。没有 Windows 商业代码签名或 Apple Developer ID 公证，首次安装可能出现系统验证提示。
+
+          源码附件与实际构建输入完全一致；其内部构建前的待验证说明保留作为历史记录，最新构建结果以本页、Release 和验证报告为准。
+          ''', encoding='utf-8')
+      - name: Commit source and current documentation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Sync tested Hermes Desktop 1.8.4 source and release documentation'
+          git push origin HEAD:main
