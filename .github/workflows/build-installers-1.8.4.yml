@@ -7,7 +7,24 @@ on:
 permissions:
   contents: read
 jobs:
+  source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download approved source from build draft
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source.zip --dir source-download
+      - uses: actions/upload-artifact@v4
+        with:
+          name: approved-source-1.8.4
+          path: source-download/Hermes-Desktop-1.8.4-source.zip
+          if-no-files-found: error
   desktop:
+    needs: source
     strategy:
       fail-fast: false
       matrix:
@@ -20,12 +37,10 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Download approved source from build draft
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: gh release download v1.8.4-build --pattern Hermes-Desktop-1.8.4-source.zip --dir source-download
+      - uses: actions/download-artifact@v4
+        with:
+          name: approved-source-1.8.4
+          path: source-download
       - name: Verify and extract source
         shell: python
         run: |
