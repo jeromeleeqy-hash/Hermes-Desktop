@@ -1,0 +1,18 @@
+JDK 21 / Gradle 8.13 / Linux x64
+96 tests, 94 passed, 2 Windows-only tests skipped, 0 failures/errors
+
+com.qingyu.hermescompanion.data.AudioFileRequestBodyTest: tests=3 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.ChatInsightsTest: tests=1 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.ConcurrentGatewayTest: tests=14 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.GatewayLoginTest: tests=9 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.HermesApiClientTest: tests=16 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.RemotePaths361Test: tests=4 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.data.VoiceTurnPolicyTest: tests=12 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.ChatCitationsTest: tests=4 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.CouncilTranscriptTest: tests=2 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.DecisionCodecTest: tests=1 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest: tests=4 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.WindowsDesktopTest: tests=4 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest: tests=13 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.storage.DesktopStoreTest: tests=3 failures=0 errors=0 skipped=0
+com.qingyu.hermescompanion.storage.WindowsMasterKeyTest: tests=6 failures=0 errors=0 skipped=2

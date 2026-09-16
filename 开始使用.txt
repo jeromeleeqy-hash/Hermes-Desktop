@@ -1,0 +1,6 @@
+Hermes macOS 1.8.3 · M 系列芯片
+
+这是完整源码包。直接生成应用请优先下载对应 BuildKit，双击 Build-Mac-App.command。
+从源码开发和打包请阅读 README.md 与 docs/BUILD-MACOS-1.8.3.md。
+
+适配目标 macOS 27；本轮尚未在 Mac 真机运行，app 和 DMG 需在 Mac 上生成。

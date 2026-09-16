@@ -1,0 +1,208 @@
+{
+  "version": "1.3.0",
+  "captured_at_utc": "2026-09-12T02:34:32.453586+00:00",
+  "environment": "Linux x64, Azul Zulu JDK 21.0.12.1, Gradle 8.13",
+  "summary": {
+    "tests": 151,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "passed": 149
+  },
+  "suites": [
+    {
+      "suite": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.826",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.023",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.539",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.741",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.008",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.101",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.651",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.032",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.005",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.ChatPresentationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.004",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.ComposerFlowTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "8.834",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.002",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.001",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.037",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.014",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.596",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.006",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.01",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.145",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "0.007",
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "seconds": "0.009",
+      "skipped_tests": [
+        "nativeWindowsDpapiReopensCookiesDraftsAndAttachments",
+        "nativeWindowsDpapiRejectsModifiedProtectedData"
+      ]
+    }
+  ],
+  "native_windows_execution": false,
+  "production_gateway_access": false
+}

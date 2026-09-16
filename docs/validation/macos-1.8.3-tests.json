@@ -1,0 +1,282 @@
+{
+  "version": "1.8.3",
+  "revision": "macOS appearance 2",
+  "target": "macos-arm64",
+  "date": "2026-09-15",
+  "host": "Linux x64, JDK 21",
+  "macos_native_apis": "Not executed. Geometry and alpha-mask tests run on Linux; Desktop lifecycle uses mocks. AppKit layout, menu tracking and template tinting require macOS validation.",
+  "totals": {
+    "tests": 244,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "passed": 240
+  },
+  "skipped_tests": [
+    "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest.titleDragUsesScreenCoordinatesAndDoubleClickTogglesOnce",
+    "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest.imagePickerHasTheActiveAvatarDialogAsOwnerAndReturnsSelectedFile",
+    "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest.nativeWindowsDpapiReopensCookiesDraftsAndAttachments",
+    "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest.nativeWindowsDpapiRejectsModifiedProtectedData"
+  ],
+  "suites": [
+    {
+      "name": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ModelCatalogParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ProviderAndAttachmentTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ChatPresentationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ComposerFlowTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopCompanionTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopMenuBoundsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ExperienceInteractionTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ExperiencePolishTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.HoldToTalkTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.MacAppearanceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.MacCompatibilityTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.MenuDismissSignalTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.OfficeDisplayTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ReadingInteractionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.Release183Test",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    }
+  ]
+}

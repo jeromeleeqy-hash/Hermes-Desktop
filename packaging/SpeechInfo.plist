@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>com.qingyu.hermes.desktop.speech</string>
+<key>CFBundleName</key><string>Hermes Speech</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>Hermes 使用 macOS 语音识别将你的录音转换为文字。</string>
+<key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入。</string>
+</dict></plist>

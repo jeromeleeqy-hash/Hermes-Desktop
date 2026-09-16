@@ -1,0 +1,9 @@
+{
+  "source_installer_sha256": "76c355b08e731d95f08e1866c862ba98c244617739bbdece0316cc66fce99051",
+  "runtime_files_verified": 316,
+  "recovered_via_nsis_stdout": [
+    "lib/modules"
+  ],
+  "module_sha256": "65665decac9ea19810f401c4750e5894a5f6653de8da4ebb6183d07a7cb24938",
+  "runtime_changed": false
+}

@@ -1,0 +1,161 @@
+{
+  "version": "1.2.0",
+  "verified_at_utc": "2026-09-11T12:21:15.768583+00:00",
+  "host": "Linux x64, JDK 21",
+  "command": "gradle test --offline",
+  "summary": {
+    "tests": 129,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2
+  },
+  "suites": [
+    {
+      "suite": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_tests": []
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_tests": [
+        "nativeWindowsDpapiReopensCookiesDraftsAndAttachments",
+        "nativeWindowsDpapiRejectsModifiedProtectedData"
+      ]
+    }
+  ]
+}

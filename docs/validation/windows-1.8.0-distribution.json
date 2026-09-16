@@ -1,0 +1,29 @@
+{
+  "version": "1.8.0",
+  "installer_portable_matching_files": 505,
+  "verified_directly_from_installer_stream": [
+    "runtime/lib/modules",
+    "app/hermes-desktop.jar",
+    "app/javafx-web-21.0.8-win.jar"
+  ],
+  "application_matches_final_compilation": true,
+  "update_launcher_scripts_match": true,
+  "windows_execution_performed": false,
+  "artifacts": [
+    {
+      "name": "Hermes-Windows-1.8.0-Setup.exe",
+      "bytes": 198335955,
+      "sha256": "d979f41a03e81974b3bead6a93ad7b6766721829478f649c13fd233315100dfd"
+    },
+    {
+      "name": "Hermes-Windows-1.8.0-portable.zip",
+      "bytes": 220811464,
+      "sha256": "c29035ea52043c7464d98e030e5e765aa61357f83934f83efca1a4ba04175301"
+    },
+    {
+      "name": "Hermes-Windows-1.8.0-update.zip",
+      "bytes": 171344146,
+      "sha256": "def3aa2bc11a3f567e80ff1d1e403771d2df09fdfa4b51f8c0e7821501274ed3"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "baseline": "1.1.0",
+  "version": "1.2.0",
+  "changed": [
+    "src/main/kotlin/com/qingyu/hermescompanion/R.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/data/HermesApiClient.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/CapabilitiesSettings.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatAndFiles.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopController.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDesign.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopPageLayout.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopTypography.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/SettingsView.kt",
+    "src/main/kotlin/com/qingyu/hermescompanion/model/Models.kt",
+    "src/main/resources/desktop-en.json",
+    "src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderPreviews.kt",
+    "packaging/Diagnose-Hermes.bat",
+    "packaging/assemble-windows-portable.py",
+    "packaging/windows-launch.bat",
+    "build.gradle.kts",
+    "README.md"
+  ],
+  "added": [
+    "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopNavigation.kt",
+    "src/test/kotlin/com/qingyu/hermescompanion/data/SessionPaginationTest.kt",
+    "src/test/kotlin/com/qingyu/hermescompanion/desktop/WorkbenchTest.kt",
+    "packaging/assemble-windows-update.py"
+  ]
+}

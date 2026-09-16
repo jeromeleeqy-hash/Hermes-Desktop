@@ -1,0 +1,42 @@
+{
+  "revision": "Desktop UI revision 3",
+  "version": "1.8.3",
+  "target": "macos-arm64",
+  "user_system": "macOS 27",
+  "jdk": {
+    "version": "21.0.12.1+1",
+    "name": "OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.12.1_1.tar.gz",
+    "source": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.12.1_1.tar.gz",
+    "sha256": "3623232f33a9c3baadf304480b2535f9a3cba8a58d42ecbb438ba267315d9998",
+    "bytes": 200073404
+  },
+  "jars": 83,
+  "verified_arm64_native_files": [
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libjavafx_iio.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libglass.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libjavafx_font.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_common.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_es2.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libdecora_sse.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_sw.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libjfxmedia_avf.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libglib-lite.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libfxplugins.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libgstreamer-lite.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libjfxmedia.dylib",
+    "javafx-web-21.0.8-mac-aarch64.jar:libjfxwebkit.dylib",
+    "skiko-awt-runtime-macos-arm64-0.9.37.4.jar:libskiko-macos-arm64.dylib"
+  ],
+  "unused_upstream_x64_resources": [
+    "skiko-awt-runtime-macos-arm64-0.9.37.4.jar:libskiko-macos-x64.dylib"
+  ],
+  "application_sha256": "28a0402ac7796254797190bc3b2f759784ea6fd2bf2495d2f72a3cdef5fa8214",
+  "macos_execution": false,
+  "app_and_dmg_generated": false,
+  "note": "The kit validates payload and architecture on Linux. Run Build-Mac-App.command on the target Mac to create and verify the actual app and DMG.",
+  "kit": {
+    "file": "Hermes-macOS-arm64-1.8.3-BuildKit.zip",
+    "bytes": 379381578,
+    "sha256": "620e549b0b0c05312ac278cabef8ea911358ff80e65fc53524a94401a037870b"
+  }
+}

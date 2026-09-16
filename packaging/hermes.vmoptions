@@ -1,0 +1,10 @@
+-Xmx1536m
+-Dfile.encoding=UTF-8
+-Dstdout.encoding=UTF-8
+-Dstderr.encoding=UTF-8
+--module-path
+"app/javafx-base-21.0.8-win.jar;app/javafx-graphics-21.0.8-win.jar;app/javafx-controls-21.0.8-win.jar;app/javafx-media-21.0.8-win.jar;app/javafx-web-21.0.8-win.jar;app/javafx-swing-21.0.8-win.jar"
+--add-modules
+javafx.swing,javafx.web,javafx.media,javafx.controls
+-cp
+"app/*"

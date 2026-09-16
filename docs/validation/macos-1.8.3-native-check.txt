@@ -1,0 +1,6 @@
+PASS floating attachment opens preview, Escape closes it, file and draft survive
+PASS only the independent remove button removes the attachment
+PASS main composer attachment preview
+PASS screenshot Escape, no main window, callback once
+PASS screenshot right-click cancellation
+PASS screenshot selection still completes

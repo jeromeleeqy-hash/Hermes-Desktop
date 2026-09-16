@@ -1,0 +1,8 @@
+{
+  "version": "1.2.1",
+  "platform": "windows-x64",
+  "unchanged_dependency_jars": 66,
+  "app_jar_sha256": "097bd76a5e94fd41f6412c0a36f6c5ad6b1337a6cabe4372448c33c14756e12b",
+  "obsolete_empty_page_error_absent": true,
+  "version_verified": true
+}

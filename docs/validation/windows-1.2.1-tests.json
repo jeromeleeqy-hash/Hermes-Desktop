@@ -1,0 +1,165 @@
+{
+  "version": "1.2.1",
+  "command": "gradle test --offline --console=plain",
+  "environment": "Linux x64, Temurin JDK 21.0.8+9, Gradle 8.13",
+  "totals": {
+    "tests": 137,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2
+  },
+  "suites": [
+    {
+      "name": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.093
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.024
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.57
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.794
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.011
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.107
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.576
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.034
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.007
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.003
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.085
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.149
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.833
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.009
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.017
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.213
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.012
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "seconds": 0.022
+    }
+  ]
+}

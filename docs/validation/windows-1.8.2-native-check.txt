@@ -1,0 +1,86 @@
+navigation.log
+PASS navigation expanded=false scale=1.0: build/verification182/navigation/Navigation-Collapsed-1x.png
+PASS navigation expanded=true scale=1.0: build/verification182/navigation/Navigation-Expanded-1x.png
+PASS navigation expanded=false scale=2.0: build/verification182/navigation/Navigation-Collapsed-2x.png
+PASS navigation expanded=true scale=2.0: build/verification182/navigation/Navigation-Expanded-2x.png
+
+
+native-check.log
+Warning: getifaddrs returns Operation not permitted
+Warning: getifaddrs returns Operation not permitted
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Internal error:   Could not resolve keysym XF86CameraAccessEnable
+> Internal error:   Could not resolve keysym XF86CameraAccessDisable
+> Internal error:   Could not resolve keysym XF86CameraAccessToggle
+> Internal error:   Could not resolve keysym XF86NextElement
+> Internal error:   Could not resolve keysym XF86PreviousElement
+> Internal error:   Could not resolve keysym XF86AutopilotEngageToggle
+> Internal error:   Could not resolve keysym XF86MarkWaypoint
+> Internal error:   Could not resolve keysym XF86Sos
+> Internal error:   Could not resolve keysym XF86NavChart
+> Internal error:   Could not resolve keysym XF86FishingChart
+> Internal error:   Could not resolve keysym XF86SingleRangeRadar
+> Internal error:   Could not resolve keysym XF86DualRangeRadar
+> Internal error:   Could not resolve keysym XF86RadarOverlay
+> Internal error:   Could not resolve keysym XF86TraditionalSonar
+> Internal error:   Could not resolve keysym XF86ClearvuSonar
+> Internal error:   Could not resolve keysym XF86SidevuSonar
+> Internal error:   Could not resolve keysym XF86NavInfo
+Errors from xkbcomp are not fatal to the X server
+PASS toggle
+PASS Escape
+PASS keyboard open
+PASS outside click
+PASS: tray action/check state, Escape, keyboard open, outside-click dismissal, hidden-main operation, theme/font scale, real ball right-click, single active menu, ask and hide actions
+
+
+native-check-hidpi.log
+Warning: getifaddrs returns Operation not permitted
+Warning: getifaddrs returns Operation not permitted
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Internal error:   Could not resolve keysym XF86CameraAccessEnable
+> Internal error:   Could not resolve keysym XF86CameraAccessDisable
+> Internal error:   Could not resolve keysym XF86CameraAccessToggle
+> Internal error:   Could not resolve keysym XF86NextElement
+> Internal error:   Could not resolve keysym XF86PreviousElement
+> Internal error:   Could not resolve keysym XF86AutopilotEngageToggle
+> Internal error:   Could not resolve keysym XF86MarkWaypoint
+> Internal error:   Could not resolve keysym XF86Sos
+> Internal error:   Could not resolve keysym XF86NavChart
+> Internal error:   Could not resolve keysym XF86FishingChart
+> Internal error:   Could not resolve keysym XF86SingleRangeRadar
+> Internal error:   Could not resolve keysym XF86DualRangeRadar
+> Internal error:   Could not resolve keysym XF86RadarOverlay
+> Internal error:   Could not resolve keysym XF86TraditionalSonar
+> Internal error:   Could not resolve keysym XF86ClearvuSonar
+> Internal error:   Could not resolve keysym XF86SidevuSonar
+> Internal error:   Could not resolve keysym XF86NavInfo
+Errors from xkbcomp are not fatal to the X server
+PASS toggle
+PASS Escape
+PASS keyboard open
+PASS outside click
+PASS: tray action/check state, Escape, keyboard open, outside-click dismissal, hidden-main operation, theme/font scale, real ball right-click, single active menu, ask and hide actions
+The XKEYBOARD keymap compiler (xkbcomp) reports:
+> Internal error:   Could not resolve keysym XF86CameraAccessEnable
+> Internal error:   Could not resolve keysym XF86CameraAccessDisable
+> Internal error:   Could not resolve keysym XF86CameraAccessToggle
+> Internal error:   Could not resolve keysym XF86NextElement
+> Internal error:   Could not resolve keysym XF86PreviousElement
+> Internal error:   Could not resolve keysym XF86AutopilotEngageToggle
+> Internal error:   Could not resolve keysym XF86MarkWaypoint
+> Internal error:   Could not resolve keysym XF86Sos
+> Internal error:   Could not resolve keysym XF86NavChart
+> Internal error:   Could not resolve keysym XF86FishingChart
+> Internal error:   Could not resolve keysym XF86SingleRangeRadar
+> Internal error:   Could not resolve keysym XF86DualRangeRadar
+> Internal error:   Could not resolve keysym XF86RadarOverlay
+> Internal error:   Could not resolve keysym XF86TraditionalSonar
+> Internal error:   Could not resolve keysym XF86ClearvuSonar
+> Internal error:   Could not resolve keysym XF86SidevuSonar
+> Internal error:   Could not resolve keysym XF86NavInfo
+Errors from xkbcomp are not fatal to the X server
+
+
+global.log
+SKIP: global Windows mouse hook requires Windows

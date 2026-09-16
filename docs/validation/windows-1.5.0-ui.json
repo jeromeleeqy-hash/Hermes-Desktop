@@ -1,0 +1,101 @@
+{
+  "renderer": "Actual Compose components / Skia software rendering / demonstration data",
+  "screenshots": [
+    {
+      "name": "chat-glass.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "62596a720b22133f33a1d297d364da5070baf9ac41a426cd57726a1b30f854b4"
+    },
+    {
+      "name": "chat-model-picker.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "6db38aa60570c81ff1240d56d4cf677f12115bb17affdcf108a5043de9076d9b"
+    },
+    {
+      "name": "chat-office.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "06fa9d59b95ff7cd0b29e88789fae85c19eee3e47b4261e6ecfe96b2e386ca91"
+    },
+    {
+      "name": "chat-paper.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "304782c51fc7c1dcc394d1a9deaf688a033de19c6b04a9e80639ab7d24a7bdda"
+    },
+    {
+      "name": "chat-workspace-menu.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "9c85f581fc77ddbeab9e53e18df12f4879fae51ab31920286c32d7cea513d327"
+    },
+    {
+      "name": "dialog.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "7156be5a4c0206e90f60f427ac410d3fac329ad4183ec116a43c0d6cb351873d"
+    },
+    {
+      "name": "files-diff.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "395f91c6e32a4034fb977487944c2114f205dd3d39db4a451b4dc2ac95366ec7"
+    },
+    {
+      "name": "files-editor-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "8296dbe3328ece4d2dbcd09790647560c6ca945acfb42ed05d0745ac4ca99403"
+    },
+    {
+      "name": "files-split-wide.png",
+      "pixels": [
+        2048,
+        1012
+      ],
+      "sha256": "2a6164f99c6b6b54f1eefc26f52405e5b9f8d38146050107994e43136196a0e0"
+    },
+    {
+      "name": "files-wide.png",
+      "pixels": [
+        2048,
+        1012
+      ],
+      "sha256": "70df5fbdbe3a37ef39dc9a47194428e4b34c642c92e40dca777d26146e933458"
+    },
+    {
+      "name": "home-scroll-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "f2696cd647fc455729a9810677d159af953cca06fd8783607e8ae9b52ab80809"
+    },
+    {
+      "name": "settings.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "cf45e0b3310991f325ec3e019f9a1e6065833a882e1217ff9722bb7ec836dd61"
+    }
+  ]
+}

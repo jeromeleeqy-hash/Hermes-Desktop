@@ -1,0 +1,1 @@
+PASS: native floating/quick windows, close/reopen, settings toggle, range capture -> daily draft

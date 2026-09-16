@@ -1,0 +1,12 @@
+{
+  "version": "1.4.0",
+  "platform": "windows-x64",
+  "stage_command": "gradle stageWindowsApplication -PdesktopTarget=windows-x64 --offline",
+  "result": "passed",
+  "jar_sha256": "5d37138f59f47753fbf25754fb9a7b439a3fc06177e8ed2812053b38ff34a420",
+  "application_bytes": 53185328,
+  "dependency_count": 66,
+  "all_dependencies_match_verified_1_2_0": true,
+  "base_sha256": "9e64991c6e19fdcdccb3d2714b9903d91516653a70f0b5624a62965d9bec91e4",
+  "windows_native_execution": false
+}

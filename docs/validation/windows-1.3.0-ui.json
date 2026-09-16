@@ -1,0 +1,233 @@
+{
+  "version": "1.3.0",
+  "environment": "Linux / Compose ImageComposeScene / Skiko software renderer",
+  "scenarios": [
+    "home-wide",
+    "home-narrow",
+    "home-empty",
+    "home-error",
+    "home-loading",
+    "home-interaction",
+    "chat",
+    "chat-paper",
+    "chat-glass",
+    "chat-dark",
+    "chat-metadata",
+    "chat-wide",
+    "chat-split",
+    "chat-collapsed",
+    "narrow-active",
+    "chat-quote",
+    "jump",
+    "settings-wide-glass",
+    "settings-retina-glass",
+    "settings-paper",
+    "settings-memory",
+    "settings-model",
+    "settings-skills",
+    "settings-tools",
+    "settings-voice",
+    "settings-help",
+    "settings-draft",
+    "sessions",
+    "tasks-wide-empty",
+    "tasks-wide-active",
+    "tasks-narrow",
+    "files",
+    "files-wide",
+    "files-table",
+    "files-diff",
+    "quick-keyboard",
+    "dialog-approval-glass"
+  ],
+  "checks": [
+    "Verified home typing, template append and task creation by actual controls",
+    "Verified file panel toggle preserves conversation and document",
+    "Verified drag resize preserves the session and document",
+    "Verified actual mouse selection and quote context menu",
+    "Verified jump footer position and pointer interaction",
+    "Verified theme selection by pointer at 1.0x density",
+    "Verified theme selection by pointer at 2.0x density",
+    "Verified the profile save action is reachable by mouse wheel",
+    "Verified settings draft survives page navigation",
+    "Verified filter hover has no rectangle",
+    "Verified quick switch filtering, arrow keys, Enter, Escape and retained conversation"
+  ],
+  "native_windows": false,
+  "captured_at_utc": "2026-09-12T02:34:32.453586+00:00",
+  "final_layout_recheck": {
+    "scenarios": [
+      "chat-wide",
+      "narrow-active",
+      "chat-dark",
+      "chat-metadata"
+    ],
+    "result": "passed",
+    "gradle_exit_code": 0,
+    "checks": [
+      "Workspace selector in left navigation",
+      "Model selector inside bottom composer",
+      "Files action after refresh",
+      "Send control aligned within 20 dp of the composer right edge",
+      "Known runtime metadata structured without changing stored message content"
+    ]
+  },
+  "previews": [
+    {
+      "file": "chat-collapsed.png",
+      "sha256": "b70e5f33b6c0b18698917a1cdad5b792e13b4b6e1619826da3d138f351ceac8d"
+    },
+    {
+      "file": "chat-dark.png",
+      "sha256": "23fa67cf01fe214f57618928b7bebfd6b4d6fe77dd809cfafde0d0df46e07397"
+    },
+    {
+      "file": "chat-glass.png",
+      "sha256": "b6aabf8cd4d60a6b9c3bd9183c75c1b3085a92c71a35dbc388fa916be373b56b"
+    },
+    {
+      "file": "chat-metadata.png",
+      "sha256": "268e015767a93ed6a043044e55f8dead6ce671c282dddebd1c63ab56d6a50d60"
+    },
+    {
+      "file": "chat-paper.png",
+      "sha256": "475851c0334e62387d0e80e3758b3efc4c386d97d0d312e9ffe4ccb9a1a34efe"
+    },
+    {
+      "file": "chat-quote.png",
+      "sha256": "bf8072c2d3902c1304733a1059e13af30b1d93a20eede0e0929d8d705c481224"
+    },
+    {
+      "file": "chat-split.png",
+      "sha256": "72d1bb05d281af732ec56b60b553ac6ee3f5199bcdbf67751afe770d520b1c5f"
+    },
+    {
+      "file": "chat-wide.png",
+      "sha256": "765ee79ecf1cba4dee8c8addeebdb168403046a424f972d4f804d83a4ba1a049"
+    },
+    {
+      "file": "chat.png",
+      "sha256": "8e62ced6d12e359e2a21ecaf2329eb73e9282c8d297d84d599784d49b0ed7e3a"
+    },
+    {
+      "file": "dialog-approval-glass.png",
+      "sha256": "43ad958755bc3d3bfd305006932b12c871e0febc57e733ec3b8c1798fbecd179"
+    },
+    {
+      "file": "files-diff.png",
+      "sha256": "f5d10914caa9e7a0608b69eae038b049c9af56d9fc5e082959ef2969aafa7b7b"
+    },
+    {
+      "file": "files-table.png",
+      "sha256": "37156b6bd52b712e13ffd224851d60972f4405bd3cc27bcc99b82ac2d03d841f"
+    },
+    {
+      "file": "files-wide.png",
+      "sha256": "8f4ae8b4d4be7fbcf5e3f4ffa99da5c7e4b12cebd5a8d2999ab8e1a9a0e33309"
+    },
+    {
+      "file": "files.png",
+      "sha256": "42d47ae8de7a71c0dd8e9e295486b09ecf13332cb308eef877133db5eaf9d6ff"
+    },
+    {
+      "file": "home-empty.png",
+      "sha256": "6c6bab89e845de7163ebf5a12f0080571e5277fd88d525737ea623c42abf6b24"
+    },
+    {
+      "file": "home-error.png",
+      "sha256": "e4ef18a76336ca9b380c41b25f15e1e825f69922182b0c04ffecfd4eea07c7c0"
+    },
+    {
+      "file": "home-interaction.png",
+      "sha256": "82d86e51b0180ea48d0cebbb2684246a9b968c6bee7d7a9f01f760bb37288a32"
+    },
+    {
+      "file": "home-loading.png",
+      "sha256": "a29021787200dce35a67503d5b31d15e2d95ea39100b2eb8b6e231cf0982d0e4"
+    },
+    {
+      "file": "home-narrow.png",
+      "sha256": "8d78b232b08b7f632720078156184d9b828c2dc585710057c8da5751625e156f"
+    },
+    {
+      "file": "home-wide.png",
+      "sha256": "6b2821944d8a7784de0a523ddefd390bd27896e33e4aa08d01b89a3e5abe5c79"
+    },
+    {
+      "file": "jump.png",
+      "sha256": "317b3bbb909c50c8918fb4229a690ce4575ab8a3ec814aca35f24bd16c26e15c"
+    },
+    {
+      "file": "narrow-active.png",
+      "sha256": "e8cbd2a58cf672387075e81502e9be87cf24dc444d0d4495cfb077a4882c95cd"
+    },
+    {
+      "file": "quick-keyboard.png",
+      "sha256": "71e7ded5d8dee88d8f1c76f0540afd1aa8f12bf55de06477ce2e71fc8445aaf5"
+    },
+    {
+      "file": "sessions-hover.png",
+      "sha256": "f3360b1520dbb862d0e833d2cb251528978fccd97c5d2166fe017e7a1006db6a"
+    },
+    {
+      "file": "sessions.png",
+      "sha256": "f3360b1520dbb862d0e833d2cb251528978fccd97c5d2166fe017e7a1006db6a"
+    },
+    {
+      "file": "settings-draft.png",
+      "sha256": "6f0bd209b3ee624f17bec42620d47b6ceb1bff99dafbc0f624e61f28c43a311e"
+    },
+    {
+      "file": "settings-help.png",
+      "sha256": "557d4a7d1e5154a5b9606215b33cc4d4cf9d1964a7d56a29b386524dfd5089a8"
+    },
+    {
+      "file": "settings-memory.png",
+      "sha256": "61e0699411988533fe008876d53b691920455c683997d2b43d01faffd25b33dc"
+    },
+    {
+      "file": "settings-model.png",
+      "sha256": "a7df3e1f8b2d9ff5323dfea9caab6a497673309d4b08c2c1375946083d8b7f42"
+    },
+    {
+      "file": "settings-paper.png",
+      "sha256": "29781aa3fc3221d9df2c9f1b2d61ea6a9bb9526010f69553ee6feeb7b62fd1eb"
+    },
+    {
+      "file": "settings-retina-glass-scrolled.png",
+      "sha256": "348affa89b655d443d6d09fb8ba2b881536d48d3039f23370295dd16a5b533d1"
+    },
+    {
+      "file": "settings-retina-glass.png",
+      "sha256": "84df0a292a87e66e4a89f68881e82e1bdc92e3495f44280a6019ba88ffbf876e"
+    },
+    {
+      "file": "settings-skills.png",
+      "sha256": "b78a43454769968c88a35faadd1762f67e25c2bf52c14a0865147bb793350aef"
+    },
+    {
+      "file": "settings-tools.png",
+      "sha256": "bdf38a2151d7a61458fab7160cbd02866c2931ac258f1890931df2105ee30b51"
+    },
+    {
+      "file": "settings-voice.png",
+      "sha256": "546337bbfee0a834ef0e5d0eae7554ab89745be1c7c9586acaa60a2da86eb454"
+    },
+    {
+      "file": "settings-wide-glass.png",
+      "sha256": "709ccfc653b34966f5992551b8037f7703ccfdc75eb6839ca201ea8bc351a8ff"
+    },
+    {
+      "file": "tasks-narrow.png",
+      "sha256": "42b602dbb49c7c5dd790a6454d1ae7baa133ed7cc7e9b7826f6b7835dabcc26c"
+    },
+    {
+      "file": "tasks-wide-active.png",
+      "sha256": "9932551a0be831b9028b1ae9a3f94b7d3391bfa624e352c5cfe0f72fef03dea9"
+    },
+    {
+      "file": "tasks-wide-empty.png",
+      "sha256": "17432959c2c1bb43da0c16d0dcab559dbfea599ce0c598793695693d662dc59a"
+    }
+  ]
+}

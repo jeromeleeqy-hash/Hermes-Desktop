@@ -1,0 +1,25 @@
+{
+  "version": "1.8.4",
+  "date": "2026-09-16",
+  "status": "source_implemented_pending_full_validation",
+  "standalone_java_image_checks": {
+    "compiled": true,
+    "passed": 10,
+    "runtime": "OpenJDK 17 compiler module",
+    "native_decoding_tested": false
+  },
+  "new_kotlin_tests": {
+    "count": 7,
+    "executed": false
+  },
+  "gradle": {
+    "attempted": true,
+    "compiled": false,
+    "tests_executed": false,
+    "blocker": "Network is unreachable downloading Gradle 8.13; project also needs JDK 21"
+  },
+  "windows_runtime_tested": false,
+  "macos_runtime_tested": false,
+  "live_gateway_tested": false,
+  "installers_generated": false
+}

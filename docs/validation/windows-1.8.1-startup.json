@@ -1,0 +1,9 @@
+{
+  "version": "1.8.1",
+  "actual_application_jar_sha256": "881d4d6b2092adefd9c267241302bb93369da995099559f447eb7f2dbbf7fbd6",
+  "environment": "Linux Xvfb, equivalent fixed Linux runtime, actual application JAR and Java argfile",
+  "unicode_space_ampersand_directory": true,
+  "exit_code": 0,
+  "output": "MAIN_WINDOW_READY 1440x900\n",
+  "real_windows_execution": false
+}

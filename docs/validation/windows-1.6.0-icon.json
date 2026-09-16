@@ -1,0 +1,33 @@
+{
+  "artwork": "F1 approved concept",
+  "source_rectangle": [
+    453,
+    73,
+    631,
+    602
+  ],
+  "png_size": [
+    512,
+    512
+  ],
+  "alpha_bounds": [
+    6,
+    6,
+    506,
+    506
+  ],
+  "ico_sizes": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    96,
+    128,
+    256
+  ],
+  "fully_transparent_corners": true,
+  "icon_sha256": "6450c65b85d710322edf5579a3891ad2a51c1f15ab49985152a78a07e1926e53"
+}

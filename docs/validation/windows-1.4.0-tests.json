@@ -1,0 +1,883 @@
+{
+  "version": "1.4.0",
+  "recorded_at_utc": "2026-09-12T07:52:58.394467+00:00",
+  "environment": "Linux x64, JDK 21.0.12.1, Gradle 8.13",
+  "command": "gradle test --offline",
+  "tests": 162,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 2,
+  "passed": 160,
+  "suites": [
+    {
+      "name": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.763,
+      "cases": [
+        {
+          "name": "streamedJsonHasExactLengthAndRoundTripsAtEveryBase64BlockBoundary",
+          "status": "passed"
+        },
+        {
+          "name": "transcriptionPreservesRecordingOnBothFailureAndSuccessAndKeepsExplicitProfile",
+          "status": "passed"
+        },
+        {
+          "name": "emptyOrChangedRecordingIsRejectedBeforeUpload",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.021,
+      "cases": [
+        {
+          "name": "extractsArtifactsAndLatestTodoState",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.488,
+      "cases": [
+        {
+          "name": "invalidDirectoryFailsBeforeSubmittingAnyPrompt",
+          "status": "passed"
+        },
+        {
+          "name": "explicitSubmissionRejectionIsDifferentFromAnUnknownDisconnect",
+          "status": "passed"
+        },
+        {
+          "name": "checkpointFailurePreventsPromptFromReachingServer",
+          "status": "passed"
+        },
+        {
+          "name": "creatingInProjectSetsRuntimeDirectoryAndPreservesRoot",
+          "status": "passed"
+        },
+        {
+          "name": "voiceFastReplyIsSessionScopedAndRestoredBeforeCompletion",
+          "status": "passed"
+        },
+        {
+          "name": "rejectedInterruptDoesNotReportSuccess",
+          "status": "passed"
+        },
+        {
+          "name": "unsupportedVoiceReasoningStillSendsWithoutChangingConfig",
+          "status": "passed"
+        },
+        {
+          "name": "stoppedBeforeSubmissionDoesNotCreateRuntimeOrSendMessage",
+          "status": "passed"
+        },
+        {
+          "name": "interleavedRepliesStayInTheirOwnConversation",
+          "status": "passed"
+        },
+        {
+          "name": "newAssistantSessionUsesCapturedProfileEvenIfClientSelectionChanged",
+          "status": "passed"
+        },
+        {
+          "name": "stoppingOneRuntimeDoesNotStopItsPeer",
+          "status": "passed"
+        },
+        {
+          "name": "disconnectNotifiesAllLiveConversations",
+          "status": "passed"
+        },
+        {
+          "name": "remotePdfIsSubmittedAsServerFileNotAsAnImage",
+          "status": "passed"
+        },
+        {
+          "name": "quickTextTurnKeepsAttachmentsAndRestoresReasoningWithoutChangingTheModel",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.736,
+      "cases": [
+        {
+          "name": "rateLimitDoesNotTriggerAnotherCredentialAttempt",
+          "status": "passed"
+        },
+        {
+          "name": "malformedProviderResponseDoesNotSubmitPassword",
+          "status": "passed"
+        },
+        {
+          "name": "passwordIsSentExactlyAndSessionSurvivesClientRestart",
+          "status": "passed"
+        },
+        {
+          "name": "serverErrorBodyCannotLeakSecretsIntoUserDiagnostic",
+          "status": "passed"
+        },
+        {
+          "name": "savedSessionFailureDoesNotClaimPasswordWasRejected",
+          "status": "passed"
+        },
+        {
+          "name": "storageFailureDoesNotBecomeInvalidCredentials",
+          "status": "passed"
+        },
+        {
+          "name": "successfulPasswordPostWithRejectedSessionHasDifferentFailure",
+          "status": "passed"
+        },
+        {
+          "name": "emptyInputIsRejectedBeforeAnyNetworkRequest",
+          "status": "passed"
+        },
+        {
+          "name": "rejectedCredentialsAreNotRetriedOrMisreportedAsCookieFailure",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.006,
+      "cases": [
+        {
+          "name": "appendsEncodedProfileToRestPath",
+          "status": "passed"
+        },
+        {
+          "name": "keepsExplicitProfileQuery",
+          "status": "passed"
+        },
+        {
+          "name": "normalizesReasoningEffortForGatewayCompatibility",
+          "status": "passed"
+        },
+        {
+          "name": "ignoresBooleanProfileDescription",
+          "status": "passed"
+        },
+        {
+          "name": "convertsHttpUrlToWebSocketUrl",
+          "status": "passed"
+        },
+        {
+          "name": "parsesLegacySingleSelectClarification",
+          "status": "passed"
+        },
+        {
+          "name": "hidesLowLevelSocketFailureFromUser",
+          "status": "passed"
+        },
+        {
+          "name": "rejectsUnsupportedScheme",
+          "status": "passed"
+        },
+        {
+          "name": "supportsHostedRootThatIsHermesHome",
+          "status": "passed"
+        },
+        {
+          "name": "convertsHttpsUrlToSecureWebSocketUrl",
+          "status": "passed"
+        },
+        {
+          "name": "resolvesNamedProfileMemoryAndSoulFilesFromUserHome",
+          "status": "passed"
+        },
+        {
+          "name": "parsesProfileCatalog",
+          "status": "passed"
+        },
+        {
+          "name": "resolvesDefaultProfileDirectlyUnderHermesHome",
+          "status": "passed"
+        },
+        {
+          "name": "gatewayTurnRejectsCompletionBeforeItsStartEdge",
+          "status": "passed"
+        },
+        {
+          "name": "parsesNestedRequestAndSnakeCaseMultiSelect",
+          "status": "passed"
+        },
+        {
+          "name": "parsesStructuredMultiSelectClarification",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ModelCatalogParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.001,
+      "cases": [
+        {
+          "name": "preservesRestartGuardFromAnErrorEnvelope",
+          "status": "passed"
+        },
+        {
+          "name": "readsNestedCatalogAndMixedModelIdsWithoutDisplayingRawJson",
+          "status": "passed"
+        },
+        {
+          "name": "recognizesAnExplicitlyEmptyCatalog",
+          "status": "passed"
+        },
+        {
+          "name": "rejectsMissingProvidersRatherThanPretendingNoModelsExist",
+          "status": "passed"
+        },
+        {
+          "name": "excludesExplicitlyUnauthenticatedProviders",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.103,
+      "cases": [
+        {
+          "name": "acceptsPosixDriveRootsUnicodeAndUncWithoutGuessingRelativePaths",
+          "status": "passed"
+        },
+        {
+          "name": "windowsFileLinksAndRelativeImagesUseServerPathSyntax",
+          "status": "passed"
+        },
+        {
+          "name": "windowsCwdSurvivesJsonRpcHttpBrowsingAndProfileRouting",
+          "status": "passed"
+        },
+        {
+          "name": "projectContainmentKeepsVolumeAndSegmentBoundaries",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.607,
+      "cases": [
+        {
+          "name": "staleTotalsDoNotDiscardSuccessfullyReadConversations",
+          "status": "passed"
+        },
+        {
+          "name": "anExactFullPageCanBeFollowedByAnEmptyPage",
+          "status": "passed"
+        },
+        {
+          "name": "aRejectedFirstRequestDoesNotPublishAnEmptyList",
+          "status": "passed"
+        },
+        {
+          "name": "archivedConversationsAlsoReadBeyondTheFirstPage",
+          "status": "passed"
+        },
+        {
+          "name": "repeatedPagesFailRatherThanLoopForeverOrPretendTheListIsComplete",
+          "status": "passed"
+        },
+        {
+          "name": "aFullPageContinuesEvenWhenTheTotalIsUnderreported",
+          "status": "passed"
+        },
+        {
+          "name": "progressSnapshotsAreStableAndDeduplicated",
+          "status": "passed"
+        },
+        {
+          "name": "clampsTheRequestToTheGatewayLimit",
+          "status": "passed"
+        },
+        {
+          "name": "honorsAnExplicitTotalEvenWhenTheServerReturnsShortPages",
+          "status": "passed"
+        },
+        {
+          "name": "successfulPagesArePublishedBeforeALaterHttpFailureForBothLists",
+          "status": "passed"
+        },
+        {
+          "name": "overlappingPagesAreDeduplicatedWithoutSkippingOffsets",
+          "status": "passed"
+        },
+        {
+          "name": "emptyPageEndsTheListEvenWhenTheTotalIncludesOtherSessions",
+          "status": "passed"
+        },
+        {
+          "name": "readsBeyondOneHundredWhenTheGatewayOmitsTotals",
+          "status": "passed"
+        },
+        {
+          "name": "malformedResponsesAreNotEmptyWorkspaces",
+          "status": "passed"
+        },
+        {
+          "name": "validationArraysAreHumanReadable",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.026,
+      "cases": [
+        {
+          "name": "speechStartedImmediatelyIsRetainedWhenTheFirstPauseSuppliesTheNoiseFloor",
+          "status": "passed"
+        },
+        {
+          "name": "isolatedTapAfterSpeechDoesNotRestartTheSilenceTimer",
+          "status": "passed"
+        },
+        {
+          "name": "constantBackgroundAndIsolatedClicksNeverSubmit",
+          "status": "passed"
+        },
+        {
+          "name": "invalidLevelsDoNotArmAndLongValidSpeechHasABoundedTurn",
+          "status": "passed"
+        },
+        {
+          "name": "chineseAndMixedNumbersSurviveMarkdownCleaning",
+          "status": "passed"
+        },
+        {
+          "name": "noisyModeFiltersMoreBackgroundButStillDetectsNearbySpeech",
+          "status": "passed"
+        },
+        {
+          "name": "speechEndsEvenWhenFanNoiseNeverReachesSilence",
+          "status": "passed"
+        },
+        {
+          "name": "quietModeCanRecognizeSoftSpeechWithoutArmingOnRoomNoise",
+          "status": "passed"
+        },
+        {
+          "name": "englishVoicesCannotSilentlyDropChinese",
+          "status": "passed"
+        },
+        {
+          "name": "shortPauseAndResumedSpeechKeepTheSameTurn",
+          "status": "passed"
+        },
+        {
+          "name": "longSpeechKeepsEveryCharacterAndUnicodePair",
+          "status": "passed"
+        },
+        {
+          "name": "animationGainCannotChangeTheEndpointLevel",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.005,
+      "cases": [
+        {
+          "name": "ignoresImagesCleansFormattingAndHonorsLimit",
+          "status": "passed"
+        },
+        {
+          "name": "ignoresUrlsInsideCodeAndPreservesDocumentOrder",
+          "status": "passed"
+        },
+        {
+          "name": "extractsMarkdownAndPlainSourcesInOrderWithoutDuplicates",
+          "status": "passed"
+        },
+        {
+          "name": "resolvesReferenceLinksAndKeepsBalancedUrlParentheses",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ChatPresentationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.003,
+      "cases": [
+        {
+          "name": "runtimeHeaderBecomesANoticeAndTheQuestionStaysIntact",
+          "status": "passed"
+        },
+        {
+          "name": "multipleChangesKeepAllNoticesWithoutDuplicatingQuestion",
+          "status": "passed"
+        },
+        {
+          "name": "onlyVerifiedLeadingImageReferencesAreReplacedByImageAttachments",
+          "status": "passed"
+        },
+        {
+          "name": "transportInterruptionIsExplainedButCodeExamplesRemainVisible",
+          "status": "passed"
+        },
+        {
+          "name": "quotedOrSimilarUserTextIsNeverStripped",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ComposerFlowTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 15.688,
+      "cases": [
+        {
+          "name": "queuedMessageWaitsForCompletionBeforeSubmitting",
+          "status": "passed"
+        },
+        {
+          "name": "openingTheActualModelPopupAndSelectingAModelCompletes",
+          "status": "passed"
+        },
+        {
+          "name": "failedStopNeverSubmitsReplacementAndKeepsTheDraft",
+          "status": "passed"
+        },
+        {
+          "name": "customCaptionButtonsDispatchIndependentActions",
+          "status": "passed"
+        },
+        {
+          "name": "malformedModelCatalogIsNeverAnEmptySuccess",
+          "status": "passed"
+        },
+        {
+          "name": "ctrlEnterModeKeepsEnterAsNewline",
+          "status": "passed"
+        },
+        {
+          "name": "unavailableHistoricalImageStaysInlineAndCanBeRetried",
+          "status": "passed"
+        },
+        {
+          "name": "sendSettingWorksWithoutServerSettingsAndSurvivesRestart",
+          "status": "passed"
+        },
+        {
+          "name": "modelRestartGuardIsNonBlockingAndRetryRestoresSelection",
+          "status": "passed"
+        },
+        {
+          "name": "imeConfirmationAndShiftModifiedShortcutsDoNotSubmit",
+          "status": "passed"
+        },
+        {
+          "name": "clickingTheSendIconSubmitsOnceAndRendersTheReply",
+          "status": "passed"
+        },
+        {
+          "name": "enterModeKeepsShiftEnterAsNewline",
+          "status": "passed"
+        },
+        {
+          "name": "rejectedSubmissionKeepsDraftAndAllowsRetry",
+          "status": "passed"
+        },
+        {
+          "name": "aDelayedModelChangeCannotNavigateBackToTheOldConversation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.003,
+      "cases": [
+        {
+          "name": "parsesAsyncDelegationBatchIntoIndependentExperts",
+          "status": "passed"
+        },
+        {
+          "name": "leavesNormalConversationMessagesUntouched",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.001,
+      "cases": [
+        {
+          "name": "restoresSameRequestIdAcrossSeparateProfilesWithoutMergingChoices",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.031,
+      "cases": [
+        {
+          "name": "sundayAliasAndSeveralWeekdaysAreSupported",
+          "status": "passed"
+        },
+        {
+          "name": "structuredSettingCodecRoundTripsAllModelFields",
+          "status": "passed"
+        },
+        {
+          "name": "artifactIndexAndSummariesSurviveEncryptedCheckpoint",
+          "status": "passed"
+        },
+        {
+          "name": "matchingSubmittedSettingsBecomeCleanAfterSave",
+          "status": "passed"
+        },
+        {
+          "name": "invalidIntegerDraftSurvivesReopeningAndCannotLookClean",
+          "status": "passed"
+        },
+        {
+          "name": "separateUserTurnsAndSystemBoundariesAreNeverMerged",
+          "status": "passed"
+        },
+        {
+          "name": "dstPreviewUsesTheRequestedZoneAndActualInstants",
+          "status": "passed"
+        },
+        {
+          "name": "projectFilterHonorsDirectoryBoundaries",
+          "status": "passed"
+        },
+        {
+          "name": "diffCanReconstructBothVersionsWithoutLosingBlankLines",
+          "status": "passed"
+        },
+        {
+          "name": "serverRefreshDoesNotOverwriteUnsavedSettings",
+          "status": "passed"
+        },
+        {
+          "name": "fileSizesDistinguishUnknownTinyAndEmptyFiles",
+          "status": "passed"
+        },
+        {
+          "name": "largeDiffHasBoundedMemoryAndPreservesContent",
+          "status": "passed"
+        },
+        {
+          "name": "artifactOrderIsIndependentOfOpeningOldConversations",
+          "status": "passed"
+        },
+        {
+          "name": "oneAssistantTurnKeepsReasoningFilesAndSearchIds",
+          "status": "passed"
+        },
+        {
+          "name": "latestMeaningfulReplyBecomesConversationSummary",
+          "status": "passed"
+        },
+        {
+          "name": "transportMarkerDoesNotEraseCodeExamplesOrUnrecognizedContent",
+          "status": "passed"
+        },
+        {
+          "name": "weekdaySchedulesAndServerTimezoneArePreviewedCorrectly",
+          "status": "passed"
+        },
+        {
+          "name": "editingDuringSaveRetainsTheLaterDraft",
+          "status": "passed"
+        },
+        {
+          "name": "invalidCronNeverPassesValidation",
+          "status": "passed"
+        },
+        {
+          "name": "cleanNumericFieldFollowsARefreshedServerValue",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.012,
+      "cases": [
+        {
+          "name": "openingAnotherDocumentWaitsForTheRichEditorAndRetainsItsUnsavedText",
+          "status": "passed"
+        },
+        {
+          "name": "theFilePanelVisibilitySurvivesRestart",
+          "status": "passed"
+        },
+        {
+          "name": "browsingAndHidingFilesPreserveTheChatDraftAndOpenDocument",
+          "status": "passed"
+        },
+        {
+          "name": "returningToChatWaitsForTheEditorFlush",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.558,
+      "cases": [
+        {
+          "name": "emptyFinalPageWithStaleTotalCompletesWithoutShowingASyncError",
+          "status": "passed"
+        },
+        {
+          "name": "showsTheFirstPageWhileLoadingAndKeepsItOnFailureThenRetries",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.006,
+      "cases": [
+        {
+          "name": "systemDetectionDoesNotMistakeDarwinForWindows",
+          "status": "passed"
+        },
+        {
+          "name": "speechTextIsDataNotPowershellCode",
+          "status": "passed"
+        },
+        {
+          "name": "shortcutsAdaptWithoutChangingUserContent",
+          "status": "passed"
+        },
+        {
+          "name": "redirectedWindowsAppDataAndUnicodePathsAreRespected",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.007,
+      "cases": [
+        {
+          "name": "templatesAppendAndHomeDraftsAreIsolatedByProjectAndProfile",
+          "status": "passed"
+        },
+        {
+          "name": "quickLookupFiltersCurrentWorkspaceAndKeepsDocumentContext",
+          "status": "passed"
+        },
+        {
+          "name": "preparingAttachmentsBlocksPrematureSubmission",
+          "status": "passed"
+        },
+        {
+          "name": "homeDraftAndAttachmentsTransferTogetherWithoutChangingAnotherSession",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.114,
+      "cases": [
+        {
+          "name": "restartPreservesAttachmentsQueuesRunsAndUnsavedFilesTogether",
+          "status": "passed"
+        },
+        {
+          "name": "sourceEditorEscapesHostileMarkupAndKeepsMarkdownCode",
+          "status": "passed"
+        },
+        {
+          "name": "completedTasksKeepTheirArtifactLinksAfterRestart",
+          "status": "passed"
+        },
+        {
+          "name": "restoreLeavesRunsInRecoveryAndQueuesAwaitingUserAction",
+          "status": "passed"
+        },
+        {
+          "name": "toolWorkAndOtherUsersTurnsCannotReleaseSavedQueues",
+          "status": "passed"
+        },
+        {
+          "name": "previousReplyCannotCompleteTheNextIdenticalPrompt",
+          "status": "passed"
+        },
+        {
+          "name": "profilesWithIdenticalSessionIdsAndDifferentAccountsStayIsolated",
+          "status": "passed"
+        },
+        {
+          "name": "reopeningDirtyProfileFileKeepsTheOriginalConflictBaseline",
+          "status": "passed"
+        },
+        {
+          "name": "laterCheckpointWinsWhenBackgroundSaveArrivesOutOfOrder",
+          "status": "passed"
+        },
+        {
+          "name": "authenticatedBlobsRejectTamperingAndPathTraversal",
+          "status": "passed"
+        },
+        {
+          "name": "sourceModeIsChosenForMarkdownThatRichTextWouldFlatten",
+          "status": "passed"
+        },
+        {
+          "name": "completionDoesNotDuplicateAlreadyStreamedText",
+          "status": "passed"
+        },
+        {
+          "name": "independentlyCroppedAvatarsStaySeparateAfterRestart",
+          "status": "passed"
+        },
+        {
+          "name": "voiceCommitAndDraftArePersistedAsOneState",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.006,
+      "cases": [
+        {
+          "name": "restartPreservesCookieAndDraftWithoutPlaintext",
+          "status": "passed"
+        },
+        {
+          "name": "corruptCiphertextDoesNotSilentlyEraseConnection",
+          "status": "passed"
+        },
+        {
+          "name": "hostOnlyCookieCannotLeakToAnotherGateway",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "seconds": 0.011,
+      "cases": [
+        {
+          "name": "simultaneousFirstLaunchUsesOneProtectedKey",
+          "status": "passed"
+        },
+        {
+          "name": "missingKeyDoesNotOverwriteExistingEncryptedState",
+          "status": "passed"
+        },
+        {
+          "name": "corruptedKeyIsPreservedAndNotRegenerated",
+          "status": "passed"
+        },
+        {
+          "name": "nativeWindowsDpapiReopensCookiesDraftsAndAttachments",
+          "status": "skipped"
+        },
+        {
+          "name": "nativeWindowsDpapiRejectsModifiedProtectedData",
+          "status": "skipped"
+        },
+        {
+          "name": "protectionFailureNeverFallsBackToPlaintext",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "windows_native_execution": false,
+  "production_gateway_accessed": false
+}

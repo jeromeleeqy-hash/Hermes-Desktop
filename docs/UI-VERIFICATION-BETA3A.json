@@ -1,0 +1,40 @@
+{
+  "tests": {
+    "tests": 86,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "previews": 29,
+  "preview_names": [
+    "assistant",
+    "chat-collapsed",
+    "chat-glass",
+    "chat-paper",
+    "chat-wide",
+    "chat",
+    "dialog-approval-glass",
+    "dialog-approval",
+    "dialog-glass",
+    "dialog-paper",
+    "dialog",
+    "english-dark",
+    "files-wide",
+    "files",
+    "home-empty",
+    "home-narrow",
+    "home-wide",
+    "jump",
+    "narrow-active",
+    "sessions-hover",
+    "sessions",
+    "settings-paper",
+    "settings-retina-glass-scrolled",
+    "settings-retina-glass",
+    "settings-wide-glass",
+    "settings",
+    "tasks-narrow",
+    "tasks-wide-active",
+    "tasks-wide-empty"
+  ]
+}

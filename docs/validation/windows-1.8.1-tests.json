@@ -1,0 +1,269 @@
+{
+  "version": "1.8.1",
+  "environment": "Linux JDK 21; physical microphone replaced in voice flow tests",
+  "summary": {
+    "tests": 221,
+    "passed": 217,
+    "skipped": 4,
+    "failures": 0,
+    "errors": 0
+  },
+  "suites": [
+    {
+      "tests": 3,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.AudioFileRequestBodyTest",
+      "seconds": 1.559
+    },
+    {
+      "tests": 1,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "seconds": 0.047
+    },
+    {
+      "tests": 14,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.ConcurrentGatewayTest",
+      "seconds": 0.748
+    },
+    {
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.GatewayLoginTest",
+      "seconds": 0.815
+    },
+    {
+      "tests": 16,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.HermesApiClientTest",
+      "seconds": 0.011
+    },
+    {
+      "tests": 5,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.ModelCatalogParserTest",
+      "seconds": 0.004
+    },
+    {
+      "tests": 12,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.ProviderAndAttachmentTest",
+      "seconds": 3.452
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "seconds": 0.119
+    },
+    {
+      "tests": 15,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+      "seconds": 0.713
+    },
+    {
+      "tests": 12,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.data.VoiceTurnPolicyTest",
+      "seconds": 0.043
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ChatCitationsTest",
+      "seconds": 0.007
+    },
+    {
+      "tests": 5,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ChatPresentationTest",
+      "seconds": 0.005
+    },
+    {
+      "tests": 7,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest",
+      "seconds": 0.604
+    },
+    {
+      "tests": 15,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ComposerFlowTest",
+      "seconds": 24.286
+    },
+    {
+      "tests": 2,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.CouncilTranscriptTest",
+      "seconds": 0.006
+    },
+    {
+      "tests": 1,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.DecisionCodecTest",
+      "seconds": 0.001
+    },
+    {
+      "tests": 5,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopCompanionTest",
+      "seconds": 0.199
+    },
+    {
+      "tests": 20,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "seconds": 0.051
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopLayoutStateTest",
+      "seconds": 0.013
+    },
+    {
+      "tests": 2,
+      "skipped": 2,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest",
+      "seconds": 0.006
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ExperienceInteractionTest",
+      "seconds": 11.714
+    },
+    {
+      "tests": 5,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ExperiencePolishTest",
+      "seconds": 0.003
+    },
+    {
+      "tests": 8,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest",
+      "seconds": 2.472
+    },
+    {
+      "tests": 10,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.HoldToTalkTest",
+      "seconds": 4.769
+    },
+    {
+      "tests": 3,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.OfficeDisplayTest",
+      "seconds": 1.592
+    },
+    {
+      "tests": 2,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.ReadingInteractionTest",
+      "seconds": 5.03
+    },
+    {
+      "tests": 2,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+      "seconds": 0.591
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.WindowsDesktopTest",
+      "seconds": 0.006
+    },
+    {
+      "tests": 4,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.WorkbenchTest",
+      "seconds": 0.009
+    },
+    {
+      "tests": 14,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "seconds": 0.124
+    },
+    {
+      "tests": 3,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.storage.DesktopStoreTest",
+      "seconds": 0.012
+    },
+    {
+      "tests": 6,
+      "skipped": 2,
+      "failures": 0,
+      "errors": 0,
+      "suite": "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest",
+      "seconds": 0.014
+    }
+  ]
+}

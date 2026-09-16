@@ -1,0 +1,9 @@
+{
+  "scope": "Office renderer after typography and zoom changes",
+  "result": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

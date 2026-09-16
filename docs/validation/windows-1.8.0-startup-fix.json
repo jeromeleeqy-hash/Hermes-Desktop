@@ -1,0 +1,90 @@
+{
+  "windows_fx_module_graph": true,
+  "display_checks": {
+    "main": {
+      "exit_code": 0,
+      "log": "MAIN_WINDOW_READY 1440x900\n"
+    },
+    "web": {
+      "exit_code": 0,
+      "log": "Hermes 预览数据\n"
+    }
+  },
+  "old_runtime_reproduction": {
+    "exit_code": 1,
+    "stdout": "Error occurred during initialization of boot layer\njava.lang.module.FindException: Module jdk.unsupported.desktop not found, required by javafx.swing\n",
+    "stderr": "",
+    "runtime_module_list_matches_released_windows_runtime_except_windows_crypto": true
+  },
+  "windows_runtime_module_count": 51,
+  "old_runtime_packaging_rejected": true,
+  "actual_windows_runtime_executed": false,
+  "application_jar_sha256": "5baaac05dbc0ba5cd87e4942ba1f9ef1aa092a04a33a57c57227011054d38de5",
+  "runtime_origin": {
+    "jdk_archive": "OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip",
+    "jdk_sha256": "f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8b4e",
+    "modules": [
+      "java.base",
+      "java.compiler",
+      "java.datatransfer",
+      "java.desktop",
+      "java.instrument",
+      "java.logging",
+      "java.management",
+      "java.management.rmi",
+      "java.naming",
+      "java.net.http",
+      "java.prefs",
+      "java.rmi",
+      "java.scripting",
+      "java.se",
+      "java.security.jgss",
+      "java.security.sasl",
+      "java.smartcardio",
+      "java.sql",
+      "java.sql.rowset",
+      "java.transaction.xa",
+      "java.xml",
+      "java.xml.crypto",
+      "jdk.accessibility",
+      "jdk.charsets",
+      "jdk.crypto.cryptoki",
+      "jdk.crypto.ec",
+      "jdk.crypto.mscapi",
+      "jdk.dynalink",
+      "jdk.httpserver",
+      "jdk.incubator.vector",
+      "jdk.internal.vm.ci",
+      "jdk.internal.vm.compiler",
+      "jdk.internal.vm.compiler.management",
+      "jdk.jdwp.agent",
+      "jdk.jfr",
+      "jdk.jsobject",
+      "jdk.localedata",
+      "jdk.management",
+      "jdk.management.agent",
+      "jdk.management.jfr",
+      "jdk.naming.dns",
+      "jdk.naming.rmi",
+      "jdk.net",
+      "jdk.nio.mapmode",
+      "jdk.sctp",
+      "jdk.security.auth",
+      "jdk.security.jgss",
+      "jdk.unsupported",
+      "jdk.unsupported.desktop",
+      "jdk.xml.dom",
+      "jdk.zipfs"
+    ],
+    "source": "https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.12.1%2B1",
+    "module_image_sha256": "65665decac9ea19810f401c4750e5894a5f6653de8da4ebb6183d07a7cb24938"
+  },
+  "packaged_argument_file_check": {
+    "packaged_app_jar": true,
+    "relative_java_argfile": true,
+    "unicode_space_ampersand_directory": true,
+    "exit_code": 0,
+    "log": "MAIN_WINDOW_READY 1440x900\n"
+  },
+  "old_shared_archive_does_not_block_start": true
+}

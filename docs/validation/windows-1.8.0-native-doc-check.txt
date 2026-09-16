@@ -1,0 +1,4 @@
+PASS: Native-Word inside real Compose window, 744 content samples
+PASS: Native-Excel inside real Compose window, 1103 content samples
+PASS: native Excel mouse-wheel scrolling
+PASS: Native-HTML inside real Compose window, 259 content samples

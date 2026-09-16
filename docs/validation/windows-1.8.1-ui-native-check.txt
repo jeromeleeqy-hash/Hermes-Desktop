@@ -1,0 +1,16 @@
+Hermes 1.8.1 UI revision — Linux Xvfb / actual AWT + Compose windows.
+No native Windows execution.
+
+100% display scale
+PASS toggle
+PASS Escape
+PASS keyboard open
+PASS outside click
+PASS: tray action/check state, Escape, keyboard open, outside-click dismissal, hidden-main operation, theme/font scale, real ball right-click, single active menu, ask and hide actions
+
+200% display scale
+PASS toggle
+PASS Escape
+PASS keyboard open
+PASS outside click
+PASS: tray action/check state, Escape, keyboard open, outside-click dismissal, hidden-main operation, theme/font scale, real ball right-click, single active menu, ask and hide actions

@@ -1,0 +1,2787 @@
+package com.qingyu.hermescompanion.data
+
+import com.qingyu.hermescompanion.i18n.uiText
+import com.qingyu.hermescompanion.R
+
+
+import com.qingyu.hermescompanion.model.ChatMessage
+import com.qingyu.hermescompanion.model.ChatImage
+import com.qingyu.hermescompanion.model.ConnectionConfig
+import com.qingyu.hermescompanion.model.CronJob
+import com.qingyu.hermescompanion.model.CronSchedule
+import com.qingyu.hermescompanion.model.HermesSession
+import com.qingyu.hermescompanion.model.scopedId
+import com.qingyu.hermescompanion.model.HermesProject
+import com.qingyu.hermescompanion.model.HermesProfile
+import com.qingyu.hermescompanion.model.HermesProfileFile
+import com.qingyu.hermescompanion.model.SessionPage
+import com.qingyu.hermescompanion.model.MessageRole
+import com.qingyu.hermescompanion.model.ModelCatalog
+import com.qingyu.hermescompanion.model.MessagePage
+import com.qingyu.hermescompanion.model.ModelProvider
+import com.qingyu.hermescompanion.model.ModelChoice
+import com.qingyu.hermescompanion.model.FallbackModel
+import com.qingyu.hermescompanion.model.ServerModelSettings
+import com.qingyu.hermescompanion.model.ConversationStyleSettings
+import com.qingyu.hermescompanion.model.ApprovalSettings
+import com.qingyu.hermescompanion.model.AgentRequest
+import com.qingyu.hermescompanion.model.AgentQuestion
+import com.qingyu.hermescompanion.model.AgentRequestChoice
+import com.qingyu.hermescompanion.model.AgentRequestType
+import com.qingyu.hermescompanion.model.MemoryContextSettings
+import com.qingyu.hermescompanion.model.ServerSettings
+import com.qingyu.hermescompanion.model.ServerSttSettings
+import com.qingyu.hermescompanion.model.ServerTtsSettings
+import com.qingyu.hermescompanion.model.ServerVoiceSettings
+import com.qingyu.hermescompanion.model.SlashCommand
+import com.qingyu.hermescompanion.model.ServerSkill
+import com.qingyu.hermescompanion.model.ToolsetInfo
+import com.qingyu.hermescompanion.model.McpServerInfo
+import com.qingyu.hermescompanion.model.PendingAttachment
+import com.qingyu.hermescompanion.model.ImagePreview
+import com.qingyu.hermescompanion.model.GatewayInfo
+import com.qingyu.hermescompanion.model.AgentUpdateCommit
+import com.qingyu.hermescompanion.model.AgentUpdateInfo
+import com.qingyu.hermescompanion.model.AgentUpdateProgress
+import com.qingyu.hermescompanion.model.SpeechAudio
+import com.qingyu.hermescompanion.model.SpeechTranscription
+import com.qingyu.hermescompanion.model.StreamEvent
+import com.qingyu.hermescompanion.model.WorkspaceDocument
+import com.qingyu.hermescompanion.model.WorkspaceEntry
+import com.qingyu.hermescompanion.model.WorkspaceListing
+import com.qingyu.hermescompanion.storage.SecureCookieJar
+import com.qingyu.hermescompanion.ui.format.compactSessionTitle
+import com.qingyu.hermescompanion.ui.format.resolvedSessionTitle
+import com.qingyu.hermescompanion.platform.Base64
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
+
+internal fun parseServerVoiceSettings(config: JSONObject): ServerVoiceSettings {
+    val stt = config.optJSONObject("stt") ?: JSONObject()
+    val sttProvider = stt.optString("provider").trim().ifBlank { "local" }
+    val sttProviderConfig = stt.optJSONObject(sttProvider) ?: JSONObject()
+    val sttModel = sttProviderConfig.optString("model").trim()
+        .ifBlank { stt.optString("model").trim() }
+        .ifBlank { defaultServerSttModel(sttProvider) }
+
+    val tts = config.optJSONObject("tts") ?: JSONObject()
+    val ttsProvider = tts.optString("provider").trim().ifBlank { "edge" }
+    val ttsProviderConfig = tts.optJSONObject(ttsProvider) ?: JSONObject()
+    val ttsModel = ttsProviderConfig.optString("model").trim()
+        .ifBlank { ttsProviderConfig.optString("model_id").trim() }
+    val ttsVoice = ttsProviderConfig.optString("voice").trim()
+        .ifBlank { ttsProviderConfig.optString("voice_id").trim() }
+
+    return ServerVoiceSettings(
+        stt = ServerSttSettings(
+            enabled = !stt.has("enabled") || stt.optBoolean("enabled"),
+            provider = sttProvider,
+            model = sttModel,
+            language = sttProviderConfig.optString("language").trim(),
+        ),
+        tts = ServerTtsSettings(
+            provider = ttsProvider,
+            model = ttsModel,
+            voice = ttsVoice,
+        ),
+    )
+}
+
+private fun defaultServerSttModel(provider: String): String = when (provider) {
+    "groq" -> "whisper-large-v3-turbo"
+    "openai" -> "whisper-1"
+    "mistral" -> "voxtral-mini-latest"
+    "xai" -> "grok-stt"
+    else -> "base"
+}
+
+class HermesApiClient(
+    private val config: ConnectionConfig,
+    private val cookieJar: SecureCookieJar,
+    private val voiceRestoreStore: com.qingyu.hermescompanion.storage.SecureConfigStore? = null,
+) {
+    private val http = OkHttpClient.Builder()
+        .cookieJar(cookieJar)
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .pingInterval(20, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
+        .build()
+
+    private val socketLock = Any()
+    private val requestIds = AtomicLong(0)
+    private val pendingCalls = ConcurrentHashMap<String, CompletableFuture<Any?>>()
+
+    @Volatile
+    private var socket: WebSocket? = null
+
+    @Volatile
+    private var socketOpen = false
+
+    @Volatile
+    private var socketOpenFuture: CompletableFuture<Unit>? = null
+
+    @Volatile
+    private var gatewayReadyFuture: CompletableFuture<Unit>? = null
+
+    private val activeStreams = ConcurrentHashMap<String, ActiveStream>()
+    private val knownSessions = ConcurrentHashMap<String, HermesSession>()
+    private val pendingAgentRequests = ConcurrentHashMap<String, AgentRequest>()
+    private val answeredServerRequests = ConcurrentHashMap<String,Long>()
+    @Volatile var onUnboundAgentEvent: ((HermesSession, StreamEvent) -> Unit)? = null
+    private val voiceRestores = ConcurrentHashMap<String, String>()
+    private val turnLeases = ConcurrentHashMap<String, Any>()
+
+    @Volatile
+    private var activeProfile: String = "default"
+
+    fun setProfile(name: String) {
+        activeProfile = name.trim().ifBlank { "default" }
+    }
+
+    fun currentProfile(): String = activeProfile
+
+    fun listProfiles(): List<HermesProfile> {
+        val raw = try {
+            request("GET", "/api/profiles", includeProfile = false)
+        } catch (error: ApiException) {
+            if (error.statusCode == 404) return listOf(HermesProfile(name = "default", isDefault = true))
+            throw error
+        }
+        return parseHermesProfiles(raw).ifEmpty {
+            listOf(HermesProfile(name = "default", isDefault = true))
+        }
+    }
+
+    fun hasSavedSession(): Boolean = cookieJar.hasCookies()
+
+    fun checkSavedSession(): String {
+        gatewayLoginStep(GatewayLoginStage.GATEWAY) { checkGatewayStatus() }
+        return gatewayLoginStep(GatewayLoginStage.RESTORE_SESSION) { authenticatedUsername() }
+    }
+
+    fun checkGatewayAccess() {
+        checkGatewayStatus()
+    }
+
+    fun gatewayInfo(): GatewayInfo {
+        val status = checkGatewayStatus()
+        val health = runCatching {
+            JSONObject(request("GET", "/api/health", includeProfile = false))
+        }.getOrDefault(JSONObject())
+        val build = status.optJSONObject("build") ?: JSONObject()
+        val gateway = status.optJSONObject("gateway") ?: JSONObject()
+        val capabilities = buildList {
+            status.optJSONArray("capabilities")?.let { array ->
+                for (index in 0 until array.length()) {
+                    array.optString(index).trim().takeIf(String::isNotBlank)?.let(::add)
+                }
+            }
+            status.optJSONObject("capabilities")?.let { values ->
+                values.keys().forEach { key -> if (values.optBoolean(key)) add(key) }
+            }
+        }.distinct()
+        return GatewayInfo(
+            agentVersion = (
+                firstString(status, "agent_version", "hermes_version", "version")
+                    ?: firstString(build, "agent_version", "hermes_version", "version")
+                    ?: firstString(health, "agent_version", "hermes_version", "version")
+                ).orEmpty(),
+            gatewayVersion = (
+                firstString(status, "gateway_version", "api_version")
+                    ?: firstString(gateway, "version", "api_version")
+                ).orEmpty(),
+            capabilities = capabilities,
+        )
+    }
+
+    fun checkAgentUpdate(force: Boolean = false): AgentUpdateInfo {
+        val root = JSONObject(
+            request(
+                "GET",
+                "/api/hermes/update/check?force=${if (force) "true" else "false"}",
+                includeProfile = false,
+            ),
+        )
+        val commits = buildList {
+            val array = root.optJSONArray("commits") ?: JSONArray()
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                add(
+                    AgentUpdateCommit(
+                        sha = firstString(item, "sha", "hash").orEmpty(),
+                        summary = firstString(item, "summary", "message", "title").orEmpty(),
+                        author = firstString(item, "author").orEmpty(),
+                        at = firstString(item, "at", "date", "timestamp").orEmpty(),
+                    ),
+                )
+            }
+        }
+        return AgentUpdateInfo(
+            currentVersion = firstString(root, "current_version", "version").orEmpty(),
+            installMethod = firstString(root, "install_method").orEmpty(),
+            behind = root.takeIf { it.has("behind") && !it.isNull("behind") }?.optInt("behind"),
+            updateAvailable = root.optBoolean("update_available"),
+            canApply = root.optBoolean("can_apply"),
+            updateCommand = firstString(root, "update_command").orEmpty(),
+            message = firstString(root, "message", "error").orEmpty(),
+            commits = commits,
+        )
+    }
+
+    fun startAgentUpdate(): AgentUpdateProgress {
+        val root = JSONObject(request("POST", "/api/hermes/update", "{}", includeProfile = false))
+        if (!root.optBoolean("ok", false)) {
+            throw ApiException(400, firstString(root, "message", "error") ?: uiText(R.string.ui_0065, "服务器未能启动 Hermes 更新"))
+        }
+        return AgentUpdateProgress(
+            started = true,
+            running = true,
+            lines = firstString(root, "message").orEmpty(),
+        )
+    }
+
+    fun agentUpdateStatus(lines: Int = 80): AgentUpdateProgress {
+        val root = JSONObject(
+            request(
+                "GET",
+                "/api/actions/hermes-update/status?lines=${lines.coerceIn(20, 300)}",
+                includeProfile = false,
+            ),
+        )
+        val output = when (val value = root.opt("lines")) {
+            is JSONArray -> buildList {
+                for (index in 0 until value.length()) add(value.optString(index))
+            }.joinToString("\n")
+            else -> value?.toString().orEmpty()
+        }
+        return AgentUpdateProgress(
+            started = true,
+            running = root.optBoolean("running"),
+            exitCode = root.takeIf { it.has("exit_code") && !it.isNull("exit_code") }?.optInt("exit_code"),
+            lines = output,
+        )
+    }
+
+    fun transcribeAudio(bytes: ByteArray, mimeType: String, profile: String = activeProfile): SpeechTranscription {
+        val encoded = Base64.encodeToString(bytes, Base64.NO_WRAP)
+        val body = JSONObject()
+            .put("data_url", "data:$mimeType;base64,$encoded")
+            .put("mime_type", mimeType)
+        val root = JSONObject(request("POST", appendProfileQuery("/api/audio/transcribe", profile), body.toString()))
+        if (!root.optBoolean("ok", true)) {
+            throw ApiException(400, firstString(root, "message", "error") ?: uiText(R.string.ui_0066, "Hermes 语音识别失败"))
+        }
+        val transcript = firstString(root, "transcript", "text").orEmpty().trim()
+        if (transcript.isBlank()) throw ApiException(400, uiText(R.string.ui_0067, "Hermes 没有识别到语音内容"))
+        return SpeechTranscription(transcript, firstString(root, "provider").orEmpty())
+    }
+
+    fun voiceSettings(profile: String = activeProfile): ServerVoiceSettings {
+        val root = JSONObject(request("GET", appendProfileQuery("/api/config", profile)))
+        return parseServerVoiceSettings(root.optJSONObject("config") ?: root)
+    }
+
+    fun synthesizeSpeech(text: String, profile: String = activeProfile): SpeechAudio {
+        require(text.length <= 8_000) { uiText(R.string.ui_0068, "朗读文本需要分段处理") }
+        val root = JSONObject(
+            request("POST", appendProfileQuery("/api/audio/speak", profile), JSONObject().put("text", text).toString()),
+        )
+        if (!root.optBoolean("ok", true)) {
+            throw ApiException(400, firstString(root, "message", "error") ?: uiText(R.string.ui_0069, "Hermes 语音合成失败"))
+        }
+        val dataUrl = firstString(root, "data_url")
+            ?: throw ApiException(500, uiText(R.string.ui_0070, "Hermes 没有返回语音数据"))
+        val mimeType = firstString(root, "mime_type")
+            ?: dataUrl.substringAfter("data:", "audio/mpeg").substringBefore(';')
+        val encoded = dataUrl.substringAfter(',', "")
+        if (encoded.isBlank()) throw ApiException(500, uiText(R.string.ui_0071, "Hermes 返回了无效的语音数据"))
+        return SpeechAudio(
+            bytes = Base64.decode(encoded, Base64.DEFAULT),
+            mimeType = mimeType,
+            provider = firstString(root, "provider").orEmpty(),
+        )
+    }
+
+    fun login(username: String, password: String): String {
+        validateGatewayCredentials(username, password)
+        gatewayLoginStep(GatewayLoginStage.GATEWAY) { checkGatewayStatus() }
+        val provider = gatewayLoginStep(GatewayLoginStage.PROVIDERS) {
+            val providers = JSONObject(request("GET", "/api/auth/providers"))
+                .optJSONArray("providers") ?: JSONArray()
+            var passwordProvider: String? = null
+            for (index in 0 until providers.length()) {
+                val provider = providers.optJSONObject(index) ?: continue
+                if (provider.optBoolean("supports_password")) {
+                    passwordProvider = provider.optString("name").takeIf { it.isNotBlank() }
+                    if (passwordProvider == "basic") break
+                }
+            }
+            passwordProvider
+                ?: throw ApiException(400, uiText(R.string.ui_0072, "这个远程网关没有启用用户名密码登录"))
+        }
+
+        gatewayLoginStep(GatewayLoginStage.LOCAL_SESSION) {
+            closeSocket()
+            cookieJar.clear()
+        }
+        val body = JSONObject()
+            .put("provider", provider)
+            .put("username", username)
+            .put("password", password)
+            .put("next", "")
+        gatewayLoginStep(GatewayLoginStage.PASSWORD) { request("POST", "/auth/password-login", body.toString()) }
+        return gatewayLoginStep(GatewayLoginStage.VERIFY_SESSION) { authenticatedUsername() }
+    }
+
+    fun logout() {
+        runCatching { request("POST", "/auth/logout", "{}") }
+        closeSocket()
+        cookieJar.clear()
+    }
+
+    fun listSessions(limit:Int=100,offset:Int=0,archived:Boolean=false): SessionPage {
+        val pageSize = limit.coerceIn(1,100)
+        val start = offset.coerceAtLeast(0)
+        val raw = request("GET", "/api/sessions?limit=$pageSize&offset=$start&include_children=false&order=recent" + if(archived)"&archived=only"else"")
+        val root = JSONTokener(raw).nextValue()
+        val array = findArray(root, "sessions", "items", "data")
+            ?: throw ApiException(500, "服务器未返回可识别的会话列表，请刷新后重试。")
+        val sessions = buildList {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                parseSession(item)?.let(::add)
+            }
+        }
+        val total = (root as? JSONObject)?.let { objectRoot ->
+            listOf("total", "total_count")
+                .firstNotNullOfOrNull { key ->
+                    objectRoot.takeIf { it.has(key) && !it.isNull(key) }
+                        ?.optInt(key, -1)
+                        ?.takeIf { it >= 0 }
+                }
+        }
+        val next = start + array.length()
+        // A gateway total may be stale or include sessions excluded by this query.
+        // An empty page ends this list; it must never invalidate earlier pages.
+        // A full page still warrants another request even if total is too small.
+        return SessionPage(sessions, (total ?: sessions.size).coerceAtLeast(sessions.size),
+            next.takeIf { array.length()>0 && (array.length()>=pageSize || (total!=null && next<total)) })
+    }
+
+    /** Publish each successful page so a later failure cannot hide usable conversations. */
+    fun listAllSessions(
+        archived:Boolean=false,
+        onProgress:(List<HermesSession>)->Unit = {},
+    ): List<HermesSession> {
+        val all = linkedMapOf<String, HermesSession>()
+        var offset = 0
+        repeat(1_000) {
+            val page = listSessions(100, offset, archived)
+            val previousSize = all.size
+            page.sessions.forEach { all.putIfAbsent(it.scopedId, it) }
+            if(all.size>previousSize) onProgress(all.values.toList())
+            val next = page.nextOffset ?: return all.values.toList()
+            if (all.size == previousSize || next <= offset)
+                throw ApiException(500, "会话列表未能完整同步，请稍后重试。")
+            offset = next
+        }
+        throw ApiException(500, "会话数量超出本次同步范围，请联系网关管理员。")
+    }
+
+    fun sessionForProfile(id: String, profile: String): HermesSession? {
+        val root = JSONObject(request("GET", appendProfileQuery("/api/sessions/${pathSegment(id)}", profile), includeProfile = false))
+        val item = root.optJSONObject("session") ?: root
+        if (item.optBoolean("archived") || !item.isNull("archived_at")) return null
+        val session = parseSession(item, profile) ?: throw ApiException(500, uiText(R.string.ui_0073, "服务器未返回完整的会话信息"))
+        if (session.id != id) throw ApiException(500, uiText(R.string.ui_0074, "服务器返回的会话与请求不符"))
+        return session
+    }
+
+    /** Search the actual history, including beyond the first page; errors never mean 'not found'. */
+    fun findSessionByTitleForProfile(title: String, profile: String): HermesSession? {
+        val seen = mutableSetOf<String>()
+        var offset = 0
+        repeat(1_000) {
+            val root = JSONTokener(request("GET", appendProfileQuery(
+                "/api/sessions?limit=60&offset=$offset&include_children=false&order=recent", profile), includeProfile = false)).nextValue()
+            val items = findArray(root, "sessions", "items", "data")
+                ?: throw ApiException(500, uiText(R.string.ui_0075, "服务器未返回可识别的会话列表"))
+            if (items.length() == 0) return null
+            val page = (0 until items.length()).mapNotNull { index ->
+                items.optJSONObject(index)?.takeUnless { it.optBoolean("archived") || !it.isNull("archived_at") }
+                    ?.let { parseSession(it, profile) }
+            }
+            page.firstOrNull { it.title == title && !it.source.equals("cron", true) }?.let { return it }
+            val added = page.count { seen.add(it.id) }
+            if (page.isEmpty() || added == 0) {
+                throw ApiException(500, uiText(R.string.ui_0076, "未能完整检查已有对话，请稍后重试"))
+            }
+            // Do not depend on total/count: older gateways return a page count instead.
+            if (items.length() < 60) return null
+            offset += items.length()
+        }
+        throw ApiException(500, uiText(R.string.ui_0077, "会话较多，暂未完成查找；请在回看中打开日常助理"))
+    }
+
+    fun listArchivedSessions(onProgress:(List<HermesSession>)->Unit = {}): List<HermesSession> {
+        return listAllSessions(archived=true,onProgress=onProgress)
+    }
+
+    fun restoreSession(sessionId: String) {
+        request(
+            "PATCH",
+            "/api/sessions/${pathSegment(sessionId)}",
+            JSONObject().put("archived", false).toString(),
+        )
+    }
+
+    fun loadMessages(session: HermesSession, pageSize: Int = 60): List<ChatMessage> =
+        loadRecentMessagePage(session, pageSize).messages
+
+    fun loadRecentMessagePage(session: HermesSession, pageSize: Int = 60): MessagePage {
+        val offset = (session.messageCount - pageSize).coerceAtLeast(0)
+        return MessagePage(
+            messages = loadMessagePage(session.id, pageSize, offset),
+            offset = offset,
+            totalCount = session.messageCount,
+        )
+    }
+
+    fun loadMessagePage(session: HermesSession, pageSize: Int, offset: Int): MessagePage {
+        val safeOffset = offset.coerceAtLeast(0)
+        return MessagePage(
+            messages = loadMessagePage(session.id, pageSize, safeOffset),
+            offset = safeOffset,
+            totalCount = session.messageCount,
+        )
+    }
+
+    fun loadLatestMessages(session: HermesSession): List<ChatMessage> {
+        val pageSize = 200
+        val root = JSONObject(request("GET", "/api/sessions/${pathSegment(session.id)}"))
+        val item = root.optJSONObject("session") ?: root
+        val latestCount = item.optInt("message_count", session.messageCount)
+        val offset = (latestCount - pageSize).coerceAtLeast(0)
+        return loadMessagePage(session.id, pageSize, offset)
+    }
+
+    private fun loadMessagePage(sessionId: String, pageSize: Int, offset: Int): List<ChatMessage> {
+        val raw = request(
+            "GET",
+            "/api/sessions/${pathSegment(sessionId)}/messages?limit=$pageSize&offset=$offset",
+        )
+        val root = JSONTokener(raw).nextValue()
+        val array = findArray(root, "messages", "items", "data") ?: JSONArray()
+        return parseMessages(array)
+    }
+
+    /** Source recovery is explicitly scoped, even if the active UI profile changes. */
+    fun loadArtifactSourceMessages(sessionId: String, profile: String, messageId: String): List<ChatMessage> {
+        val metadata = JSONObject(request("GET", appendProfileQuery("/api/sessions/${pathSegment(sessionId)}", profile)))
+        val count = (metadata.optJSONObject("session") ?: metadata).optInt("message_count", 0)
+        var offset = (count - 200).coerceAtLeast(0)
+        while (true) {
+            val raw = request("GET", appendProfileQuery("/api/sessions/${pathSegment(sessionId)}/messages?limit=200&offset=$offset", profile))
+            val array = findArray(JSONTokener(raw).nextValue(), "messages", "items", "data") ?: JSONArray()
+            val messages = parseMessages(array)
+            if (messageId.isBlank() || messages.any { it.id == messageId } || offset == 0) return messages
+            offset = (offset - 200).coerceAtLeast(0)
+        }
+    }
+
+    fun createSession(workspacePath: String? = null): HermesSession = createSessionForProfile(workspacePath, currentProfile())
+
+    fun createSessionForProfile(workspacePath: String?, profile: String): HermesSession {
+        val result = rpcObject(
+            "session.create",
+            JSONObject()
+                .put("cols", 72)
+                .put("source", "desktop").put("profile", profile),
+        )
+        val runtimeId = result.optString("session_id").takeIf { it.isNotBlank() }
+            ?: error(uiText(R.string.ui_0078, "远程网关没有返回运行会话 ID"))
+        val storedId = result.optString("stored_session_id").takeIf { it.isNotBlank() } ?: runtimeId
+        val info = result.optJSONObject("info") ?: JSONObject()
+        val created = HermesSession(
+            id = storedId,
+            title = uiText(R.string.ui_0079, "新会话"),
+            source = "desktop",
+            model = firstString(info, "model").orEmpty(),
+            provider = firstString(info, "provider").orEmpty(),
+            runtimeId = runtimeId,
+            reasoningEffort = firstString(info, "reasoning_effort"),
+            profile = profile,
+            workspacePath = firstString(info, "cwd", "git_repo_root").orEmpty(),
+        )
+        knownSessions[runtimeId]=created
+        return if (workspacePath.isNullOrBlank()) created else setSessionDirectory(created, workspacePath)
+    }
+
+    fun resumeSession(session: HermesSession): ResumedSession {
+        val pendingBefore=pendingAgentRequests.keys.toSet()
+        val result = rpcObject(
+            "session.resume",
+            JSONObject()
+                .put("session_id", session.id)
+                .put("profile", session.profile)
+                .put("cols", 72)
+                .put("source", "desktop"),
+            timeoutSeconds = 120,
+        )
+        val runtimeId = result.optString("session_id").takeIf { it.isNotBlank() }
+            ?: error(uiText(R.string.ui_0078, "远程网关没有返回运行会话 ID"))
+        val info = result.optJSONObject("info") ?: JSONObject()
+        val messages = parseMessages(result.optJSONArray("messages") ?: JSONArray())
+        knownSessions[runtimeId]=session.copy(runtimeId=runtimeId)
+        restorePendingAgentRequests(result,runtimeId,pendingBefore)
+        return ResumedSession(
+            session.copy(
+                runtimeId = runtimeId,
+                reasoningEffort = firstString(info, "reasoning_effort"),
+                model = firstString(info, "model") ?: session.model,
+                provider = firstString(info, "provider") ?: session.provider,
+                workspacePath = session.workspacePath.ifBlank { firstString(info, "cwd", "git_repo_root").orEmpty() },
+            ),
+            messages,
+            running=if(result.has("running"))result.optBoolean("running") else null,
+            pendingRequests=pendingAgentRequests.values.filter {it.runtimeSessionId==runtimeId},
+            requestSnapshotKnown=result.has("open_requests")||result.has("pending_approval")||result.has("pending_clarify")||result.has("pending_clarification")||(result.has("running")&&!result.optBoolean("running")),
+        )
+    }
+
+    fun probeConnection(runtime:String?=null) {
+        // Read-only and bounded. Never retry an uncertain message or tool execution here.
+        request("GET", "/api/auth/me", includeProfile=false, retryTransport=false, timeoutMillis=8_000)
+        if(runtime!=null)try {
+            rpcObject("session.status",JSONObject().put("session_id",runtime),timeoutSeconds=8)
+        }catch(e:RpcException){
+            // A deleted runtime or old method is not a disconnected gateway.
+        }catch(e:Exception){
+            synchronized(socketLock){
+                val stale=socket
+                handleSocketClosed("实时连接需要恢复，正在核对服务器任务")
+                stale?.cancel()
+            }
+            throw e
+        }
+    }
+
+    fun changeSessionReasoning(session:HermesSession,effort:String):HermesSession {
+        val active=resumeSession(session).session
+        val catalog=modelCatalog()
+        val allowed=catalog.providers.firstOrNull {it.slug==active.provider}?.reasoningOptions?.get(active.model)
+        require(allowed!=null&&effort in allowed){"服务器未声明该模型支持此思考档位，请刷新模型能力。"}
+        setSessionReasoning(active,effort)
+        return resumeSession(active).session.also {
+            check(it.reasoningEffort==effort){"服务器未确认思考强度已生效，请重新读取会话。"}
+        }
+    }
+
+    fun modelCatalog(): ModelCatalog = parseModelCatalog(JSONObject(request("GET", "/api/model/options?explicit_only=1")))
+
+    fun slashCommands(query: String = ""): List<SlashCommand> {
+        val cleanQuery = query.trim().removePrefix("/")
+        val result = if (cleanQuery.isBlank()) {
+            rpcObject("commands.catalog")
+        } else {
+            rpcObject("complete.slash", JSONObject().put("text", "/$cleanQuery"))
+        }
+        return buildList {
+            fun addPair(pair: JSONArray, category: String) {
+                val raw = pair.optString(0).trim()
+                if (raw.isBlank()) return
+                add(
+                    SlashCommand(
+                        command = raw.substringBefore(' ').let { if (it.startsWith('/')) it else "/$it" },
+                        description = pair.optString(1),
+                        category = category,
+                        argsHint = raw.substringAfter(' ', ""),
+                    ),
+                )
+            }
+
+            if (cleanQuery.isBlank()) {
+                val categories = result.optJSONArray("categories") ?: JSONArray()
+                for (categoryIndex in 0 until categories.length()) {
+                    val category = categories.optJSONObject(categoryIndex) ?: continue
+                    val categoryName = firstString(category, "name", "category", "group").orEmpty()
+                    val pairs = category.optJSONArray("pairs") ?: category.optJSONArray("commands") ?: JSONArray()
+                    for (pairIndex in 0 until pairs.length()) {
+                        when (val item = pairs.opt(pairIndex)) {
+                            is JSONArray -> addPair(item, categoryName)
+                            is JSONObject -> addCompletionItem(item, categoryName)?.let(::add)
+                        }
+                    }
+                }
+                val pairs = result.optJSONArray("pairs") ?: JSONArray()
+                for (pairIndex in 0 until pairs.length()) {
+                    (pairs.opt(pairIndex) as? JSONArray)?.let { addPair(it, "") }
+                }
+            } else {
+                val items = result.optJSONArray("items") ?: JSONArray()
+                for (itemIndex in 0 until items.length()) {
+                    when (val item = items.opt(itemIndex)) {
+                        is JSONObject -> addCompletionItem(item)?.let(::add)
+                        is String -> item.trim().takeIf(String::isNotBlank)?.let { raw ->
+                            add(SlashCommand(command = raw.let { if (it.startsWith('/')) it else "/$it" }))
+                        }
+                    }
+                }
+            }
+        }.distinctBy(SlashCommand::command)
+    }
+
+    private fun addCompletionItem(item: JSONObject, fallbackCategory: String = ""): SlashCommand? {
+        val raw = completionString(item, "text", "command", "name", "value", "display") ?: return null
+        val command = raw.substringBefore(' ').let { if (it.startsWith('/')) it else "/$it" }
+        return SlashCommand(
+            command = command,
+            description = completionString(item, "meta", "description", "help", "detail", "summary").orEmpty(),
+            category = completionString(item, "group", "category", "section") ?: fallbackCategory,
+            argsHint = completionString(item, "args_hint", "args", "usage").orEmpty(),
+        )
+    }
+
+    private fun completionString(item: JSONObject, vararg keys: String): String? {
+        keys.forEach { key ->
+            val value = item.opt(key)
+            val text = when (value) {
+                is String -> value
+                is JSONArray -> buildString {
+                    for (index in 0 until value.length()) {
+                        val part = value.opt(index)
+                        append(
+                            when (part) {
+                                is JSONArray -> part.optString(1).ifBlank { part.optString(0) }
+                                is String -> part
+                                else -> ""
+                            },
+                        )
+                    }
+                }
+                else -> ""
+            }.trim()
+            if (text.isNotBlank()) return text
+        }
+        return null
+    }
+
+    fun serverSettings(): ServerSettings {
+        val parsed = parseServerSettings(readConfig())
+        if (parsed.models.provider.isNotBlank() && parsed.models.model.isNotBlank()) return parsed
+        val live = runCatching {
+            JSONObject(request("GET", "/api/model/auxiliary"))
+        }.getOrNull() ?: return parsed
+        return parsed.copy(models = mergeLiveModelSettings(parsed.models, live))
+    }
+
+    fun saveModelSettings(value: ServerModelSettings): ServerSettings = updateConfig { config ->
+        val model = config.ensureObject("model")
+        model.put("provider", value.provider)
+        model.put("default", value.model)
+        if (value.contextLength > 0) model.put("context_length", value.contextLength) else model.remove("context_length")
+        config.ensureObject("agent").put("reasoning_effort", normalizeReasoningEffort(value.reasoningEffort))
+
+        val auxiliary = config.ensureObject("auxiliary")
+        AUXILIARY_TASK_KEYS.forEach { key ->
+            val choice = value.auxiliary[key] ?: ModelChoice()
+            auxiliary.ensureObject(key)
+                .put("provider", choice.provider.ifBlank { "auto" })
+                .put("model", choice.model)
+        }
+        val fallbacks = JSONArray()
+        value.fallbackModels.filter { it.provider.isNotBlank() && it.model.isNotBlank() }.forEach { fallback ->
+            fallbacks.put(JSONObject().put("provider", fallback.provider).put("model", fallback.model))
+        }
+        config.put("fallback_providers", fallbacks)
+
+        val moa = config.ensureObject("moa")
+        moa.put("reference_models", JSONArray(value.moaReferenceModels.filter(String::isNotBlank)))
+        moa.put("aggregator_model", value.moaAggregatorModel)
+        val activePreset = moa.optString("active_preset", "default").ifBlank { "default" }
+        val presets = moa.optJSONObject("presets")
+        if (presets != null) {
+            val preset = presets.ensureObject(activePreset)
+            preset.put(
+                "reference_models",
+                JSONArray().apply {
+                    value.moaReferenceModels.filter(String::isNotBlank).forEach { spec ->
+                        put(modelSpecObject(spec))
+                    }
+                },
+            )
+            preset.put("aggregator", modelSpecObject(value.moaAggregatorModel))
+        }
+    }
+
+    fun saveConversationStyle(value: ConversationStyleSettings): ServerSettings = updateConfig { config ->
+        config.ensureObject("display").put("personality", value.personality.ifBlank {"none"})
+        // Keep an existing legacy selection in step without rewriting personality definitions or SOUL.
+        config.optJSONObject("agent")?.takeIf {it.has("personality")}?.put("personality",value.personality)
+        config.put("timezone", value.timezone)
+        config.ensureObject("display").put("show_reasoning", value.showReasoning)
+    }
+
+    fun saveApprovalSettings(value: ApprovalSettings): ServerSettings = updateConfig { config ->
+        config.ensureObject("approvals")
+            .put("mode", value.mode)
+            .put("timeout", value.timeoutSeconds.coerceIn(10, 3_600))
+    }
+
+    fun saveMemorySettings(value: MemoryContextSettings): ServerSettings = updateConfig { config ->
+        config.ensureObject("memory")
+            .put("memory_enabled", value.memoryEnabled)
+            .put("user_profile_enabled", value.userProfileEnabled)
+            .put("memory_char_limit", value.memoryCharLimit.coerceAtLeast(256))
+            .put("user_char_limit", value.userCharLimit.coerceAtLeast(256))
+        config.ensureObject("compression")
+            .put("enabled", value.compressionEnabled)
+            .put("threshold", value.compressionThreshold.coerceIn(0.10, 0.95))
+            .put("target_ratio", value.compressionTargetRatio.coerceIn(0.05, 0.80))
+            .put("protect_last_n", value.protectLastMessages.coerceAtLeast(1))
+    }
+
+    fun saveVoiceSettings(value: ServerVoiceSettings): ServerSettings = updateConfig { config ->
+        val stt = config.ensureObject("stt")
+            .put("enabled", value.stt.enabled)
+            .put("provider", value.stt.provider)
+        val sttProvider = stt.ensureObject(value.stt.provider)
+        if (value.stt.model.isNotBlank()) sttProvider.put("model", value.stt.model) else sttProvider.remove("model")
+        sttProvider.put("language", value.stt.language)
+
+        val tts = config.ensureObject("tts").put("provider", value.tts.provider)
+        val ttsProvider = tts.ensureObject(value.tts.provider)
+        if (value.tts.model.isNotBlank()) {
+            ttsProvider.put(if (value.tts.provider == "elevenlabs") "model_id" else "model", value.tts.model)
+        } else {
+            ttsProvider.remove("model")
+            ttsProvider.remove("model_id")
+        }
+        if (value.tts.voice.isNotBlank()) {
+            ttsProvider.put(if (value.tts.provider == "elevenlabs") "voice_id" else "voice", value.tts.voice)
+        } else {
+            ttsProvider.remove("voice")
+            ttsProvider.remove("voice_id")
+        }
+    }
+
+    fun addCustomProvider(
+        id: String,
+        displayName: String,
+        baseUrl: String,
+        model: String,
+        apiKey: String,
+    ): ServerSettings {
+        val slug = id.trim().lowercase().replace(Regex("[^a-z0-9_-]+"), "-").trim('-')
+        if (slug.isBlank()) throw ApiException(400, uiText(R.string.ui_0080, "请填写有效的提供商标识"))
+        val envKey = "HERMES_PROVIDER_${slug.uppercase().replace('-', '_')}_API_KEY"
+        if (apiKey.isNotBlank()) {
+            request("PUT", "/api/env", JSONObject().put("key", envKey).put("value", apiKey).toString())
+        }
+        return updateConfig { config ->
+            val provider = config.ensureObject("providers").ensureObject(slug)
+                .put("name", displayName.trim().ifBlank { slug })
+                .put("api", baseUrl.trim().trimEnd('/'))
+                .put("transport", "chat_completions")
+                .put("default_model", model.trim())
+                .put("enabled", true)
+            if (apiKey.isNotBlank()) provider.put("key_env", envKey)
+        }
+    }
+
+    fun providerCredentials():List<ProviderCredential> = parseProviderCredentials(JSONObject(request("GET","/api/env")))
+
+    fun customProviders():CustomProviderCatalog = try {
+        parseCustomProviders(JSONObject(request("GET","/api/providers/custom-endpoints")),true)
+    }catch(e:ApiException) {
+        if(e.statusCode !in setOf(404,405,501))throw e
+        parseCustomProviders(readConfig(),false)
+    }
+
+    fun saveProviderCredential(key:String,value:String) {
+        require(Regex("[A-Z][A-Z0-9_]{1,100}").matches(key)) {"无效的密钥名称。"}
+        require(value.isNotBlank()&&!value.contains('\n')&&!value.contains('\r')) {"请输入有效的 API Key。"}
+        try {checkCommandAccepted(JSONObject(request("PUT","/api/env",JSONObject().put("key",key).put("value",value.trim()).toString())))}
+        catch(e:Exception){throw ApiException((e as? ApiException)?.statusCode?:502,e.message.orEmpty().replace(value,"[密钥已隐藏]"))}
+    }
+
+    fun saveCustomProvider(value:CustomProviderConfiguration,key:String,makeDefault:Boolean,native:Boolean) {
+        val payload=customProviderPayload(value,key,makeDefault)
+        try {
+            if(native) {checkCommandAccepted(JSONObject(request("POST","/api/providers/custom-endpoints",payload.toString())));return}
+            // Older gateways expose only config/env. Merge the named entry and model map.
+            val env="HERMES_PROVIDER_${value.id.uppercase().replace('-','_')}_API_KEY"
+            if(key.isNotBlank())saveProviderCredential(env,key)
+            updateConfig {config->
+                val entry=config.ensureObject("providers").ensureObject(value.id)
+                entry.put("name",value.name.trim()).put("api",value.baseUrl.trim().trimEnd('/')).put("default_model",value.model.trim()).put("discover_models",value.discoverModels)
+                if(entry.has("base_url"))entry.put("base_url",value.baseUrl.trim().trimEnd('/'))
+                if(entry.has("model"))entry.put("model",value.model.trim())
+                if(!entry.has("transport"))entry.put("transport","chat_completions")
+                val previous=entry.opt("models")
+                val models=if(previous is JSONObject)previous else JSONObject().apply {providerModelNames(previous).forEach {put(it,JSONObject())}}
+                (value.models+value.model).filter(String::isNotBlank).forEach {if(!models.has(it))models.put(it,JSONObject())}
+                entry.put("models",models)
+                if(key.isNotBlank()){entry.put("key_env",env);entry.remove("api_key")}
+                if(makeDefault)config.ensureObject("model").put("provider",value.id).put("default",value.model).put("base_url","")
+            }
+        }catch(e:Exception) {throw ApiException((e as? ApiException)?.statusCode?:502,if(key.isNotBlank())e.message.orEmpty().replace(key,"[密钥已隐藏]")else e.message?:"保存供应商失败。")}
+    }
+
+    fun probeCustomProvider(value:CustomProviderConfiguration,key:String):ProviderProbe {
+        val raw=JSONObject(request("POST","/api/providers/custom-endpoints/validate",customProviderPayload(value,key,false).toString(),timeoutMillis=12000))
+        return ProviderProbe(raw.optBoolean("ok"),raw.optBoolean("reachable"),providerModelNames(raw.opt("models")))
+    }
+
+    fun listSkills(): List<ServerSkill> {
+        val root = JSONTokener(request("GET", "/api/skills")).nextValue()
+        val array = findArray(root, "skills", "items", "data") ?: (root as? JSONArray) ?: JSONArray()
+        return buildList {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                val name = firstString(item, "name", "id") ?: continue
+                add(
+                    ServerSkill(
+                        name = name,
+                        description = firstString(item, "description", "summary").orEmpty(),
+                        category = firstString(item, "category").orEmpty().ifBlank { uiText(R.string.ui_0081, "其他") },
+                        enabled = !item.has("enabled") || item.optBoolean("enabled"),
+                        provenance = firstString(item, "provenance", "source").orEmpty(),
+                    ),
+                )
+            }
+        }
+    }
+
+    fun setSkillEnabled(name: String, enabled: Boolean) {
+        request(
+            "PUT",
+            "/api/skills/toggle",
+            JSONObject().put("name", name).put("enabled", enabled).toString(),
+        )
+    }
+
+    fun skillContent(name: String): String {
+        val root = JSONObject(request("GET", "/api/skills/content?name=${queryValue(name)}"))
+        return firstString(root, "content").orEmpty()
+    }
+
+    fun listToolsets(): List<ToolsetInfo> {
+        val rootValue = JSONTokener(request("GET", "/api/tools/toolsets")).nextValue()
+        val array = findArray(rootValue, "toolsets", "items", "data") ?: (rootValue as? JSONArray) ?: JSONArray()
+        return buildList {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                val name = firstString(item, "name", "id", "key") ?: continue
+                val tools = item.optJSONArray("tools") ?: JSONArray()
+                add(
+                    ToolsetInfo(
+                        name = name,
+                        label = firstString(item, "label", "display_name") ?: name,
+                        description = firstString(item, "description").orEmpty(),
+                        tools = (0 until tools.length()).mapNotNull { tools.optString(it).takeIf(String::isNotBlank) },
+                        enabled = when {
+                            item.has("active") -> item.optBoolean("active")
+                            item.has("enabled") -> item.optBoolean("enabled")
+                            else -> true
+                        },
+                        configured = !item.has("configured") || item.optBoolean("configured"),
+                    ),
+                )
+            }
+        }
+    }
+
+    fun setToolsetEnabled(name: String, enabled: Boolean) {
+        updateConfig { config ->
+            val agent = config.ensureObject("agent")
+            val disabled = agent.optJSONArray("disabled_toolsets") ?: JSONArray()
+            val values = (0 until disabled.length()).mapNotNull {
+                disabled.optString(it).takeIf(String::isNotBlank)
+            }.toMutableSet()
+            if (enabled) values.remove(name) else values.add(name)
+            agent.put("disabled_toolsets", JSONArray(values.sorted()))
+        }
+    }
+
+    fun listMcpServers(): List<McpServerInfo> {
+        val rootValue = JSONTokener(request("GET", "/api/mcp/servers")).nextValue()
+        val array = findArray(rootValue, "servers", "items", "data") ?: (rootValue as? JSONArray) ?: JSONArray()
+        return buildList {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                val name = firstString(item, "name", "id") ?: continue
+                val tools = item.optJSONArray("tools")
+                add(
+                    McpServerInfo(
+                        name = name,
+                        transport = firstString(item, "transport", "type").orEmpty(),
+                        enabled = !item.has("enabled") || item.optBoolean("enabled"),
+                        status = firstString(item, "status", "state").orEmpty(),
+                        toolCount = item.optInt("tool_count", tools?.length() ?: 0),
+                        detail = firstString(item,"message","error","detail").orEmpty(),
+                        authorizationUrl = safeActionUrl(firstString(item,"authorization_url","auth_url")),
+                    ),
+                )
+            }
+        }
+    }
+
+    fun setMcpServerEnabled(name: String, enabled: Boolean) {
+        request(
+            "PUT",
+            "/api/mcp/servers/${pathSegment(name)}/enabled",
+            JSONObject().put("enabled", enabled).toString(),
+        )
+    }
+
+    fun switchSessionModel(session: HermesSession, provider: String, model: String): HermesSession {
+        val active = if (session.runtimeId.isNullOrBlank()) resumeSession(session).session else session
+        require(!model.any {it.isWhitespace()}&&!provider.any {it.isWhitespace()}){"模型标识无效。"}
+        val result=rpcObject(
+            "slash.exec",
+            JSONObject().put("session_id",active.runtimeId)
+                .put("command","/model $model --provider $provider --session"),timeoutSeconds=120,
+        )
+        checkCommandAccepted(result)
+        val updated=resumeSession(active).session
+        return updated
+    }
+
+    fun sessionTitle(sessionId: String): String {
+        val item = JSONObject(request("GET", "/api/sessions/${pathSegment(sessionId)}"))
+        return firstString(item, "title").orEmpty()
+    }
+
+    fun renameSession(sessionId: String, title: String): String = renameSessionForProfile(sessionId, title, currentProfile())
+
+    fun renameSessionForProfile(sessionId: String, title: String, profile: String): String {
+        val body = JSONObject().put("title", compactSessionTitle(title)).toString()
+        val result = JSONObject(request("PATCH", appendProfileQuery("/api/sessions/${pathSegment(sessionId)}", profile), body, includeProfile = false))
+        return compactSessionTitle(firstString(result, "title") ?: title)
+    }
+
+    fun setSessionPinned(sessionId: String, pinned: Boolean) {
+        val body = JSONObject().put("pinned", pinned).toString()
+        request("PATCH", "/api/sessions/${pathSegment(sessionId)}", body)
+    }
+
+    fun archiveSession(sessionId: String) {
+        val body = JSONObject().put("archived", true).toString()
+        request("PATCH", "/api/sessions/${pathSegment(sessionId)}", body)
+    }
+
+    fun projectCatalog(): List<HermesProject> {
+        val result = rpcObject(
+            "projects.tree",
+            JSONObject().put("preview_limit", 0).put("session_limit", 2_000),
+            timeoutSeconds = 120,
+        )
+        val projects = result.optJSONArray("projects") ?: JSONArray()
+        return buildList {
+            for (index in 0 until projects.length()) {
+                val item = projects.optJSONObject(index) ?: continue
+                if (item.optBoolean("isNoProject")) continue
+                parseProject(item)?.let(::add)
+            }
+        }
+    }
+
+    fun createProject(name: String, primaryPath: String): HermesProject {
+        val normalizedPath = normalizeWorkspacePath(primaryPath)
+        require(isAbsoluteRemotePath(normalizedPath)) { uiText(R.string.ui_0082, "项目目录需要使用服务器绝对路径") }
+        val result = rpcObject(
+            "projects.create",
+            JSONObject()
+                .put("name", name.trim())
+                .put("folders", JSONArray().put(normalizedPath))
+                .put("primary_path", normalizedPath)
+                .put("use", false),
+            timeoutSeconds = 120,
+        )
+        val item = result.optJSONObject("project") ?: result
+        return parseProject(item)
+            ?: throw ApiException(500, uiText(R.string.ui_0083, "Hermes 没有返回新建项目"))
+    }
+
+    fun moveSessionToProject(session: HermesSession, project: HermesProject): HermesSession {
+        val active = if (session.runtimeId.isNullOrBlank()) resumeSession(session).session else session
+        return setSessionDirectory(active, project.primaryPath)
+    }
+
+    private fun setSessionDirectory(session: HermesSession, path: String): HermesSession {
+        val cwd = normalizeWorkspacePath(path)
+        require(isAbsoluteRemotePath(cwd)) { uiText(R.string.ui_0082, "项目目录需要使用服务器绝对路径") }
+        val result = rpcObject(
+            "session.cwd.set",
+            JSONObject().put("session_id", session.runtimeId).put("cwd", cwd).put("profile", session.profile),
+            timeoutSeconds = 120,
+        )
+        if ((result.has("ok") && !result.optBoolean("ok")) || (result.has("error") && !result.isNull("error"))) {
+            throw ApiException(400, firstString(result, "error", "message") ?: uiText(R.string.ui_0084, "无法切换项目目录"))
+        }
+        return session.copy(workspacePath = cwd)
+    }
+
+    fun generateSessionTitles(sessions: List<HermesSession>): Map<String, String> {
+        if (sessions.isEmpty()) return emptyMap()
+        return buildMap {
+            sessions.chunked(20).forEach { chunk ->
+                val input = JSONArray().apply {
+                    chunk.forEach { session ->
+                        put(
+                            JSONObject()
+                                .put("id", session.id)
+                                .put("current_title", session.title)
+                                .put("conversation_preview", session.preview.take(600)),
+                        )
+                    }
+                }
+                val result = rpcObject(
+                    "llm.oneshot",
+                    JSONObject()
+                        .put(
+                            "instructions",
+                            uiText(R.string.ui_0085, "你负责为 Hermes AI 助理的对话生成简洁中文标题。根据每条记录的现有标题和对话摘要改写标题。") +
+                                uiText(R.string.ui_0086, "每个标题必须准确、自然，不超过15个汉字字符，不加引号、序号、句号或解释。") +
+                                uiText(R.string.ui_0087, "只返回严格 JSON 数组，每项格式为 {\"id\":\"原id\",\"title\":\"新标题\"}。"),
+                        )
+                        .put("input", input.toString())
+                        .put("task", "title_generation")
+                        .put("max_tokens", 1_200)
+                        .put("temperature", 0.2),
+                    timeoutSeconds = 180,
+                )
+                val text = firstString(result, "text").orEmpty()
+                val array = extractJsonArray(text)
+                    ?: throw ApiException(500, uiText(R.string.ui_0088, "Hermes 没有返回可识别的标题列表"))
+                for (index in 0 until array.length()) {
+                    val item = array.optJSONObject(index) ?: continue
+                    val id = firstString(item, "id") ?: continue
+                    val title = compactSessionTitle(firstString(item, "title").orEmpty())
+                    if (id in chunk.map(HermesSession::id) && title != uiText(R.string.ui_0079, "新会话")) put(id, title)
+                }
+            }
+        }
+    }
+
+    fun deleteSession(sessionId: String) {
+        request("DELETE", "/api/sessions/${pathSegment(sessionId)}")
+    }
+
+    fun initialWorkspace(): WorkspaceListing = initialWorkspaceForProfile(currentProfile())
+
+    fun initialWorkspaceForProfile(profile: String): WorkspaceListing {
+        val config = try {
+            val root = JSONObject(request("GET", appendProfileQuery("/api/config", profile)))
+            root.optJSONObject("config") ?: root
+        } catch (error: ApiException) {
+            if (error.statusCode != 404) throw error
+            JSONObject()
+        }
+        val cwd = normalizeWorkspacePath(config.optJSONObject("terminal")?.optString("cwd").orEmpty())
+        if (cwd.isNotBlank() && cwd !in setOf(".", "auto", "cwd")) {
+            require(isAbsoluteRemotePath(cwd)) { uiText(R.string.ui_0089, "Profile 的工作目录需使用服务器绝对路径，请在项目中选择目录") }
+            // A configured but inaccessible directory must not silently fall back.
+            return listWorkspaceForProfile(cwd, profile)
+        }
+        val project = try { activeProjectRoot(profile) } catch (error: ApiException) {
+            if (error.statusCode !in setOf(404, 501)) throw error
+            null
+        }
+        if (project != null) return listWorkspaceForProfile(project.second, profile).copy(projectName=project.first)
+        throw ApiException(400, uiText(R.string.ui_0090, "当前 Profile 未设置明确的工作目录，请先选择项目，或配置 terminal.cwd 为服务器绝对路径"))
+    }
+
+    fun listWorkspace(path: String?): WorkspaceListing = listWorkspaceForProfile(path, currentProfile())
+
+    fun listWorkspaceForProfile(path: String?, profile: String): WorkspaceListing {
+        val suffix = path?.takeIf { it.isNotBlank() }
+            ?.let { "?path=${queryValue(it)}" }
+            .orEmpty()
+        val root = JSONObject(request("GET", appendProfileQuery("/api/files$suffix", profile)))
+        val entries = root.optJSONArray("entries") ?: JSONArray()
+        return WorkspaceListing(
+            path = root.optString("path"),
+            parent = firstString(root, "parent"),
+            root = firstString(root, "locked_root", "root"),
+            entries = buildList {
+                for (index in 0 until entries.length()) {
+                    val item = entries.optJSONObject(index) ?: continue
+                    val entryPath = firstString(item, "path") ?: continue
+                    add(
+                        WorkspaceEntry(
+                            name = firstString(item, "name") ?: entryPath.substringAfterLast('/'),
+                            path = entryPath,
+                            isDirectory = item.optBoolean("is_directory"),
+                            size = item.optLong("size").takeIf { !item.isNull("size") },
+                            modifiedAt = item.optDouble("mtime", 0.0),
+                            mimeType = firstString(item, "mime_type"),
+                        ),
+                    )
+                }
+            },
+        )
+    }
+
+    fun readWorkspaceDocument(path: String): WorkspaceDocument = readWorkspaceDocumentForProfile(path, currentProfile())
+
+    fun readWorkspaceDocumentForProfile(path: String, profile: String, timeoutMillis:Long?=null): WorkspaceDocument {
+        val root = JSONObject(request("GET", appendProfileQuery("/api/files/read?path=${queryValue(path)}", profile),timeoutMillis=timeoutMillis))
+        val dataUrl = root.optString("data_url")
+        val encoded = dataUrl.substringAfter(',', missingDelimiterValue = "")
+        if (!dataUrl.startsWith("data:") || !dataUrl.substringBefore(',').endsWith(";base64") || ',' !in dataUrl) {
+            throw ApiException(500, uiText(R.string.ui_0091, "Hermes 没有返回文件内容"))
+        }
+        val bytes = runCatching { java.util.Base64.getMimeDecoder().decode(encoded) }
+            .getOrElse { throw ApiException(500, uiText(R.string.ui_0092, "无法解析远程文件内容")) }
+        return WorkspaceDocument(
+            name = firstString(root, "name") ?: path.substringAfterLast('/'),
+            path = firstString(root, "path") ?: path,
+            mimeType = firstString(root, "mime_type") ?: "application/octet-stream",
+            content = if (isTextDocument(path, firstString(root, "mime_type").orEmpty())) {
+                bytes.toString(Charsets.UTF_8)
+            } else {
+                ""
+            },
+            bytes = bytes,
+        )
+    }
+
+    fun readProfileFile(file: HermesProfileFile): WorkspaceDocument {
+        val profile = currentProfile().trim().ifBlank { "default" }
+        if (!PROFILE_NAME_PATTERN.matches(profile)) {
+            throw ApiException(400, uiText(R.string.ui_0093, "当前 Hermes Profile 名称无法用于读取文件"))
+        }
+        val filesRoot = listWorkspace(null).path
+        val candidates = hermesProfileFileCandidates(filesRoot, profile, file)
+        var lastFailure: Throwable? = null
+        candidates.forEach { path ->
+            runCatching { readWorkspaceDocument(path) }
+                .onSuccess { return it }
+                .onFailure { lastFailure = it }
+        }
+        val hint = if (file == HermesProfileFile.MEMORY) {
+            uiText(R.string.ui_0094, "当前 Profile 可能还没有生成 MEMORY.md；让 Hermes 记录一条记忆后再试")
+        } else {
+            uiText(R.string.ui_0095, "请确认当前 Profile 已创建 SOUL.md")
+        }
+        val status = (lastFailure as? ApiException)?.statusCode ?: 404
+        throw ApiException(status, uiText(R.string.ui_0096, "无法读取 %1\$s。%2\$s", file.fileName, hint))
+    }
+
+    fun saveWorkspaceDocument(path: String, content: String): WorkspaceDocument = saveWorkspaceDocumentForProfile(path,content,currentProfile())
+
+    fun saveWorkspaceDocumentForProfile(path: String, content: String, profile: String, mimeType:String="text/markdown"): WorkspaceDocument {
+        val dataUrl = "data:$mimeType;charset=utf-8;base64," +
+            Base64.encodeToString(content.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+        val body = JSONObject()
+            .put("path", path)
+            .put("data_url", dataUrl)
+            .put("overwrite", true)
+        request("POST", appendProfileQuery("/api/files/upload", profile), body.toString())
+        return WorkspaceDocument(
+            name = path.substringAfterLast('/'),
+            path = path,
+            mimeType = mimeType,
+            content = content,
+            bytes = content.toByteArray(Charsets.UTF_8),
+        )
+    }
+
+    /** Immutable upload with an explicit profile. Unknown acknowledgements are reconciled by the caller. */
+    fun uploadAssistantFile(path: String, dataUrl: String, profile: String) {
+        val body = JSONObject().put("path", path).put("data_url", dataUrl).put("overwrite", false).put("profile", profile)
+        checkCommandAccepted(JSONObject(request("POST", appendProfileQuery("/api/files/upload", profile), body.toString(), includeProfile = false)))
+    }
+
+    fun transcribeAudioFile(file: java.io.File, profile: String, onCall: (okhttp3.Call) -> Unit = {}): SpeechTranscription {
+        val body = AudioFileRequestBody(file)
+        val client = http.newBuilder().readTimeout(180, TimeUnit.SECONDS).writeTimeout(180, TimeUnit.SECONDS)
+            .callTimeout(240, TimeUnit.SECONDS).retryOnConnectionFailure(false).build()
+        val call = client.newCall(Request.Builder().url(endpoint(appendProfileQuery("/api/audio/transcribe", profile)))
+            .header("Accept", "application/json").header("User-Agent", USER_AGENT).post(body).build())
+        onCall(call)
+        call.execute().use { response ->
+            val raw = response.body?.string().orEmpty()
+            if (!response.isSuccessful) throw ApiException(response.code, extractErrorMessage(raw))
+            val root = JSONObject(raw)
+            if (!root.optBoolean("ok", true)) throw ApiException(400, firstString(root, "message", "error") ?: uiText(R.string.ui_0097, "语音识别失败"))
+            val transcript = firstString(root, "transcript", "text").orEmpty().trim()
+            if (transcript.isBlank()) throw ApiException(400, uiText(R.string.ui_0098, "没有识别到文字，录音已保留，可以重试"))
+            return SpeechTranscription(transcript, firstString(root, "provider").orEmpty())
+        }
+    }
+
+    fun readImage(path: String): ImagePreview {
+        if (path.startsWith("data:image/", ignoreCase = true)) {
+            return decodeImageDataUrl(path, uiText(R.string.ui_0057, "图片"), path)
+        }
+        if (path.startsWith("http://", ignoreCase = true) || path.startsWith("https://", ignoreCase = true)) {
+            val request = Request.Builder()
+                .url(path)
+                .header("Accept", "image/*")
+                .header("User-Agent", USER_AGENT)
+                .build()
+            http.newCall(request).execute().use { response ->
+                val bytes = response.body?.bytes() ?: ByteArray(0)
+                if (!response.isSuccessful) throw ApiException(response.code, uiText(R.string.ui_0099, "无法读取聊天图片"))
+                if (bytes.isEmpty()) throw ApiException(500, uiText(R.string.ui_0100, "图片内容为空"))
+                return ImagePreview(
+                    name = path.substringBefore('?').substringAfterLast('/').ifBlank { uiText(R.string.ui_0057, "图片") },
+                    source = path,
+                    mimeType = response.header("Content-Type")?.substringBefore(';') ?: "image/*",
+                    bytes = bytes,
+                )
+            }
+        }
+        val root = JSONObject(request("GET", "/api/files/read?path=${queryValue(path)}"))
+        return decodeImageDataUrl(
+            dataUrl = root.optString("data_url"),
+            name = firstString(root, "name") ?: path.substringAfterLast('/'),
+            source = firstString(root, "path") ?: path,
+        )
+    }
+
+    fun listCronJobs(profile: String = activeProfile): List<CronJob> {
+        val root = JSONTokener(request("GET", appendProfileQuery("/api/cron/jobs", profile), includeProfile = false)).nextValue()
+        val array = findArray(root, "jobs", "items", "data") ?: JSONArray()
+        return buildList {
+            for (index in 0 until array.length()) {
+                val item = array.optJSONObject(index) ?: continue
+                parseCronJob(item)?.let(::add)
+            }
+        }
+    }
+
+    fun createCronJob(name: String, prompt: String, schedule: String, profile: String = activeProfile): CronJob {
+        val body = JSONObject()
+            .put("name", name.trim())
+            .put("prompt", prompt.trim())
+            .put("schedule", schedule.trim())
+            .put("deliver", "local")
+        val root = JSONObject(request("POST", appendProfileQuery("/api/cron/jobs", profile), body.put("profile", profile).toString(), includeProfile = false, retryTransport = false))
+        return parseCronJob(root.optJSONObject("job") ?: root)
+            ?: throw ApiException(500, uiText(R.string.ui_0101, "Hermes 没有返回定时任务"))
+    }
+
+    fun cronJob(jobId: String): CronJob {
+        val root = JSONObject(request("GET", "/api/cron/jobs/${pathSegment(jobId)}"))
+        return parseCronJob(root.optJSONObject("job") ?: root)
+            ?: throw ApiException(500, uiText(R.string.ui_0102, "Hermes 没有返回定时任务详情"))
+    }
+
+    fun updateCronJob(jobId: String, name: String, prompt: String, schedule: String): CronJob {
+        val body = JSONObject().put(
+            "updates",
+            JSONObject()
+                .put("name", name.trim())
+                .put("prompt", prompt.trim())
+                .put("schedule", schedule.trim()),
+        )
+        val root = JSONObject(request("PUT", "/api/cron/jobs/${pathSegment(jobId)}", body.toString()))
+        return parseCronJob(root.optJSONObject("job") ?: root)
+            ?: cronJob(jobId)
+    }
+
+    fun pauseCronJob(jobId: String) {
+        request("POST", "/api/cron/jobs/${pathSegment(jobId)}/pause", "{}")
+    }
+
+    fun resumeCronJob(jobId: String) {
+        request("POST", "/api/cron/jobs/${pathSegment(jobId)}/resume", "{}")
+    }
+
+    fun triggerCronJob(jobId: String) {
+        request("POST", "/api/cron/jobs/${pathSegment(jobId)}/trigger", "{}", retryTransport = false)
+    }
+
+    fun deleteCronJob(jobId: String, profile: String = activeProfile) {
+        request("DELETE", appendProfileQuery("/api/cron/jobs/${pathSegment(jobId)}", profile), includeProfile = false)
+    }
+
+    private inline fun <T> withTurnLease(session: HermesSession, block: () -> T): T {
+        val key = "${session.profile}::${session.id}"
+        val lease = Any()
+        if (turnLeases.putIfAbsent(key, lease) != null) throw ApiException(409, uiText(R.string.ui_0103, "这段对话已有任务正在运行"))
+        try { return block() } finally { turnLeases.remove(key, lease) }
+    }
+
+    private fun voiceRestoreKey(session: HermesSession) = "${session.profile}::${session.id}"
+
+    private fun rememberVoiceReasoning(session: HermesSession, effort: String) {
+        voiceRestoreStore?.savePendingVoiceReasoning(config.baseUrl, session.profile, session.id, effort)
+        voiceRestores[voiceRestoreKey(session)] = effort
+    }
+
+    private fun setSessionReasoning(session: HermesSession, effort: String) {
+        require(!session.runtimeId.isNullOrBlank())
+        // Validate the runtime: old gateways must never interpret a missing session as a global edit.
+        val status = rpcObject("session.status", JSONObject().put("session_id", session.runtimeId).put("profile", session.profile))
+        if (status.optBoolean("running") || status.optString("output").contains("Agent Running: Yes", ignoreCase = true)) {
+            throw ApiException(409, uiText(R.string.ui_0104, "这段对话正在执行，完成后再切换语音思考模式"))
+        }
+        checkCommandAccepted(rpcObject("config.set", JSONObject().put("session_id", session.runtimeId).put("profile", session.profile)
+            .put("scope", "session").put("key", "reasoning").put("value", effort)))
+    }
+
+    private fun restoreVoiceReasoning(session: HermesSession): String? {
+        val effort = voiceRestores[voiceRestoreKey(session)]
+            ?: voiceRestoreStore?.pendingVoiceReasoning(config.baseUrl, session.profile, session.id) ?: return null
+        setSessionReasoning(session, effort)
+        voiceRestoreStore?.savePendingVoiceReasoning(config.baseUrl, session.profile, session.id, null)
+        voiceRestores.remove(voiceRestoreKey(session))
+        return effort
+    }
+
+    fun streamVoiceMessage(controller: StreamController, session: HermesSession, prompt: String, fastReply: Boolean,
+        onNotice: (String) -> Unit, onEvent: (StreamEvent) -> Unit, attachments: List<PendingAttachment> = emptyList()) {
+        withTurnLease(session) {
+        if (controller.isStopped()) return
+        var active = resumeSession(session).session
+        restoreVoiceReasoning(active)?.let { active = active.copy(reasoningEffort = it) }
+        if (controller.isStopped()) return
+        var changed = false
+        if (fastReply) {
+            val original = active.reasoningEffort
+            if (original in setOf("minimal", "low", "medium", "high", "xhigh", "max", "ultra")) {
+                try {
+                    rememberVoiceReasoning(active, original!!)
+                    setSessionReasoning(active, "none")
+                    changed = true
+                } catch (error: Exception) {
+                    val rejection = generateSequence<Throwable>(error) { it.cause }.filterIsInstance<RpcException>().firstOrNull()
+                    if (rejection?.rpcCode in setOf(-32601, -32602, 4002)) {
+                        // Explicit rejection means no setting changed; old gateways can still answer.
+                        voiceRestoreStore?.savePendingVoiceReasoning(config.baseUrl, active.profile, active.id, null)
+                        voiceRestores.remove(voiceRestoreKey(active))
+                    } else {
+                        // A lost acknowledgement may have changed the runtime; restore before sending.
+                        restoreVoiceReasoning(active)
+                    }
+                    onNotice(uiText(R.string.ui_0105, "当前 Agent 暂不支持快速回答，本次沿用原模型设置"))
+                }
+            } else if (original != "none") onNotice(uiText(R.string.ui_0106, "当前 Agent 未提供可恢复的思考设置，本次沿用原模型设置"))
+        }
+        var completed = false
+        try {
+            streamMessageInternal(controller, active, prompt, attachments, restoreBeforeSend = false) { event ->
+                if (event == StreamEvent.Completed) completed = true else onEvent(event)
+            }
+        } finally {
+            if (changed && !controller.wasDisconnected()) {
+                // Stops restore on the next send, after the interrupt has reached the server.
+                if (!controller.isStopped()) runCatching { restoreVoiceReasoning(active) }
+                    .onFailure { onNotice(uiText(R.string.ui_0107, "回答已完成；原思考设置将在下次发送前恢复")) }
+            }
+            if (completed) onEvent(StreamEvent.Completed)
+        }
+        }
+    }
+
+    fun streamMessage(
+        controller: StreamController,
+        session: HermesSession,
+        prompt: String,
+        attachments: List<PendingAttachment>,
+        onEvent: (StreamEvent) -> Unit,
+    ) = withTurnLease(session) { streamMessageInternal(controller, session, prompt, attachments, true, onEvent) }
+
+    private fun streamMessageInternal(controller: StreamController, session: HermesSession, prompt: String,
+        attachments: List<PendingAttachment>, restoreBeforeSend: Boolean, onEvent: (StreamEvent) -> Unit) {
+        if (controller.isStopped()) return
+        val active = if (session.runtimeId.isNullOrBlank()) resumeSession(session).session else session
+        if (restoreBeforeSend) restoreVoiceReasoning(active)
+        val runtimeId = active.runtimeId ?: error(uiText(R.string.ui_0108, "无法恢复 Hermes 会话"))
+        controller.runtimeSessionId = runtimeId
+        if (controller.isStopped()) return
+        knownSessions[runtimeId]=active
+        val registration = ActiveStream(runtimeId, controller, onEvent)
+        if (activeStreams.putIfAbsent(runtimeId, registration) != null) {
+            throw ApiException(409, uiText(R.string.ui_0103, "这段对话已有任务正在运行"))
+        }
+        try {
+            // Bind only this runtime. Never change the gateway's global active project.
+            // A resumed conversation must use its own directory before any attachments or prompt.
+            if (active.workspacePath.isNotBlank()) setSessionDirectory(active, active.workspacePath)
+            if (controller.isStopped()) return
+            val readyAttachments=prepareChatFiles(active,attachments){controller.isStopped()}
+            attachments.filter { it.dataUrl != null }.forEach { attachment ->
+                if (controller.isStopped()) return
+                checkCommandAccepted(rpcObject(
+                    "image.attach_bytes",
+                    JSONObject()
+                        .put("session_id", runtimeId)
+                        .put("profile", session.profile)
+                        .put("content_base64", attachment.dataUrl)
+                        .put("filename", attachment.name),
+                ))
+            }
+            if (controller.isStopped()) return
+            controller.submissionAttempted = true
+            controller.beforeSubmission?.invoke()
+            if(controller.isStopped())return
+            val acknowledgement=try {rpcObject(
+                "prompt.submit",
+                JSONObject().put("session_id", runtimeId).put("profile", session.profile)
+                    .put("text", appendTextAttachments(prompt, readyAttachments)),
+            )}catch(e:RpcException){controller.submissionRejected=true;throw e}
+            try {checkCommandAccepted(acknowledgement)}catch(e:ApiException){controller.submissionRejected=true;throw e}
+            controller.submissionAccepted = true
+            // Stop can race the submit acknowledgement; interrupt again after submit returns.
+            if (controller.isStopped()) stopRun(runtimeId, session.profile)
+            if (!controller.awaitCompletion()) throw ApiException(408, uiText(R.string.ui_0109, "等待 Hermes 回复超时"))
+        } finally {
+            activeStreams.remove(runtimeId, registration)
+        }
+    }
+
+    fun stopRun(runtimeSessionId: String, profile: String = activeProfile) {
+        runCatching {
+            rpcObject("session.interrupt", JSONObject().put("session_id", runtimeSessionId).put("profile", profile))
+        }
+    }
+
+    fun stopRunChecked(runtimeSessionId:String, profile:String=activeProfile) {
+        checkCommandAccepted(rpcObject("session.interrupt",JSONObject().put("session_id",runtimeSessionId).put("profile",profile)))
+    }
+
+    fun steerSession(runtimeSessionId: String, text: String): String {
+        val result = rpcObject(
+            "session.steer",
+            JSONObject()
+                .put("session_id", runtimeSessionId)
+                .put("text", text.trim()),
+        )
+        checkCommandAccepted(result)
+        return firstString(result, "status").orEmpty().ifBlank { "queued" }
+    }
+
+    fun respondAgentRequest(request: AgentRequest, answer: String, answers:Map<String,String> = emptyMap()) {
+        val requestKey="${request.runtimeSessionId}:${request.requestId}"
+        require(pendingAgentRequests.containsKey(requestKey)){"这个请求已过期或尚未恢复，请刷新待处理事项。"}
+        if(request.type==AgentRequestType.ACTION_REQUIRED) {
+            require(answer=="unsupported"&&request.serverRpcId!=null){"请在服务器页面完成此操作。"}
+            ensureGatewayConnected()
+            val frame=JSONObject().put("jsonrpc","2.0").put("id",JSONTokener(request.serverRpcId).nextValue())
+                .put("error",JSONObject().put("code",-32601).put("message","This desktop client cannot answer this request type."))
+            check(socket?.send(frame.toString())==true){"拒绝请求尚未送出，请重连后重试。"}
+            pendingAgentRequests.remove(requestKey);return
+        }
+        if(request.serverRpcId!=null) {
+            ensureGatewayConnected()
+            val result=when {
+                request.type==AgentRequestType.APPROVAL->JSONObject().put("choice",answer)
+                request.questions.isNotEmpty()->JSONObject().put("answers",JSONObject(answers))
+                else->JSONObject().put("answer",answer)
+            }
+            // A server request is answered by an ordinary JSON-RPC response, not clarify.respond.
+            val frame=JSONObject().put("jsonrpc","2.0").put("id",JSONTokener(request.serverRpcId).nextValue()).put("result",result)
+            if(socket?.send(frame.toString())!=true)throw ApiException(0,"回答尚未送出，请重新连接后重试。")
+            answeredServerRequests[requestKey]=System.currentTimeMillis()
+            pendingAgentRequests.remove(requestKey)
+            return
+        }
+        val params = when (request.type) {
+            AgentRequestType.ACTION_REQUIRED -> error("请在服务器页面处理此请求。")
+            AgentRequestType.APPROVAL -> JSONObject()
+                .put("session_id", request.runtimeSessionId)
+                .put("request_id", request.requestId)
+                .put("choice", answer)
+
+            AgentRequestType.CLARIFICATION -> JSONObject()
+                .put("session_id", request.runtimeSessionId)
+                .put("request_id", request.requestId)
+                .put("answer", if(request.questions.isEmpty())answer else JSONObject().put("answers",JSONObject(answers)).toString())
+        }
+        checkCommandAccepted(rpcObject(
+            if (request.type == AgentRequestType.APPROVAL) "approval.respond" else "clarify.respond",
+            params,
+        ))
+        pendingAgentRequests.remove(requestKey)
+    }
+
+    fun ensureConnected() { ensureGatewayConnected() }
+
+    fun reconnectGateway() {
+        if (activeStreams.isNotEmpty()) {
+            ensureGatewayConnected()
+            return
+        }
+        synchronized(socketLock) {
+            closeSocketLocked()
+        }
+        ensureGatewayConnected()
+    }
+
+    fun close() {
+        closeSocket()
+        http.dispatcher.executorService.shutdown()
+        http.connectionPool.evictAll()
+    }
+
+    private fun checkGatewayStatus(): JSONObject {
+        val status = JSONObject(request("GET", "/api/status"))
+        if (!status.optBoolean("auth_required", false)) {
+            throw ApiException(400, uiText(R.string.ui_0110, "该地址不是已启用登录的 Hermes 远程网关"))
+        }
+        val advertised = status.optJSONArray("auth_providers")
+        if (advertised != null && (0 until advertised.length()).none { advertised.optString(it) == "basic" }) {
+            throw ApiException(400, uiText(R.string.ui_0111, "该网关没有启用 Hermes 用户名密码登录"))
+        }
+        return status
+    }
+
+    private fun authenticatedUsername(): String {
+        val me = JSONObject(request("GET", "/api/auth/me"))
+        return firstString(me, "display_name", "user_id", "email") ?: config.username
+    }
+
+    private fun ensureGatewayConnected() {
+        if (socketOpen && socket != null) return
+        synchronized(socketLock) {
+            if (socketOpen && socket != null) return
+            closeSocketLocked()
+
+            val ticketResponse = JSONObject(request("POST", "/api/auth/ws-ticket", "{}"))
+            val ticket = ticketResponse.optString("ticket").takeIf { it.isNotBlank() }
+                ?: error(uiText(R.string.ui_0112, "远程网关没有返回 WebSocket 票据"))
+            val openFuture = CompletableFuture<Unit>()
+            val readyFuture = CompletableFuture<Unit>()
+            socketOpenFuture = openFuture
+            gatewayReadyFuture = readyFuture
+
+            val httpUrl = endpoint("/api/ws").toHttpUrl()
+            val wsUrl = httpUrl.newBuilder()
+                .addQueryParameter("ticket", ticket)
+                .build()
+            val request = Request.Builder()
+                .url(toWebSocketUrl(wsUrl.toString()))
+                .header("User-Agent", USER_AGENT)
+                .build()
+            socket = http.newWebSocket(request, GatewayWebSocketListener())
+            try {
+                openFuture.get(20, TimeUnit.SECONDS)
+                readyFuture.get(20, TimeUnit.SECONDS)
+            } catch (error: Exception) {
+                closeSocketLocked()
+                throw error.cause ?: error
+            } finally {
+                socketOpenFuture = null
+                gatewayReadyFuture = null
+            }
+        }
+    }
+
+    private fun rpcObject(
+        method: String,
+        params: JSONObject = JSONObject(),
+        timeoutSeconds: Long = 60,
+    ): JSONObject {
+        ensureGatewayConnected()
+        val id = "android-${requestIds.incrementAndGet()}"
+        val future = CompletableFuture<Any?>()
+        pendingCalls[id] = future
+        if (!params.has("profile")) params.put("profile", activeProfile)
+        val frame = JSONObject()
+            .put("jsonrpc", "2.0")
+            .put("id", id)
+            .put("method", method)
+            .put("params", params)
+        if (socket?.send(frame.toString()) != true) {
+            pendingCalls.remove(id)
+            socketOpen = false
+            throw ApiException(0, uiText(R.string.ui_0113, "Hermes 实时连接已断开"))
+        }
+        val result = try {
+            future.get(timeoutSeconds, TimeUnit.SECONDS)
+        } catch(error:java.util.concurrent.ExecutionException) {
+            throw error.cause ?: error
+        } catch (error: TimeoutException) {
+            pendingCalls.remove(id)
+            throw ApiException(408, uiText(R.string.ui_0114, "Hermes 请求超时：%1\$s", method))
+        }
+        return when (result) {
+            is JSONObject -> result
+            null, JSONObject.NULL -> JSONObject()
+            else -> JSONObject().put("value", result)
+        }
+    }
+
+    private fun checkCommandAccepted(result:JSONObject) {
+        if((result.has("ok") && !result.optBoolean("ok")) || (result.has("success") && !result.optBoolean("success")))
+            throw ApiException(409,firstString(result,"message","error") ?: "服务器未接受此操作，请重试。")
+    }
+
+    private fun request(
+        method: String,
+        path: String,
+        body: String? = null,
+        includeProfile: Boolean = shouldScopeRequest(path),
+        retryTransport: Boolean = true,
+        timeoutMillis:Long?=null,
+    ): String {
+        val resolvedPath = if (includeProfile) appendProfileQuery(path, activeProfile) else path
+        val resolvedBody = if (includeProfile && body != null) {
+            runCatching {
+                JSONObject(body).apply {
+                    if (!has("profile")) put("profile", activeProfile)
+                }.toString()
+            }.getOrDefault(body)
+        } else body
+        val builder = Request.Builder()
+            .url(endpoint(resolvedPath))
+            .header("Accept", "application/json")
+            .header("User-Agent", USER_AGENT)
+        if (resolvedBody != null) {
+            builder.method(method, resolvedBody.toRequestBody(JSON_MEDIA_TYPE))
+        } else {
+            builder.method(method, null)
+        }
+        val transport = if (retryTransport && method.uppercase() in setOf("GET","HEAD")) http else http.newBuilder().retryOnConnectionFailure(false).build()
+        val call=transport.newCall(builder.build())
+        timeoutMillis?.let {call.timeout().timeout(it,TimeUnit.MILLISECONDS)}
+        call.execute().use { response ->
+            val raw = response.body?.string().orEmpty()
+            if (!response.isSuccessful) throw ApiException(response.code, extractErrorMessage(raw))
+            return raw
+        }
+    }
+
+    private fun endpoint(path: String): String = config.baseUrl.trimEnd('/') + "/" + path.trimStart('/')
+
+    private fun activeProjectRoot(profile: String): Pair<String, String>? {
+        val result = rpcObject("projects.list", JSONObject().put("profile", profile))
+        val projects = result.optJSONArray("projects") ?: return null
+        val activeId = result.optString("active_id")
+        val candidates = buildList {
+            for (index in 0 until projects.length()) {
+                projects.optJSONObject(index)?.takeIf { !it.optBoolean("archived") }?.let(::add)
+            }
+        }
+        val project = candidates.firstOrNull { it.optString("id") == activeId }
+            ?: return null
+        val parsed = parseProject(project) ?: return null
+        return parsed.name to parsed.primaryPath
+    }
+
+    private fun parseSession(item: JSONObject, profile: String = activeProfile): HermesSession? {
+        val id = firstString(item, "id", "session_id", "sessionId") ?: return null
+        val preview = firstString(item, "preview")
+            ?.replace(Regex("\\s+"), " ")
+            ?.trim()
+            .orEmpty()
+        return HermesSession(
+            id = id,
+            title = resolvedSessionTitle(firstString(item, "title", "name").orEmpty(), preview),
+            preview = preview,
+            updatedAt = firstString(
+                item,
+                "last_active",
+                "updated_at",
+                "updatedAt",
+                "started_at",
+                "created_at",
+                "createdAt",
+            ).orEmpty(),
+            source = firstString(item, "source", "platform").orEmpty(),
+            messageCount = item.optInt("message_count", 0),
+            model = firstString(item, "model").orEmpty(),
+            provider = firstString(item, "provider").orEmpty(),
+            isPinned = item.optBoolean("pinned"),
+            workspacePath = firstString(item, "cwd", "git_repo_root").orEmpty(),
+            profile = profile,
+        )
+    }
+
+    private fun shouldScopeRequest(path: String): Boolean {
+        val clean = path.substringBefore('?').trimEnd('/')
+        return clean.startsWith("/api/") &&
+            clean != "/api/status" &&
+            clean != "/api/profiles" &&
+            !clean.startsWith("/api/auth/") &&
+            clean != "/api/ws"
+    }
+
+    private fun parseProject(item: JSONObject): HermesProject? {
+        val id = firstString(item, "id", "slug") ?: return null
+        val directPrimary = firstString(item, "path", "primary_path").orEmpty()
+        var folderPrimary = ""
+        val paths = buildList {
+            directPrimary.takeIf(String::isNotBlank)?.let(::add)
+            listOf("folders", "repos").forEach { key ->
+                val entries = item.optJSONArray(key) ?: JSONArray()
+                for (index in 0 until entries.length()) {
+                    val value = entries.opt(index)
+                    val path = when (value) {
+                        is JSONObject -> firstString(value, "path")?.also {
+                            if (value.optBoolean("is_primary")) folderPrimary = it
+                        }
+                        is String -> value.trim().takeIf(String::isNotBlank)
+                        else -> null
+                    }
+                    path?.let(::add)
+                }
+            }
+        }.distinct()
+        val primaryPath = directPrimary.ifBlank { folderPrimary }.ifBlank { paths.firstOrNull().orEmpty() }
+        if (primaryPath.isBlank()) return null
+        return HermesProject(
+            id = id,
+            name = firstString(item, "label", "name") ?: id.substringAfterLast('/'),
+            primaryPath = primaryPath,
+            paths = (paths + primaryPath).distinct(),
+            isAuto = item.optBoolean("isAuto") || item.optBoolean("is_auto"),
+        )
+    }
+
+    private fun extractJsonArray(text: String): JSONArray? {
+        val start = text.indexOf('[')
+        val end = text.lastIndexOf(']')
+        if (start < 0 || end <= start) return null
+        return runCatching { JSONArray(text.substring(start, end + 1)) }.getOrNull()
+    }
+
+    private fun parseMessages(array: JSONArray): List<ChatMessage> = buildList {
+        for (index in 0 until array.length()) {
+            val item = array.optJSONObject(index) ?: continue
+            parseMessage(item)?.let(::add)
+        }
+    }
+
+    private fun parseMessage(item: JSONObject): ChatMessage? {
+        val role = when (item.optString("role").lowercase()) {
+            "user" -> MessageRole.USER
+            "assistant" -> MessageRole.ASSISTANT
+            "tool" -> MessageRole.TOOL
+            "system" -> MessageRole.SYSTEM
+            else -> return null
+        }
+        val content = flattenContent(item.opt("content")).ifBlank {
+            flattenContent(item.opt("text"))
+        }
+        val reasoning = listOf(
+            extractReasoning(item.opt("content")),
+            flattenContent(item.opt("reasoning_content")),
+            flattenContent(item.opt("reasoning")),
+            flattenContent(item.opt("thinking")),
+        ).firstOrNull(String::isNotBlank).orEmpty()
+        val images = extractImages(item.opt("content")) + extractImages(item.opt("attachments"))
+        if (content.isBlank() && reasoning.isBlank() && images.isEmpty() && role != MessageRole.TOOL) return null
+        return ChatMessage(
+            id = firstString(item, "row_id", "id", "message_id", "messageId")
+                ?: UUID.randomUUID().toString(),
+            role = role,
+            content = content,
+            createdAt = firstString(item, "created_at", "createdAt", "timestamp").orEmpty(),
+            reasoning = reasoning,
+            images = images.distinctBy(ChatImage::source),
+        )
+    }
+
+    private fun parseCronJob(item: JSONObject): CronJob? {
+        val id = firstString(item, "id", "job_id") ?: return null
+        val scheduleValue = item.opt("schedule")
+        val schedule = when (scheduleValue) {
+            is JSONObject -> CronSchedule(
+                kind = firstString(scheduleValue, "kind", "type") ?: "cron",
+                expression = firstString(scheduleValue, "expr", "expression", "cron").orEmpty(),
+                display = firstString(scheduleValue, "display", "label")
+                    ?: firstString(scheduleValue, "expr", "expression", "cron").orEmpty(),
+            )
+            is String -> CronSchedule(expression = scheduleValue, display = scheduleValue)
+            else -> CronSchedule(expression = "", display = uiText(R.string.ui_0115, "未设置"))
+        }
+        return CronJob(
+            id = id,
+            name = firstString(item, "name", "title") ?: uiText(R.string.ui_0116, "定时任务"),
+            prompt = firstString(item, "prompt", "message", "command").orEmpty(),
+            schedule = schedule,
+            enabled = if (item.has("enabled")) item.optBoolean("enabled") else !item.optBoolean("paused"),
+            state = firstString(item, "state", "status").orEmpty().ifBlank { "scheduled" },
+            deliver = firstString(item, "deliver", "delivery").orEmpty().ifBlank { "local" },
+            nextRunAt = firstString(item, "next_run_at", "nextRunAt", "next_run").orEmpty(),
+            lastRunAt = firstString(item, "last_run_at", "lastRunAt", "last_run").orEmpty(),
+            lastStatus = firstString(item, "last_status", "lastStatus").orEmpty(),
+            model = firstString(item, "model").orEmpty(),
+            provider = firstString(item, "provider").orEmpty(),
+        )
+    }
+
+    internal fun prepareChatFiles(session:HermesSession,attachments:List<PendingAttachment>,cancelled:()->Boolean={false}):List<PendingAttachment> {
+        if(attachments.none {it.uploadDataUrl!=null})return attachments
+        val directory=session.workspacePath.ifBlank {listWorkspace(null).path}.trimEnd('/')
+        require(directory.isNotBlank()) {"无法确定附件保存目录，请先选择工作空间。"}
+        return attachments.map {attachment->
+            val data=attachment.uploadDataUrl?:return@map attachment
+            if(cancelled())throw java.util.concurrent.CancellationException("附件上传已停止")
+            val safeName=attachment.name.substringAfterLast('/').substringAfterLast('\\').replace(Regex("[\\p{Cntrl}<>:\"|?*]"),"_").takeLast(150).ifBlank {"file"}
+            val id=java.security.MessageDigest.getInstance("SHA-256").digest(attachment.id.toByteArray()).take(12).joinToString(""){"%02x".format(it)}
+            val path="$directory/Hermes-Attachment-$id-$safeName"
+            try {uploadAssistantFile(path,data,session.profile)}catch(failure:Exception) {
+                // A retry after an unknown acknowledgement may find the immutable upload already there.
+                val same=runCatching {
+                    val existing=readWorkspaceDocumentForProfile(path,session.profile).bytes
+                    existing.contentEquals(java.util.Base64.getDecoder().decode(data.substringAfter(',')))
+                }.getOrDefault(false)
+                if(!same)throw ApiException((failure as? ApiException)?.statusCode?:502,"${attachment.name} 上传未完成，附件已保留。${failure.message.orEmpty()}")
+            }
+            attachment.copy(remotePath=path,uploadDataUrl=null)
+        }
+    }
+
+    private fun appendTextAttachments(prompt: String, attachments: List<PendingAttachment>): String {
+        val documents = attachments.filter { it.textContent != null || (it.remotePath != null && it.dataUrl == null) }
+        if (documents.isEmpty()) return prompt
+        return buildString {
+            append(prompt)
+            documents.forEach { attachment ->
+                append(uiText(R.string.ui_0117, "\n\n--- 附件："))
+                append(attachment.name)
+                append(" ---\n")
+                if (attachment.textContent != null) {
+                    append(attachment.textContent)
+                } else {
+                    append(uiText(R.string.ui_0118, "服务器文件路径："))
+                    append(JSONObject.quote(attachment.remotePath))
+                    append(uiText(R.string.ui_0119, "\n该附件保存在当前档案的服务器上，请使用文件工具读取后处理。"))
+                }
+                append(uiText(R.string.ui_0120, "\n--- 附件结束 ---"))
+            }
+        }
+    }
+
+    private fun emitAgentEvent(runtime:String,event:StreamEvent) {
+        val stream=activeStreams[runtime]
+        if(stream!=null&&!stream.controller.isStopped()&&!stream.controller.wasDisconnected())stream.onEvent(event)
+        else knownSessions[runtime]?.let {onUnboundAgentEvent?.invoke(it,event)}
+    }
+
+    private fun publishAgentRequest(value:AgentRequest) {
+        val key="${value.runtimeSessionId}:${value.requestId}"
+        // A response frame has no acknowledgement of its own. Ignore an in-flight snapshot
+        // briefly, but allow a still-open server request to reappear so a dropped answer can retry.
+        val sentAt=answeredServerRequests[key]
+        if(sentAt!=null&&System.currentTimeMillis()-sentAt<8_000)return
+        if(sentAt!=null)answeredServerRequests.remove(key)
+        pendingAgentRequests[key]=value
+        emitAgentEvent(value.runtimeSessionId,StreamEvent.AgentRequestPending(value))
+    }
+
+    private fun expireAgentRequest(runtime:String,id:String) {
+        pendingAgentRequests.remove("$runtime:$id")
+        answeredServerRequests.remove("$runtime:$id")
+        emitAgentEvent(runtime,StreamEvent.AgentRequestExpired(id))
+    }
+
+    private fun handleServerRequest(frame:JSONObject,fallbackRuntime:String?=null) {
+        val method=frame.optString("method")
+        val type=when(method){"clarify"->AgentRequestType.CLARIFICATION;"approval"->AgentRequestType.APPROVAL;else->AgentRequestType.ACTION_REQUIRED}
+        val payload=frame.optJSONObject("params")?:JSONObject()
+        val id=frame.opt("id")?.takeUnless {it==JSONObject.NULL}?:return
+        val runtime=firstString(payload,"session_id")?:fallbackRuntime?:activeStreams.keys.singleOrNull()?:knownSessions.keys.singleOrNull()
+        if(runtime==null) {
+            socket?.send(JSONObject().put("jsonrpc","2.0").put("id",id).put("error",JSONObject().put("code",-32602).put("message","A session_id is required to route this request.")).toString())
+            return
+        }
+        // Never borrow an explicitly named request for a different conversation.
+        if(fallbackRuntime!=null&&runtime!=fallbackRuntime)return
+        publishAgentRequest(parseGatewayRequest(payload,runtime,type,JSONObject.valueToString(id)).copy(
+            method=method,actionUrl=safeActionUrl(firstString(payload,"authorization_url","auth_url","url")),
+        ))
+    }
+
+    private fun restorePendingAgentRequests(result:JSONObject,runtime:String,pendingBefore:Set<String>) {
+        val open=result.optJSONArray("open_requests")
+        if(open!=null) {
+            val liveIds=if(open==null)emptySet()else (0 until open.length()).mapNotNull {open.optJSONObject(it)?.opt("id")?.toString()}.toSet()
+            pendingAgentRequests.values.filter {it.runtimeSessionId==runtime&&it.serverRpcId!=null&&it.requestId !in liveIds&&"$runtime:${it.requestId}" in pendingBefore}
+                .forEach {expireAgentRequest(runtime,it.requestId)}
+            if(open!=null)for(i in 0 until open.length())open.optJSONObject(i)?.let {handleServerRequest(it,runtime)}
+        }
+        listOf("pending_clarify" to AgentRequestType.CLARIFICATION,"pending_clarification" to AgentRequestType.CLARIFICATION,"pending_approval" to AgentRequestType.APPROVAL).forEach {(field,type)->
+            result.optJSONObject(field)?.let {payload->
+                // New gateways may include the same approval in both representations.
+                if(open==null||(0 until open.length()).none {open.optJSONObject(it)?.optString("method")=="approval"&&type==AgentRequestType.APPROVAL})
+                    publishAgentRequest(parseGatewayRequest(payload,runtime,type))
+            }
+        }
+        if(result.has("running")&&!result.optBoolean("running")&&result.optString("status")!="waiting") {
+            pendingAgentRequests.values.filter {it.runtimeSessionId==runtime&&it.serverRpcId==null&&"$runtime:${it.requestId}" in pendingBefore&&
+                !result.has("pending_approval")&&!result.has("pending_clarify")&&!result.has("pending_clarification")}.forEach {expireAgentRequest(runtime,it.requestId)}
+        }
+    }
+
+    private fun handleGatewayEvent(params: JSONObject) {
+        val type = params.optString("type")
+        if (type == "gateway.ready") {
+            gatewayReadyFuture?.complete(Unit)
+            return
+        }
+        val payload = params.optJSONObject("payload") ?: params
+        val sessionId = firstString(params, "session_id") ?: firstString(payload, "session_id")
+        val controlRuntime=sessionId ?: activeStreams.keys.singleOrNull()
+        if(type in setOf("approval.request","clarify.request")) {
+            if(controlRuntime!=null)publishAgentRequest(parseGatewayRequest(payload,controlRuntime,if(type=="approval.request")AgentRequestType.APPROVAL else AgentRequestType.CLARIFICATION))
+            return
+        }
+        if(type in setOf("request.cancel","approval.expire","approval.expired","clarify.expire","clarify.expired")) {
+            val id=firstString(payload,"request_id","id") ?: return
+            if(sessionId!=null)expireAgentRequest(sessionId,id)
+            else pendingAgentRequests.values.filter {it.requestId==id}.singleOrNull()?.let {expireAgentRequest(it.runtimeSessionId,id)}
+            return
+        }
+        // Unlabelled events are safe only when exactly one runtime is registered.
+        val stream = routeSessionEvent(activeStreams, sessionId) ?: return
+        if (stream.controller.isStopped() || stream.controller.wasDisconnected()) return
+        if (type == "message.start") {
+            if (stream.turn.markStarted()) stream.onEvent(StreamEvent.RunStarted(stream.sessionId))
+            return
+        }
+        // A session id can be reused when a stored conversation is resumed. Ignore trailing
+        // notifications from the previous turn until this prompt receives its own start edge.
+        if (!stream.turn.hasStarted()) return
+        when (type) {
+            "reasoning.delta" -> streamText(payload, "text", "delta", "content")
+                ?.takeIf(String::isNotEmpty)
+                ?.let { stream.onEvent(StreamEvent.ReasoningDelta(it)) }
+
+            "reasoning.available" -> streamText(payload, "text", "reasoning", "content", "context", "preview")
+                ?.takeIf(String::isNotBlank)
+                ?.let { stream.onEvent(StreamEvent.ReasoningAvailable(it)) }
+
+            "thinking.delta" -> streamText(payload, "text", "delta", "content")
+                ?.takeIf(String::isNotEmpty)
+                ?.let { stream.onEvent(StreamEvent.ReasoningDelta(it)) }
+
+            "message.delta" -> payload.optString("text").takeIf { it.isNotEmpty() }
+                ?.let { stream.onEvent(StreamEvent.AssistantDelta(it)) }
+
+            "message.interim" -> payload.optString("text").takeIf { it.isNotBlank() }
+                ?.let { stream.onEvent(StreamEvent.AssistantInterim(it)) }
+
+            "message.complete" -> {
+                activeStreams.remove(stream.sessionId, stream)
+                val status = payload.optString("status")
+                if (status in setOf("error", "failed", "failure")) {
+                    stream.onEvent(StreamEvent.Error(firstString(payload, "error", "text") ?: uiText(R.string.ui_0121, "Hermes 运行失败")))
+                } else {
+                    stream.onEvent(
+                        StreamEvent.AssistantCompleted(
+                            content = payload.optString("text"),
+                            responsePreviewed = payload.optBoolean("response_previewed") ||
+                                payload.optBoolean("responsePreviewed"),
+                        ),
+                    )
+                    stream.onEvent(StreamEvent.Completed)
+                }
+                stream.controller.finish()
+            }
+
+            "tool.start", "tool.generating" -> stream.onEvent(
+                StreamEvent.ToolStarted(
+                    name = firstString(payload, "name", "tool_name") ?: uiText(R.string.ui_0122, "正在使用工具"),
+                    preview = firstString(payload, "context", "preview", "args_text").orEmpty(),
+                    todos = ChatInsightParser.parseTodos(payload.optJSONArray("todos")),
+                ),
+            )
+
+            "tool.complete" -> stream.onEvent(
+                StreamEvent.ToolCompleted(
+                    name = firstString(payload, "name", "tool_name") ?: uiText(R.string.ui_0123, "工具"),
+                    preview = firstString(payload, "summary", "context", "result_text").orEmpty(),
+                    todos = ChatInsightParser.parseTodos(payload.optJSONArray("todos")),
+                ),
+            )
+
+            "tool.progress" -> stream.onEvent(
+                StreamEvent.ToolProgress(
+                    name = firstString(payload, "name", "tool_name") ?: uiText(R.string.ui_0122, "正在使用工具"),
+                    preview = firstString(payload, "message", "summary", "context", "preview").orEmpty(),
+                ),
+            )
+
+            "tool.error", "tool.failed", "tool.failure" -> stream.onEvent(
+                StreamEvent.ToolFailed(
+                    name = firstString(payload, "name", "tool_name") ?: uiText(R.string.ui_0123, "工具"),
+                    preview = firstString(payload, "message", "error", "summary", "context").orEmpty(),
+                ),
+            )
+
+            "error" -> {
+                activeStreams.remove(stream.sessionId, stream)
+                stream.onEvent(StreamEvent.Error(firstString(payload, "message", "error") ?: uiText(R.string.ui_0121, "Hermes 运行失败")))
+                stream.controller.finish()
+            }
+        }
+    }
+
+    private fun handleSocketClosed(message: String) {
+        socketOpen = false
+        socket = null
+        answeredServerRequests.clear()
+        socketOpenFuture?.completeExceptionally(ApiException(0, message))
+        gatewayReadyFuture?.completeExceptionally(ApiException(0, message))
+        val error = ApiException(0, message)
+        pendingCalls.values.forEach { it.completeExceptionally(error) }
+        pendingCalls.clear()
+        val interruptedStreams = activeStreams.values.toList()
+        interruptedStreams.forEach { stream ->
+            activeStreams.remove(stream.sessionId, stream)
+            if (!stream.controller.isStopped() && stream.controller.markDisconnected()) {
+                stream.onEvent(StreamEvent.ConnectionInterrupted(message))
+            }
+            stream.controller.finish()
+        }
+    }
+
+    private fun closeSocket() {
+        synchronized(socketLock) { closeSocketLocked() }
+    }
+
+    private fun closeSocketLocked() {
+        val current = socket
+        socket = null
+        socketOpen = false
+        current?.close(1000, "client closing")
+        pendingCalls.values.forEach { it.completeExceptionally(ApiException(0, uiText(R.string.ui_0124, "Hermes 实时连接已关闭"))) }
+        pendingCalls.clear()
+    }
+
+    private inner class GatewayWebSocketListener : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            socketOpen = true
+            socketOpenFuture?.complete(Unit)
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            if (socket !== webSocket) return
+            val frame = runCatching { JSONObject(text) }.getOrNull() ?: return
+            if (frame.optString("method") == "event") {
+                frame.optJSONObject("params")?.let(::handleGatewayEvent)
+                return
+            }
+            if(frame.has("method")) {
+                if(frame.optString("method")=="request.cancel") {
+                    val p=frame.optJSONObject("params")?:JSONObject()
+                    handleGatewayEvent(JSONObject().put("type","request.cancel").put("payload",p))
+                }else if(frame.has("id"))handleServerRequest(frame)
+                return
+            }
+            val id = frame.opt("id")?.toString()?.takeIf { it.isNotBlank() } ?: return
+            val future = pendingCalls.remove(id) ?: return
+            val error = frame.optJSONObject("error")
+            if (error != null) {
+                future.completeExceptionally(
+                    RpcException(error.optInt("code"), error.optString("message", uiText(R.string.ui_0125, "Hermes RPC 失败"))),
+                )
+            } else {
+                future.complete(frame.opt("result"))
+            }
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            webSocket.close(code, reason)
+        }
+
+        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+            if (socket === webSocket) handleSocketClosed(uiText(R.string.ui_0126, "网络连接发生波动，正在尝试恢复"))
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            if (socket === webSocket) {
+                handleSocketClosed(webSocketFailureMessage(response?.code))
+            }
+        }
+    }
+
+    private fun flattenContent(content: Any?): String {
+        return when (content) {
+            null, JSONObject.NULL -> ""
+            is String -> content
+            is JSONObject -> {
+                val type = content.optString("type").lowercase()
+                if (type in setOf("reasoning", "reasoning_content", "thinking", "analysis")) ""
+                else firstString(content, "text", "content", "output_text").orEmpty()
+            }
+            is JSONArray -> buildList {
+                for (index in 0 until content.length()) {
+                    val value = flattenContent(content.opt(index))
+                    if (value.isNotBlank()) add(value)
+                }
+            }.joinToString("\n")
+            else -> content.toString()
+        }
+    }
+
+    private fun extractReasoning(content: Any?): String = when (content) {
+        null, JSONObject.NULL -> ""
+        is JSONArray -> buildList {
+            for (index in 0 until content.length()) {
+                extractReasoning(content.opt(index)).takeIf(String::isNotBlank)?.let(::add)
+            }
+        }.joinToString("\n")
+        is JSONObject -> {
+            val type = content.optString("type").lowercase()
+            if (type in setOf("reasoning", "reasoning_content", "thinking", "analysis")) {
+                firstString(content, "text", "content", "reasoning").orEmpty()
+            } else {
+                buildList {
+                    content.keys().forEach { key ->
+                        extractReasoning(content.opt(key)).takeIf(String::isNotBlank)?.let(::add)
+                    }
+                }.joinToString("\n")
+            }
+        }
+        else -> ""
+    }
+
+    private fun extractImages(content: Any?): List<ChatImage> = when (content) {
+        null, JSONObject.NULL -> emptyList()
+        is JSONArray -> buildList {
+            for (index in 0 until content.length()) addAll(extractImages(content.opt(index)))
+        }
+        is JSONObject -> {
+            val type = content.optString("type").lowercase()
+            val imageUrlValue = content.opt("image_url")
+            val sourceObject = content.optJSONObject("source")
+            val direct = when {
+                imageUrlValue is String -> imageUrlValue
+                imageUrlValue is JSONObject -> firstString(imageUrlValue, "url")
+                type in setOf("image", "input_image") -> firstString(content, "url", "path", "data_url")
+                else -> null
+            }
+            val base64Source = sourceObject?.takeIf { it.optString("type") == "base64" }?.let { source ->
+                val data = source.optString("data")
+                val mime = firstString(source, "media_type", "mime_type") ?: "image/png"
+                data.takeIf(String::isNotBlank)?.let { "data:$mime;base64,$it" }
+            }
+            val source = direct ?: base64Source
+            if (!source.isNullOrBlank()) {
+                listOf(
+                    ChatImage(
+                        name = firstString(content, "name", "filename", "alt") ?: uiText(R.string.ui_0057, "图片"),
+                        source = source,
+                        mimeType = firstString(content, "mime_type", "media_type")
+                            ?: source.substringAfter("data:", "image/*").substringBefore(';'),
+                    ),
+                )
+            } else {
+                buildList {
+                    content.keys().forEach { key ->
+                        if (key !in setOf("text", "content", "output_text")) addAll(extractImages(content.opt(key)))
+                    }
+                }
+            }
+        }
+        else -> emptyList()
+    }
+
+    private fun decodeImageDataUrl(dataUrl: String, name: String, source: String): ImagePreview {
+        if (!dataUrl.startsWith("data:image/", ignoreCase = true)) {
+            throw ApiException(415, uiText(R.string.ui_0127, "该文件不是可预览的图片"))
+        }
+        val encoded = dataUrl.substringAfter(',', missingDelimiterValue = "")
+        if (encoded.isBlank()) throw ApiException(500, uiText(R.string.ui_0128, "Hermes 没有返回图片内容"))
+        val bytes = runCatching { java.util.Base64.getMimeDecoder().decode(encoded) }
+            .getOrElse { throw ApiException(500, uiText(R.string.ui_0129, "无法解析图片内容")) }
+        return ImagePreview(
+            name = name,
+            source = source,
+            mimeType = dataUrl.substringAfter("data:").substringBefore(';'),
+            bytes = bytes,
+        )
+    }
+
+    private fun readConfig(): JSONObject {
+        val root = JSONObject(request("GET", "/api/config"))
+        return root.optJSONObject("config") ?: root
+    }
+
+    @Synchronized private fun updateConfig(transform: (JSONObject) -> Unit): ServerSettings {
+        val config = readConfig()
+        transform(config)
+        request("PUT", "/api/config", JSONObject().put("config", config).toString())
+        return parseServerSettings(config)
+    }
+
+    private fun parseServerSettings(config: JSONObject): ServerSettings {
+        val model = config.optJSONObject("model") ?: JSONObject()
+        val agent = config.optJSONObject("agent") ?: JSONObject()
+        val auxiliary = config.optJSONObject("auxiliary") ?: JSONObject()
+        val fallbackArray = config.optJSONArray("fallback_providers") ?: JSONArray()
+        val moa = config.optJSONObject("moa") ?: JSONObject()
+        val refs = mutableListOf<String>()
+        val legacyRefs = moa.optJSONArray("reference_models") ?: JSONArray()
+        for (index in 0 until legacyRefs.length()) {
+            val item = legacyRefs.opt(index)
+            modelSpecString(item)?.let(refs::add)
+        }
+        var aggregator = modelSpecString(moa.opt("aggregator_model")).orEmpty()
+        if (refs.isEmpty()) {
+            val activePreset = moa.optString("active_preset", "default").ifBlank { "default" }
+            val preset = moa.optJSONObject("presets")?.optJSONObject(activePreset)
+            val presetRefs = preset?.optJSONArray("reference_models") ?: JSONArray()
+            for (index in 0 until presetRefs.length()) modelSpecString(presetRefs.opt(index))?.let(refs::add)
+            aggregator = aggregator.ifBlank { modelSpecString(preset?.opt("aggregator")).orEmpty() }
+        }
+        val memory = config.optJSONObject("memory") ?: JSONObject()
+        val compression = config.optJSONObject("compression") ?: JSONObject()
+        val approvals = config.optJSONObject("approvals") ?: JSONObject()
+        val display = config.optJSONObject("display") ?: JSONObject()
+        return ServerSettings(
+            rawConfig = config.toString(),
+            models = ServerModelSettings(
+                provider = firstString(model, "provider").orEmpty(),
+                model = firstString(model, "default", "model").orEmpty(),
+                reasoningEffort = firstString(agent, "reasoning_effort").orEmpty(),
+                contextLength = model.optInt("context_length", 0),
+                auxiliary = AUXILIARY_TASK_KEYS.associateWith { key ->
+                    val slot = auxiliary.optJSONObject(key) ?: JSONObject()
+                    ModelChoice(
+                        provider = firstString(slot, "provider") ?: "auto",
+                        model = firstString(slot, "model").orEmpty(),
+                    )
+                },
+                fallbackModels = buildList {
+                    for (index in 0 until fallbackArray.length()) {
+                        val item = fallbackArray.optJSONObject(index) ?: continue
+                        val provider = firstString(item, "provider").orEmpty()
+                        val fallbackModel = firstString(item, "model").orEmpty()
+                        if (provider.isNotBlank() || fallbackModel.isNotBlank()) add(FallbackModel(provider, fallbackModel))
+                    }
+                },
+                moaReferenceModels = refs.distinct(),
+                moaAggregatorModel = aggregator,
+            ),
+            conversation = ConversationStyleSettings(
+                personality = if(display.has("personality"))display.optString("personality", "none") else firstString(agent, "personality").orEmpty(),
+                timezone = firstString(config, "timezone").orEmpty(),
+                showReasoning = !display.has("show_reasoning") || display.optBoolean("show_reasoning"),
+            ),
+            approvals = ApprovalSettings(
+                mode = firstString(approvals, "mode") ?: "smart",
+                timeoutSeconds = approvals.optInt("timeout", 60),
+            ),
+            memory = MemoryContextSettings(
+                memoryEnabled = !memory.has("memory_enabled") || memory.optBoolean("memory_enabled"),
+                userProfileEnabled = !memory.has("user_profile_enabled") || memory.optBoolean("user_profile_enabled"),
+                memoryCharLimit = memory.optInt("memory_char_limit", 2200),
+                userCharLimit = memory.optInt("user_char_limit", 1375),
+                compressionEnabled = !compression.has("enabled") || compression.optBoolean("enabled"),
+                compressionThreshold = compression.optDouble("threshold", 0.50),
+                compressionTargetRatio = compression.optDouble("target_ratio", 0.20),
+                protectLastMessages = compression.optInt("protect_last_n", 20),
+            ),
+            voice = parseServerVoiceSettings(config),
+        )
+    }
+
+    private fun mergeLiveModelSettings(current: ServerModelSettings, root: JSONObject): ServerModelSettings {
+        val data = root.optJSONObject("data") ?: root
+        val main = data.optJSONObject("main")
+            ?: data.optJSONObject("current")
+            ?: data.optJSONObject("model")
+            ?: JSONObject()
+        val provider = current.provider.ifBlank {
+            firstString(main, "provider", "current_provider")
+                ?: firstString(data, "provider", "current_provider", "default_provider")
+                ?: ""
+        }
+        val model = current.model.ifBlank {
+            firstString(main, "model", "default", "current_model")
+                ?: firstString(data, "model", "current_model", "default_model")
+                ?: ""
+        }
+        val liveAuxiliary = data.optJSONObject("auxiliary")
+            ?: data.optJSONObject("assignments")
+            ?: JSONObject()
+        val auxiliary = current.auxiliary.toMutableMap()
+        AUXILIARY_TASK_KEYS.forEach { key ->
+            val existing = auxiliary[key] ?: ModelChoice()
+            if (existing.model.isNotBlank() || existing.provider !in setOf("", "auto")) return@forEach
+            val slot = liveAuxiliary.optJSONObject(key) ?: return@forEach
+            auxiliary[key] = ModelChoice(
+                provider = firstString(slot, "provider") ?: existing.provider.ifBlank { "auto" },
+                model = firstString(slot, "model", "default").orEmpty(),
+            )
+        }
+        return current.copy(provider = provider, model = model, auxiliary = auxiliary)
+    }
+
+    private fun modelSpecString(value: Any?): String? = when (value) {
+        is String -> value.trim().takeIf(String::isNotBlank)
+        is JSONObject -> {
+            val provider = firstString(value, "provider").orEmpty()
+            val model = firstString(value, "model", "default").orEmpty()
+            when {
+                provider.isNotBlank() && model.isNotBlank() -> "$provider:$model"
+                model.isNotBlank() -> model
+                else -> null
+            }
+        }
+        else -> null
+    }
+
+    private fun modelSpecObject(spec: String): JSONObject {
+        val value = spec.trim()
+        val provider = value.substringBefore(':', "").takeIf { ':' in value }.orEmpty()
+        val model = if (provider.isBlank()) value else value.substringAfter(':')
+        return JSONObject().put("provider", provider.ifBlank { "openrouter" }).put("model", model)
+    }
+
+    private fun JSONObject.ensureObject(key: String): JSONObject {
+        val existing = optJSONObject(key)
+        if (existing != null) return existing
+        return JSONObject().also { put(key, it) }
+    }
+
+    private fun findArray(root: Any?, vararg keys: String): JSONArray? {
+        if (root is JSONArray) return root
+        if (root !is JSONObject) return null
+        keys.forEach { key ->
+            root.optJSONArray(key)?.let { return it }
+            val nested = root.optJSONObject(key)
+            nested?.optJSONArray("items")?.let { return it }
+            nested?.optJSONArray("data")?.let { return it }
+        }
+        return null
+    }
+
+    private fun firstString(item: JSONObject, vararg keys: String): String? {
+        keys.forEach { key ->
+            if (!item.has(key) || item.isNull(key)) return@forEach
+            val value = item.optString(key).trim()
+            if (value.isNotBlank()) return value
+        }
+        return null
+    }
+
+    private fun pathSegment(value: String): String {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.name()).replace("+", "%20")
+    }
+
+    private fun queryValue(value: String): String = pathSegment(value)
+
+    private fun extractErrorMessage(raw: String): String {
+        fun message(value: Any?, depth: Int = 0): String? {
+            if (depth > 5) return null
+            return when (value) {
+                is String -> value.trim().takeIf { it.isNotBlank() }
+                is JSONObject -> listOf("detail", "message", "msg", "error")
+                    .firstNotNullOfOrNull { message(value.opt(it), depth + 1) }
+                is JSONArray -> (0 until minOf(value.length(), 3))
+                    .mapNotNull { message(value.opt(it), depth + 1) }.distinct().joinToString("；").takeIf { it.isNotBlank() }
+                else -> null
+            }
+        }
+        val parsed = runCatching { message(JSONTokener(raw).nextValue()) }.getOrNull()
+        return (parsed ?: raw.trim().takeIf { it.isNotEmpty() && !it.startsWith("<") && !it.startsWith("{") && !it.startsWith("[") }
+            ?: uiText(R.string.ui_0130, "请求失败")).take(600)
+    }
+
+    private data class ActiveStream(
+        val sessionId: String,
+        val controller: StreamController,
+        val onEvent: (StreamEvent) -> Unit,
+        val turn: GatewayTurnTracker = GatewayTurnTracker(),
+    )
+
+    private companion object {
+        val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
+        val USER_AGENT = "Hermes-Desktop/${com.qingyu.hermescompanion.BuildConfig.VERSION_NAME}"
+        val AUXILIARY_TASK_KEYS = listOf(
+            "vision",
+            "web_extract",
+            "compression",
+            "skills_hub",
+            "approval",
+            "mcp",
+            "title_generation",
+            "curator",
+        )
+    }
+}
+
+internal fun parseAgentRequestPayload(
+    payload: Map<String, Any?>,
+    fallbackSessionId: String,
+    type: AgentRequestType,
+): AgentRequest {
+    val request = payload.mapValue("request") ?: payload
+    val structuredQuestion = request.listValue("questions")
+        ?.firstNotNullOfOrNull { it as? Map<*, *> }
+        ?.stringKeyMap()
+        ?: payload.listValue("questions")
+            ?.firstNotNullOfOrNull { it as? Map<*, *> }
+            ?.stringKeyMap()
+        ?: (request["question"] as? Map<*, *>)?.stringKeyMap()
+    val sources = buildList {
+        structuredQuestion?.let(::add)
+        add(request)
+        if (payload !== request) add(payload)
+    }
+    val rawChoices = sources.firstNotNullOfOrNull { source ->
+        source.listValue("choices") ?: source.listValue("options")
+    }
+    val choices = rawChoices.orEmpty().mapNotNull { rawChoice ->
+        when (rawChoice) {
+            is String -> rawChoice.trim().takeIf(String::isNotBlank)?.let(::AgentRequestChoice)
+            is Map<*, *> -> {
+                val choice = rawChoice.stringKeyMap()
+                val label = choice.firstStringValue("label", "text", "title", "value", "name")
+                    ?: return@mapNotNull null
+                AgentRequestChoice(
+                    label = label,
+                    value = choice.firstStringValue("value", "answer", "id") ?: label,
+                    description = choice.firstStringValue("description", "detail", "help").orEmpty(),
+                )
+            }
+            else -> null
+        }
+    }.distinctBy { it.value }
+    val requestId = listOf(request,payload).firstStringValue("request_id", "requestId", "id", "tool_use_id")
+        ?: UUID.randomUUID().toString()
+    val title = if (type == AgentRequestType.APPROVAL) {
+        sources.firstStringValue("title", "command", "tool_name", "action") ?: uiText(R.string.ui_0131, "需要确认操作")
+    } else {
+        sources.firstStringValue("question", "title", "prompt", "header") ?: uiText(R.string.ui_0132, "Hermes 需要补充信息")
+    }
+    return AgentRequest(
+        requestId = requestId,
+        runtimeSessionId = sources.firstStringValue("session_id", "sessionId") ?: fallbackSessionId,
+        type = type,
+        title = title,
+        detail = sources.firstStringValue("detail", "description", "reason", "message", "context").orEmpty(),
+        choices = choices,
+        allowMultiple = sources.firstBooleanValue(
+            "multi_select",
+            "multiSelect",
+            "allow_multiple",
+            "allowMultiple",
+            "multiple",
+        ) ?: false,
+        allowSession = sources.firstBooleanValue("allow_session", "allowSession") ?: true,
+        allowPermanent = sources.firstBooleanValue("allow_permanent", "allowPermanent", "allow_always") ?: false,
+    )
+}
+
+private fun JSONObject.toKotlinMap(): Map<String, Any?> = buildMap {
+    val iterator = keys()
+    while (iterator.hasNext()) {
+        val key = iterator.next()
+        put(key, opt(key).toKotlinValue())
+    }
+}
+
+private fun Any?.toKotlinValue(): Any? = when (this) {
+    null, JSONObject.NULL -> null
+    is JSONObject -> toKotlinMap()
+    is JSONArray -> buildList {
+        for (index in 0 until length()) add(opt(index).toKotlinValue())
+    }
+    else -> this
+}
+
+private fun Map<*, *>.stringKeyMap(): Map<String, Any?> = entries.mapNotNull { (key, value) ->
+    (key as? String)?.let { it to value }
+}.toMap()
+
+private fun Map<String, Any?>.mapValue(key: String): Map<String, Any?>? =
+    (get(key) as? Map<*, *>)?.stringKeyMap()
+
+private fun Map<String, Any?>.listValue(key: String): List<Any?>? = get(key) as? List<Any?>
+
+private fun Map<String, Any?>.firstStringValue(vararg keys: String): String? = keys.firstNotNullOfOrNull { key ->
+    (get(key) as? String)?.trim()?.takeIf(String::isNotBlank)
+}
+
+private fun List<Map<String, Any?>>.firstStringValue(vararg keys: String): String? =
+    firstNotNullOfOrNull { it.firstStringValue(*keys) }
+
+private fun List<Map<String, Any?>>.firstBooleanValue(vararg keys: String): Boolean? =
+    firstNotNullOfOrNull { source ->
+        keys.firstNotNullOfOrNull { key ->
+            when (val value = source[key]) {
+                is Boolean -> value
+                is Number -> value.toInt() != 0
+                is String -> value.trim().lowercase().let { normalized ->
+                    when (normalized) {
+                        "true", "1", "yes", "on" -> true
+                        "false", "0", "no", "off" -> false
+                        else -> null
+                    }
+                }
+                else -> null
+            }
+        }
+    }
+
+internal fun toWebSocketUrl(httpUrl: String): String = when {
+    httpUrl.startsWith("https://", ignoreCase = true) -> "wss://" + httpUrl.substring(8)
+    httpUrl.startsWith("http://", ignoreCase = true) -> "ws://" + httpUrl.substring(7)
+    else -> throw IllegalArgumentException(uiText(R.string.ui_0133, "WebSocket 地址必须由 HTTP(S) 地址转换"))
+}
+
+data class ResumedSession(
+    val session: HermesSession,
+    val messages: List<ChatMessage>,
+    val running:Boolean?=null,
+    val pendingRequests:List<AgentRequest> = emptyList(),
+    val requestSnapshotKnown:Boolean=false,
+)
+
+class StreamController {
+    var beforeSubmission:(()->Unit)?=null
+    @Volatile var submissionAttempted: Boolean = false
+        internal set
+    @Volatile var submissionAccepted: Boolean = false
+        internal set
+    @Volatile var submissionRejected:Boolean=false
+        internal set
+    private val stopped = AtomicBoolean(false)
+    private val disconnected = AtomicBoolean(false)
+    private val completion = CountDownLatch(1)
+
+    @Volatile
+    var runtimeSessionId: String? = null
+        internal set
+
+    fun stop() {
+        stopped.set(true)
+        completion.countDown()
+    }
+
+    internal fun finish() {
+        completion.countDown()
+    }
+
+    internal fun markDisconnected(): Boolean = disconnected.compareAndSet(false, true)
+
+    fun wasDisconnected(): Boolean = disconnected.get()
+
+    internal fun awaitCompletion(): Boolean = completion.await(30, TimeUnit.MINUTES)
+
+    fun isStopped(): Boolean = stopped.get()
+}
+
+internal fun webSocketFailureMessage(statusCode: Int?): String = when (statusCode) {
+    401, 403 -> uiText(R.string.ui_0134, "登录状态已失效，请重新登录")
+    else -> uiText(R.string.ui_0126, "网络连接发生波动，正在尝试恢复")
+}
+
+class ApiException(val statusCode: Int, override val message: String) : Exception(message)
+
+internal class GatewayTurnTracker {
+    private val started = AtomicBoolean(false)
+
+    fun markStarted(): Boolean = started.compareAndSet(false, true)
+
+    fun hasStarted(): Boolean = started.get()
+}
+
+internal fun normalizeReasoningEffort(raw: String): String = when (raw.trim().lowercase()) {
+    "none", "low", "medium", "high", "max" -> raw.trim().lowercase()
+    "minimal" -> "low"
+    "xhigh", "ultra" -> "max"
+    else -> "medium"
+}
+
+private val PROFILE_NAME_PATTERN = Regex("[A-Za-z0-9][A-Za-z0-9._-]*")
+
+internal fun hermesProfileFileCandidates(
+    filesRoot: String,
+    profile: String,
+    file: HermesProfileFile,
+): List<String> {
+    val cleanRoot = normalizeWorkspacePath(filesRoot).replace('\\', '/').ifBlank { "/" }
+    val hermesRoots = linkedSetOf<String>()
+    if (profile != "default" && cleanRoot.endsWith("/profiles/$profile")) {
+        return listOf(joinRemotePath(cleanRoot, when (file) {
+            HermesProfileFile.MEMORY -> "memories/MEMORY.md"
+            HermesProfileFile.SOUL -> "SOUL.md"
+        }))
+    }
+    if (cleanRoot.endsWith("/.hermes") || cleanRoot == ".hermes") {
+        hermesRoots += cleanRoot
+    } else {
+        hermesRoots += joinRemotePath(cleanRoot, ".hermes")
+        // Hosted/Docker deployments may expose HERMES_HOME itself as the managed root.
+        hermesRoots += cleanRoot
+    }
+    val relativePath = when (file) {
+        HermesProfileFile.MEMORY -> "memories/MEMORY.md"
+        HermesProfileFile.SOUL -> "SOUL.md"
+    }
+    return hermesRoots.map { hermesRoot ->
+        val profileRoot = if (profile == "default") {
+            hermesRoot
+        } else {
+            joinRemotePath(hermesRoot, "profiles/$profile")
+        }
+        joinRemotePath(profileRoot, relativePath)
+    }.distinct()
+}
+
+private fun joinRemotePath(root: String, child: String): String = joinServerPath(root, child)
+
+internal fun appendProfileQuery(path: String, profile: String): String {
+    if (profile.isBlank() || Regex("(?:[?&])profile=").containsMatchIn(path)) return path
+    val separator = if ('?' in path) '&' else '?'
+    val encoded = URLEncoder.encode(profile, StandardCharsets.UTF_8.name()).replace("+", "%20")
+    return "$path$separator" + "profile=$encoded"
+}
+
+internal fun parseHermesProfiles(raw: String): List<HermesProfile> {
+    val root = runCatching { JSONTokener(raw).nextValue() }.getOrNull()
+    val array = when (root) {
+        is JSONArray -> root
+        is JSONObject -> root.optJSONArray("profiles")
+            ?: root.optJSONArray("items")
+            ?: root.optJSONArray("data")
+        else -> null
+    }
+    val parsed = buildList {
+        for (index in 0 until (array?.length() ?: 0)) {
+            checkNotNull(array)
+            val item = array.optJSONObject(index) ?: continue
+            val name = item.optString("name").trim().takeIf(String::isNotBlank) ?: continue
+            add(
+                HermesProfile(
+                    name = name,
+                    path = item.profileText("path"),
+                    isDefault = item.optBoolean("is_default"),
+                    model = item.profileText("model"),
+                    provider = item.profileText("provider"),
+                    description = item.profileText("description")
+                        .ifBlank { item.profileText("description_auto") },
+                    skillCount = item.optInt("skill_count"),
+                    gatewayRunning = item.optBoolean("gateway_running"),
+                ),
+            )
+        }
+    }
+    if (parsed.isNotEmpty()) return parsed
+
+    // Android's org.json implementation is unavailable in local JVM tests. Profile
+    // records are flat objects, so keep a narrow fallback for tests and wrapped payloads.
+    val arrayBody = Regex(
+        """"(?:profiles|items|data)"\s*:\s*\[([\s\S]*?)]""",
+        RegexOption.IGNORE_CASE,
+    ).find(raw)?.groupValues?.getOrNull(1)
+        ?: raw.trim().takeIf { it.startsWith('[') && it.endsWith(']') }?.drop(1)?.dropLast(1)
+        ?: return emptyList()
+    return Regex("""\{([^{}]*)}""").findAll(arrayBody).mapNotNull { match ->
+        val body = match.groupValues[1]
+        val name = body.profileStringField("name")?.trim()?.takeIf(String::isNotBlank)
+            ?: return@mapNotNull null
+        HermesProfile(
+            name = name,
+            path = body.profileStringField("path").orEmpty(),
+            isDefault = body.profileBooleanField("is_default"),
+            model = body.profileStringField("model").orEmpty(),
+            provider = body.profileStringField("provider").orEmpty(),
+            description = body.profileStringField("description")
+                .orEmpty()
+                .ifBlank { body.profileStringField("description_auto").orEmpty() },
+            skillCount = body.profileIntField("skill_count"),
+            gatewayRunning = body.profileBooleanField("gateway_running"),
+        )
+    }.toList()
+}
+
+private fun JSONObject.profileText(key: String): String = profileTextValue(opt(key))
+
+internal fun profileTextValue(value: Any?): String = (value as? String)?.trim().orEmpty()
+
+private fun isTextDocument(path: String, mimeType: String): Boolean {
+    if (mimeType.startsWith("text/", ignoreCase = true)) return true
+    if (mimeType.substringBefore(';').lowercase() in setOf(
+            "application/json", "application/xml", "application/javascript",
+            "application/x-yaml", "application/yaml",
+        )
+    ) return true
+    return path.substringAfterLast('.', "").lowercase() in setOf(
+        "md", "markdown", "txt", "csv", "tsv", "json", "xml", "yaml", "yml", "log",
+        "kt", "java", "py", "js", "ts", "html", "htm", "css", "sh", "sql",
+    )
+}
+
+private fun String.profileStringField(key: String): String? {
+    val escapedKey = Regex.escape(key)
+    val encoded = Regex(""""$escapedKey"\s*:\s*"((?:\\.|[^"\\])*)"""")
+        .find(this)
+        ?.groupValues
+        ?.getOrNull(1)
+        ?: return null
+    return Regex("""\\u([0-9a-fA-F]{4})""").replace(encoded) { result ->
+        result.groupValues[1].toInt(16).toChar().toString()
+    }.replace("\\\"", "\"")
+        .replace("\\/", "/")
+        .replace("\\n", "\n")
+        .replace("\\r", "\r")
+        .replace("\\t", "\t")
+        .replace("\\b", "\b")
+        .replace("\\f", "\u000C")
+        .replace("\\\\", "\\")
+}
+
+private fun String.profileBooleanField(key: String): Boolean =
+    Regex(""""${Regex.escape(key)}"\s*:\s*(true|false)""", RegexOption.IGNORE_CASE)
+        .find(this)
+        ?.groupValues
+        ?.getOrNull(1)
+        ?.lowercase()
+        ?.toBooleanStrictOrNull()
+        ?: false
+
+private fun String.profileIntField(key: String): Int =
+    Regex(""""${Regex.escape(key)}"\s*:\s*(-?\d+)""")
+        .find(this)
+        ?.groupValues
+        ?.getOrNull(1)
+        ?.toIntOrNull()
+        ?: 0
+
+class RpcException(val rpcCode: Int, override val message: String) : Exception(message)
+
+/** Unlike identifiers, stream deltas must not be trimmed or discard a standalone space. */
+internal fun streamText(payload:JSONObject,vararg keys:String):String? =
+    keys.firstNotNullOfOrNull {(payload.opt(it) as? String)?.takeIf(String::isNotEmpty)}
+
+internal fun parseGatewayRequest(payload:JSONObject,runtime:String,type:AgentRequestType,rpcId:String?=null):AgentRequest {
+    val base=parseAgentRequestPayload(payload.toKotlinMap(),runtime,type)
+    val body=payload.optJSONObject("request")?:payload
+    val batch=body.optJSONArray("questions")?:payload.optJSONArray("questions")
+    val locked=body.optJSONObject("answers")?:JSONObject()
+    val questions=if(batch==null||(rpcId==null&&batch.length()==1))emptyList()else (0 until batch.length()).mapNotNull {i->
+        val question=batch.optJSONObject(i)?:return@mapNotNull null
+        val parsed=parseAgentRequestPayload(question.toKotlinMap(),runtime,AgentRequestType.CLARIFICATION)
+        AgentQuestion(question.optString("qid").ifBlank {question.optString("id").ifBlank {"q${i+1}"}},parsed.title,parsed.choices,parsed.allowMultiple)
+            .let {it.copy(lockedAnswer=if(locked.has(it.id))locked.optString(it.id)else null)}
+    }
+    return base.copy(requestId=rpcId?.let {JSONTokener(it).nextValue().toString()}?:base.requestId,
+        runtimeSessionId=runtime,serverRpcId=rpcId,questions=questions,
+        title=if(questions.size>1)"Hermes 有 ${questions.size} 个问题需要你确认"else base.title)
+}

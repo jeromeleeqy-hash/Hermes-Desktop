@@ -1,0 +1,3 @@
+PASS: native long hold opens the quick panel without stealing focus; outside release ends the hold once
+PASS: native drag moves the ball without entering voice
+PASS: native single click remains a text question

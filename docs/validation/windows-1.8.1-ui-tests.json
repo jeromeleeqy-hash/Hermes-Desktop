@@ -1,0 +1,28 @@
+{
+  "version": "1.8.1",
+  "edition": "UI revision",
+  "suites": [
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopCompanionTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.DesktopMenuBoundsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.qingyu.hermescompanion.desktop.HoldToTalkTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "real_windows_execution": false
+}

@@ -1,0 +1,857 @@
+{
+  "package": "@fluentui/svg-icons",
+  "version": "1.1.341",
+  "source": "https://github.com/microsoft/fluentui-system-icons",
+  "icons": [
+    {
+      "name": "expand.svg",
+      "source": "open_20_regular.svg",
+      "sha256": "ac1788bb4ce4e3fa50668a6569ac0021a5da1d27c4c3035cceb1ba26eda99584"
+    },
+    {
+      "name": "expand-24.svg",
+      "source": "open_24_regular.svg",
+      "sha256": "c1bdec30a5e39f0c5f0dd0ac0c405c36b8780bd595aadd8810633478f89e4480"
+    },
+    {
+      "name": "capture.svg",
+      "source": "screenshot_20_regular.svg",
+      "sha256": "7f7349b4bbf3f5e48579c6609f24b879ea0c14f4bf0c0f9143235563d83d20c7"
+    },
+    {
+      "name": "capture-24.svg",
+      "source": "screenshot_24_regular.svg",
+      "sha256": "bcf7dcecfb1c489daf6cd5a73a71bff26924b5ade83a02bc2abc0db6a86df32e"
+    },
+    {
+      "name": "move.svg",
+      "source": "arrow_move_20_regular.svg",
+      "sha256": "caa70b9bc1b6024912725adb1178e93816903bf5fa0082278184482ec8f351fd"
+    },
+    {
+      "name": "move-24.svg",
+      "source": "arrow_move_24_regular.svg",
+      "sha256": "5143dec981d68f61e0494e8079d15b7280f224cb6839c5d49b21d930e8ece7a4"
+    },
+    {
+      "name": "add.svg",
+      "source": "add_20_regular.svg",
+      "sha256": "eace2d0d89e66e50d5c93cf82d21eb9e73a452dc370a76846d1f1802788dd71c"
+    },
+    {
+      "name": "add-24.svg",
+      "source": "add_24_regular.svg",
+      "sha256": "e5a1042750088527992b3396337a1962a36161ffe497dc9ac3cdac1a0b91ae91"
+    },
+    {
+      "name": "alert.svg",
+      "source": "warning_20_regular.svg",
+      "sha256": "7a256990981850e1d9a82cf0689adc0ce9f77563795c1d40dacb5806d7f2b639"
+    },
+    {
+      "name": "alert-24.svg",
+      "source": "warning_24_regular.svg",
+      "sha256": "eb5c30348be332b8997f477c1c184be0eb9f4d04c02539078faca2723e87ec6c"
+    },
+    {
+      "name": "arrow-down.svg",
+      "source": "arrow_down_20_regular.svg",
+      "sha256": "c1548448de9cc56a3569bb51e54e954337eff72fa6d6e68a910c1586033780f8"
+    },
+    {
+      "name": "arrow-down-24.svg",
+      "source": "arrow_down_24_regular.svg",
+      "sha256": "2e2305fd607615f2f8c7973f019bbe45fd08816782bdc91828868e62a9596fc4"
+    },
+    {
+      "name": "arrow-up.svg",
+      "source": "arrow_up_20_regular.svg",
+      "sha256": "895cf1471c758a2e3ed183ac90f3f58566ae6c792228b742c2303eac34cfdf6e"
+    },
+    {
+      "name": "arrow-up-24.svg",
+      "source": "arrow_up_24_regular.svg",
+      "sha256": "0343d6edf0543e4e55a888409fa013af0badd2b092e74961f0a7b4bc0181e168"
+    },
+    {
+      "name": "attachment.svg",
+      "source": "attach_20_regular.svg",
+      "sha256": "7b3169b0231345a62efe4014237e846cb3ac506524306430b7ce5a2ee3370785"
+    },
+    {
+      "name": "attachment-24.svg",
+      "source": "attach_24_regular.svg",
+      "sha256": "34be4bd1733047cf08173e382752707cd8fa94e99755fcd63849c387b017beb4"
+    },
+    {
+      "name": "audio.svg",
+      "source": "speaker_2_20_regular.svg",
+      "sha256": "4459a050705f33030b6926ca627578509d504cb50aa14a9f278c07629b6c8fe0"
+    },
+    {
+      "name": "audio-24.svg",
+      "source": "speaker_2_24_regular.svg",
+      "sha256": "be91ede893f8b8515cef94b339a85096193bf4931c0b7cc104b4f5e38019ec03"
+    },
+    {
+      "name": "back.svg",
+      "source": "arrow_left_20_regular.svg",
+      "sha256": "d94a8b83b6764b02c7e80a80d7854b37eaa2ce0b505f289ed2a0e3b2a1d2f82c"
+    },
+    {
+      "name": "back-24.svg",
+      "source": "arrow_left_24_regular.svg",
+      "sha256": "af4fac96f008c5dd73830726077204210932524f5ed8c04bd3be99e4f578db31"
+    },
+    {
+      "name": "bookmark.svg",
+      "source": "bookmark_20_regular.svg",
+      "sha256": "0a547b8e524b558184d323bc3add48487fb7a7905423480b2e8b6d46f1fb2192"
+    },
+    {
+      "name": "bookmark-24.svg",
+      "source": "bookmark_24_regular.svg",
+      "sha256": "021bbf9e8aca7ce6fecb1152576b898b9b0ea83f34fd388d0fe001d9fe943574"
+    },
+    {
+      "name": "calendar.svg",
+      "source": "calendar_ltr_20_regular.svg",
+      "sha256": "df0db6c0f1a27b2a33e3f07b27a09f23a1f1ba8de340ff2e76311eab7e2993af"
+    },
+    {
+      "name": "calendar-24.svg",
+      "source": "calendar_ltr_24_regular.svg",
+      "sha256": "14532a4c17274355bb2689361ab070b79ad450febf489b796fd92bc18955f5ea"
+    },
+    {
+      "name": "check.svg",
+      "source": "checkmark_20_regular.svg",
+      "sha256": "9ad90a13e5d3dd6309544d09a14817b7e609015db6e6c60ecd44ef120d2b3470"
+    },
+    {
+      "name": "check-24.svg",
+      "source": "checkmark_24_regular.svg",
+      "sha256": "3b05851972b1bc66cd30e7c423d44dc59f38cae96eaa2f6dcdd22bb523df0f71"
+    },
+    {
+      "name": "chevron-down.svg",
+      "source": "chevron_down_20_regular.svg",
+      "sha256": "2584741754fe0e27641d7423ff96e675167119889fbc1e5129516973cbfb136a"
+    },
+    {
+      "name": "chevron-down-24.svg",
+      "source": "chevron_down_24_regular.svg",
+      "sha256": "ee9fd7bce0165d8da4a34e6ec5056873e5eb55102d78321bfba858daff28a36e"
+    },
+    {
+      "name": "chevron-right.svg",
+      "source": "chevron_right_20_regular.svg",
+      "sha256": "44ffbcf6fb378dc3f78648031d0bec0303a67f629c62378fe1fb261dc91201b0"
+    },
+    {
+      "name": "chevron-right-24.svg",
+      "source": "chevron_right_24_regular.svg",
+      "sha256": "34fd96a5fdf562cdffba50de0b097a0bfaee5a21b54b789030901174ea9de7a1"
+    },
+    {
+      "name": "clock.svg",
+      "source": "clock_20_regular.svg",
+      "sha256": "fd5202fb96544171c260e8541138dfb49c29a7db3c1801cdc5a15333f673e067"
+    },
+    {
+      "name": "clock-24.svg",
+      "source": "clock_24_regular.svg",
+      "sha256": "a438e64295e27c63eed57e19ed452629bd714542902de48f4bbbd6a032e8dd3f"
+    },
+    {
+      "name": "close.svg",
+      "source": "dismiss_20_regular.svg",
+      "sha256": "3d95fdce4bb3a29b983377648e5528d73d965ed90409bce5fa096ef790b75ccb"
+    },
+    {
+      "name": "close-24.svg",
+      "source": "dismiss_24_regular.svg",
+      "sha256": "7cff7ed321daa78ab1e9346e182c5416d4f1ae88b3d9bf7742f2497be37a7cc5"
+    },
+    {
+      "name": "code.svg",
+      "source": "code_20_regular.svg",
+      "sha256": "7f6377ae6d6ef1dc030e5d629f32506937d1b9ac3ab21c70d84c6798cf7611a7"
+    },
+    {
+      "name": "code-24.svg",
+      "source": "code_24_regular.svg",
+      "sha256": "511189746149c7343686ce1c1e9117ed75adb9ce67843986c526b8412c8438d6"
+    },
+    {
+      "name": "command.svg",
+      "source": "slash_forward_20_regular.svg",
+      "sha256": "d7b7b5ddb85750ff02399704e87bfc85fad9e37a57a132e8eca79d2fc8c3efbd"
+    },
+    {
+      "name": "command-24.svg",
+      "source": "slash_forward_24_regular.svg",
+      "sha256": "33e97bbecb40727255e198117b3958e78ca70a93f4965e54e8e0fd908646a7f0"
+    },
+    {
+      "name": "connect.svg",
+      "source": "plug_connected_20_regular.svg",
+      "sha256": "e99d100f8b5f0591602c1319a8b9b6ac801a69e98f97a138e0138e2a9d8b2e4a"
+    },
+    {
+      "name": "connect-24.svg",
+      "source": "plug_connected_24_regular.svg",
+      "sha256": "95006159752582c3c02ddbdf8889943ea23deaa74225c0b31d9f74c1ab0557d1"
+    },
+    {
+      "name": "copy.svg",
+      "source": "copy_20_regular.svg",
+      "sha256": "069105eaa258ab181db8e66234677d149d26d3e8caed4e034ed6cfdf0c9511f9"
+    },
+    {
+      "name": "copy-24.svg",
+      "source": "copy_24_regular.svg",
+      "sha256": "626fa727f24d5486f97192267df0b8b125ef9519bd996f8c410ed5cbc9dda6fb"
+    },
+    {
+      "name": "dashboard.svg",
+      "source": "grid_20_regular.svg",
+      "sha256": "e39560fcf33db8035a28269765f079779c6938dbc8a51bc80f00a7293878c825"
+    },
+    {
+      "name": "dashboard-24.svg",
+      "source": "grid_24_regular.svg",
+      "sha256": "53f7ff58057d675df7161fe24f8a63fd4e8f53f20451da00a53aaf22ba10f1eb"
+    },
+    {
+      "name": "document.svg",
+      "source": "document_text_20_regular.svg",
+      "sha256": "4c1e89ff1d85152da67997db13c68af58a9b930de199e9a91922aa7b6a8dc7cb"
+    },
+    {
+      "name": "document-24.svg",
+      "source": "document_text_24_regular.svg",
+      "sha256": "46d173dd6621d3a774269edddeee47bc964fbce8e93a38206b1f000cb28a8cb6"
+    },
+    {
+      "name": "files.svg",
+      "source": "document_multiple_20_regular.svg",
+      "sha256": "9a25f1de4b2355be9bfbf463106734b539f45af58b94f7129150312fda3e5778"
+    },
+    {
+      "name": "files-24.svg",
+      "source": "document_multiple_24_regular.svg",
+      "sha256": "51c4f7666a553adf359c6230883fd98a86ad3652cf6b4c3e35a282f5a79ee5c5"
+    },
+    {
+      "name": "focus.svg",
+      "source": "full_screen_maximize_20_regular.svg",
+      "sha256": "2210ec089c44f42c1fb77a0d4939a2cdb073d65351ae6370b5f6ecacf29857e3"
+    },
+    {
+      "name": "focus-24.svg",
+      "source": "full_screen_maximize_24_regular.svg",
+      "sha256": "67dfe7e4e571a5237dc5e0e4311f369010d150833b6bfad86528baec38523402"
+    },
+    {
+      "name": "folder.svg",
+      "source": "folder_20_regular.svg",
+      "sha256": "d144cc84fe8997e44aede97843ba009454b5302e9d9827e01c6540e8eef4aaa8"
+    },
+    {
+      "name": "folder-24.svg",
+      "source": "folder_24_regular.svg",
+      "sha256": "9699f588e3e77fd73f6cd7d426a1c77bef26f4816ccb6b9e1b93824fffe8a222"
+    },
+    {
+      "name": "help.svg",
+      "source": "question_circle_20_regular.svg",
+      "sha256": "b42a01c3a7d4721158305403a563aa348bf47dce28f59919ee0caa2fb8648003"
+    },
+    {
+      "name": "help-24.svg",
+      "source": "question_circle_24_regular.svg",
+      "sha256": "f4a98c23c410cd8781870184f5622d4946add8a0d76d368667d1daec5d94f2f3"
+    },
+    {
+      "name": "history.svg",
+      "source": "chat_20_regular.svg",
+      "sha256": "43de4d62447040251b86777a122e88fde571b9111150fc8bd56284d0c607ef49"
+    },
+    {
+      "name": "history-24.svg",
+      "source": "chat_24_regular.svg",
+      "sha256": "a31300040c5512fbce86c8504f5276b1a65b8fafe74721ce9dca476f09e8e583"
+    },
+    {
+      "name": "home.svg",
+      "source": "home_20_regular.svg",
+      "sha256": "dac78c102bf3fbd572d213673fc45c4cee38208fd80d42a12fc34ae94016b069"
+    },
+    {
+      "name": "home-24.svg",
+      "source": "home_24_regular.svg",
+      "sha256": "3acb8d62ca32b6f79bab49e107741f0d35cf468c49559d6ef24b2132ecacab57"
+    },
+    {
+      "name": "image.svg",
+      "source": "image_20_regular.svg",
+      "sha256": "0e57f2cad97fe254f56e0997f877e1bb902efc9e2fc9b14f2091d1ce7301226c"
+    },
+    {
+      "name": "image-24.svg",
+      "source": "image_24_regular.svg",
+      "sha256": "028a9cc4eba4b6f9c2264ace17983661011703ab28977258c16040d83e98aa5d"
+    },
+    {
+      "name": "inbox.svg",
+      "source": "tray_item_add_20_regular.svg",
+      "sha256": "21a183f6c92ea9348b78cf5f65ba7ead8e85f288d1b83eb56840cc539558078a"
+    },
+    {
+      "name": "inbox-24.svg",
+      "source": "tray_item_add_24_regular.svg",
+      "sha256": "905145ca018a06378aa7ba44b94f9cf447d3685295f22bb6731c1d45a7efbd4a"
+    },
+    {
+      "name": "memory.svg",
+      "source": "brain_20_regular.svg",
+      "sha256": "17876fdbc7b8fed3b691773c5d7505b11b4033850e8770487db95c5294819e1b"
+    },
+    {
+      "name": "memory-24.svg",
+      "source": "brain_24_regular.svg",
+      "sha256": "74d704b209045b9a98369601d88b9888458ec80e186eb8673c0ec59b1fd6659f"
+    },
+    {
+      "name": "mic.svg",
+      "source": "mic_20_regular.svg",
+      "sha256": "644c6bf7eafa2edf4d96715dc0c17cde7c1c6fc93c56a13d70b4717e5352c768"
+    },
+    {
+      "name": "mic-24.svg",
+      "source": "mic_24_regular.svg",
+      "sha256": "41a27af080ed7830b4cd120c5eabc3098c0472da10421252fdf41a5c0c8cdf10"
+    },
+    {
+      "name": "minus.svg",
+      "source": "subtract_20_regular.svg",
+      "sha256": "a724aae5ef54510875cf0b1dda4b49e6bb39dcb9f44dad450cdb1f64d5feb85b"
+    },
+    {
+      "name": "minus-24.svg",
+      "source": "subtract_24_regular.svg",
+      "sha256": "1681f591eb7e39eff10ca24f7083d2ca6c6248c11a1353078f9c46b2274a259d"
+    },
+    {
+      "name": "model.svg",
+      "source": "sparkle_20_regular.svg",
+      "sha256": "c5779b54ed098ff789bbff477999336d0d44ec4cfa3d42d1427cd06f73aa16b9"
+    },
+    {
+      "name": "model-24.svg",
+      "source": "sparkle_24_regular.svg",
+      "sha256": "0f8ff7e31164c5119a5e70c4f25021ab11be149651d6e1caa4996217ebc96424"
+    },
+    {
+      "name": "more.svg",
+      "source": "more_horizontal_20_regular.svg",
+      "sha256": "d700fdb05f2b48ed931352413ce2fd110fbbaa77f661858568312d31aadd2cdf"
+    },
+    {
+      "name": "more-24.svg",
+      "source": "more_horizontal_24_regular.svg",
+      "sha256": "b867db7b6a08e04fe34cdda325a1c300546c9cfc981cf1a75048643a70f36b6f"
+    },
+    {
+      "name": "notification.svg",
+      "source": "alert_20_regular.svg",
+      "sha256": "4555330756537b8bdc9509f39d9d5a4578f125f27bc2553cfc2bc2f8163b685a"
+    },
+    {
+      "name": "notification-24.svg",
+      "source": "alert_24_regular.svg",
+      "sha256": "5605cb9d31dd5213893b3b92d24207a8f5bd460fbf6e4e6300a486906d30e7fa"
+    },
+    {
+      "name": "outline.svg",
+      "source": "text_bullet_list_ltr_20_regular.svg",
+      "sha256": "e3e8e7fc40d3b9a39d731dc8c6886551d489329f792df8f20c80ffed78f3bcee"
+    },
+    {
+      "name": "outline-24.svg",
+      "source": "text_bullet_list_ltr_24_regular.svg",
+      "sha256": "b250f00cdfa95365bb46c0c6ee1ef7529cc8291c3caed8be65af294fb98fd80c"
+    },
+    {
+      "name": "palette.svg",
+      "source": "color_20_regular.svg",
+      "sha256": "8006a67fc14da27b3c16ce1b5773eff32d0205974883f836e4fd222647bc3ee5"
+    },
+    {
+      "name": "palette-24.svg",
+      "source": "color_24_regular.svg",
+      "sha256": "b02805d2847b6262c4f025f5f27a8a077711b2dfded142dba3bb420eb3a65222"
+    },
+    {
+      "name": "panel.svg",
+      "source": "panel_right_20_regular.svg",
+      "sha256": "a4830810b33a540cc4e7d78a355b7bafbe43f1893e344efd3961589c91a59625"
+    },
+    {
+      "name": "panel-24.svg",
+      "source": "panel_right_24_regular.svg",
+      "sha256": "e6e1d14e68c335cf4d5870a196b8cb745bebcfef5afb373e9c2a27357b08502e"
+    },
+    {
+      "name": "pause.svg",
+      "source": "pause_20_regular.svg",
+      "sha256": "0a144a13786d586c21f51f0efe798060ce29710feccad543ed13ea064f9e8eb5"
+    },
+    {
+      "name": "pause-24.svg",
+      "source": "pause_24_regular.svg",
+      "sha256": "2850f1b7d01490088c680d40b7af6b0d430dd48336b3c50fa7e3f55cb39e38a1"
+    },
+    {
+      "name": "pin.svg",
+      "source": "pin_20_regular.svg",
+      "sha256": "65031f56a410d691e6cf20de376811a27d6aa9d011c6af9e8316558c959af9af"
+    },
+    {
+      "name": "pin-24.svg",
+      "source": "pin_24_regular.svg",
+      "sha256": "8dd9fcf17c2734bd035b13377457aa8908e7c9344572c1a7baab83bc33946a90"
+    },
+    {
+      "name": "play.svg",
+      "source": "play_20_regular.svg",
+      "sha256": "a70e85cb0889d75b42b9d72cb7de2aedf408b4377d5bc10583b1d5edcaec9bdd"
+    },
+    {
+      "name": "play-24.svg",
+      "source": "play_24_regular.svg",
+      "sha256": "9e255921f65c4fa9c85c887cac9e0dbeb442089063843d0f4633d44f889c4ac9"
+    },
+    {
+      "name": "profile.svg",
+      "source": "person_20_regular.svg",
+      "sha256": "6e1f81884eb79045c974790bcab3a66614e76eb58d7d9803fab4cc7b961e65fd"
+    },
+    {
+      "name": "profile-24.svg",
+      "source": "person_24_regular.svg",
+      "sha256": "252544bd3290eb6e67f074cee87557b04680537ab8e207ea5b2ec003aa0f3ece"
+    },
+    {
+      "name": "queue.svg",
+      "source": "text_bullet_list_add_20_regular.svg",
+      "sha256": "ad77fe1db99d52f8acbd3e73f9f979d3111aed704c3bf0a22e7fe6f72f13f00f"
+    },
+    {
+      "name": "queue-24.svg",
+      "source": "text_bullet_list_add_24_regular.svg",
+      "sha256": "6d2a8f77ef87bc0bb939250d03ec3b1d4c3c761eb50f8d1b204afa2cdf23f49a"
+    },
+    {
+      "name": "refresh.svg",
+      "source": "arrow_sync_20_regular.svg",
+      "sha256": "563a1dd29e26075d3ffc349bacdf56a58d86842373a045a753ba1e1973205813"
+    },
+    {
+      "name": "refresh-24.svg",
+      "source": "arrow_sync_24_regular.svg",
+      "sha256": "54305365aa4d78a40d2b771a7c6ebff0a73485d60949b1b64e9ce7d5f79b6eaf"
+    },
+    {
+      "name": "search.svg",
+      "source": "search_20_regular.svg",
+      "sha256": "bdcaed7e5348ba774acf854b840ef8bcf30c024bf5d3bf50b1e08d3aac8aab17"
+    },
+    {
+      "name": "search-24.svg",
+      "source": "search_24_regular.svg",
+      "sha256": "7616f8b854157e435a4c7556eebe10a4be065b3380913aba4b1f77f6aeb32ee6"
+    },
+    {
+      "name": "send.svg",
+      "source": "send_20_regular.svg",
+      "sha256": "0f36811ec1b48569da2ed30f95692176615b55c525e373ba4977f777537b0d1b"
+    },
+    {
+      "name": "send-24.svg",
+      "source": "send_24_regular.svg",
+      "sha256": "07b5e8efb6739d3c5956bb8a1f84e40cde7bb5418a57dac01f2a1ed497ae2bdb"
+    },
+    {
+      "name": "settings.svg",
+      "source": "settings_20_regular.svg",
+      "sha256": "082803991d9af2fdb934957c5c8cddb04885665c7669d73d0c3d3dfee7ac7e6a"
+    },
+    {
+      "name": "settings-24.svg",
+      "source": "settings_24_regular.svg",
+      "sha256": "2d6d320d21346d519f87261c3ce941272b6f6bf54350ed3f00c5494e99f7804f"
+    },
+    {
+      "name": "sidebar.svg",
+      "source": "panel_left_20_regular.svg",
+      "sha256": "f31a8664092ca1bfb4fdb6809c936ab3e4109063641f8548f013bbe869a65461"
+    },
+    {
+      "name": "sidebar-24.svg",
+      "source": "panel_left_24_regular.svg",
+      "sha256": "6485746cf1b72ca77cf04267e42492c57ab66a2f8af5aded924175f59c304a0e"
+    },
+    {
+      "name": "stop.svg",
+      "source": "stop_20_regular.svg",
+      "sha256": "e58c0332ba5a4105506a3bceef850c0b25ef324fc2af356c7da009940c4bb5bf"
+    },
+    {
+      "name": "stop-24.svg",
+      "source": "stop_24_regular.svg",
+      "sha256": "5c1242adf53802802a9e72418650a49e24fec00916bbe3b705b76c971aa085c8"
+    },
+    {
+      "name": "table.svg",
+      "source": "table_20_regular.svg",
+      "sha256": "01abb91aad998f162fd39dd5989844c43afd428597b9824dcb7ba1e2cd965572"
+    },
+    {
+      "name": "table-24.svg",
+      "source": "table_24_regular.svg",
+      "sha256": "ab55957aa4f48b180009245b56dd105ba1a497326582de53440b9fe8ae92fce5"
+    },
+    {
+      "name": "tasks.svg",
+      "source": "task_list_ltr_20_regular.svg",
+      "sha256": "6a6e3cd97fb2c2a8fcdc8e6304d76cdf704db2d6318dc21741f24782d85386f2"
+    },
+    {
+      "name": "tasks-24.svg",
+      "source": "task_list_ltr_24_regular.svg",
+      "sha256": "601b18f255316309ab6170de7a48ae023baf0a671b06cc532323d23f44d956a1"
+    },
+    {
+      "name": "tool.svg",
+      "source": "wrench_20_regular.svg",
+      "sha256": "35032e75227053783c0a35d87fdd3e99a8287b57175876e4ea04304e305ce554"
+    },
+    {
+      "name": "tool-24.svg",
+      "source": "wrench_24_regular.svg",
+      "sha256": "7effb330ef490f37336830642a20885a7fc79e2029b5c51810ff0bbb5cc589e4"
+    },
+    {
+      "name": "workspace.svg",
+      "source": "briefcase_20_regular.svg",
+      "sha256": "d11789409c2f553610b6b23073838c657e80fc79aa05091cea910d70fa9f8cab"
+    },
+    {
+      "name": "workspace-24.svg",
+      "source": "briefcase_24_regular.svg",
+      "sha256": "af894d33946ce901f104aa0bf0cd733fbd48bf556967167d436bbee1c479ff79"
+    },
+    {
+      "name": "window-minimize.svg",
+      "source": "subtract_20_regular.svg",
+      "sha256": "a724aae5ef54510875cf0b1dda4b49e6bb39dcb9f44dad450cdb1f64d5feb85b"
+    },
+    {
+      "name": "window-minimize-24.svg",
+      "source": "subtract_24_regular.svg",
+      "sha256": "1681f591eb7e39eff10ca24f7083d2ca6c6248c11a1353078f9c46b2274a259d"
+    },
+    {
+      "name": "window-maximize.svg",
+      "source": "square_20_regular.svg",
+      "sha256": "6732bac4e4c65055a7e800c2a14f14a337f18ede5e91fd7588394b3da5c78517"
+    },
+    {
+      "name": "window-maximize-24.svg",
+      "source": "square_24_regular.svg",
+      "sha256": "0edc68fd58267a5d7d3a4d14373028b9b039e776a7a8d8e071d1d7a9449e195b"
+    },
+    {
+      "name": "window-restore.svg",
+      "source": "square_multiple_20_regular.svg",
+      "sha256": "de601d733420494510b8129cc413f76463435f7366a727faefde9b9e9a457a9f"
+    },
+    {
+      "name": "window-restore-24.svg",
+      "source": "square_multiple_24_regular.svg",
+      "sha256": "42546600628177f0659f8990bc9018359f2937ce356772536c722170e607d9c3"
+    },
+    {
+      "name": "edit.svg",
+      "source": "edit_20_regular.svg",
+      "sha256": "9cd1910479e8a6adeaf04e91528589cc4ff1b9e561d878f80fe6344a5a1ad53c"
+    },
+    {
+      "name": "edit-24.svg",
+      "source": "edit_24_regular.svg",
+      "sha256": "90dd323abfe41ff7b0dfdc4525a9c9952b3133f5e6db9c92e3cfed3abc6ede0b"
+    },
+    {
+      "name": "delete.svg",
+      "source": "delete_20_regular.svg",
+      "sha256": "117dd937dfea155b95a157489089b658bb0611c736cbad4e5339c8470d5a3b93"
+    },
+    {
+      "name": "delete-24.svg",
+      "source": "delete_24_regular.svg",
+      "sha256": "04c0fc28e66541a55699e32de594c7d50cec3ce5f6f09173d0ce8e2ea685c97d"
+    },
+    {
+      "name": "download.svg",
+      "source": "arrow_download_20_regular.svg",
+      "sha256": "cc965b2de3fca74d76e48d93fb2a2c68756e1fab748bb06de904a8e17ca4e5c2"
+    },
+    {
+      "name": "download-24.svg",
+      "source": "arrow_download_24_regular.svg",
+      "sha256": "650de0475e4ed7559065e68804a7c322bb5866c42e9fe02086bcc6e6dcd4db52"
+    },
+    {
+      "name": "save.svg",
+      "source": "save_20_regular.svg",
+      "sha256": "c28f4f46d9a4ab46b1d39491b734ee41e84919b9ee6b67f2833a46682bf404af"
+    },
+    {
+      "name": "save-24.svg",
+      "source": "save_24_regular.svg",
+      "sha256": "d6ece7d88c36652b5b18652fa803988cacdca099620375bd03e581410f7daaf7"
+    },
+    {
+      "name": "cut.svg",
+      "source": "cut_20_regular.svg",
+      "sha256": "22e7e4781d227d384403a319309f10bfb5c73776bd1eb2804a4692689f44e753"
+    },
+    {
+      "name": "cut-24.svg",
+      "source": "cut_24_regular.svg",
+      "sha256": "63e79523f21a1f2ec19a016bcab3e948c94156904627f3e64f54f490e441daf9"
+    },
+    {
+      "name": "paste.svg",
+      "source": "clipboard_paste_20_regular.svg",
+      "sha256": "ec9306a57faababc7c2ea24526b65109d68337b71ef2b3af8edf5eb54e04f386"
+    },
+    {
+      "name": "paste-24.svg",
+      "source": "clipboard_paste_24_regular.svg",
+      "sha256": "27d14e403eddb6182076521137f59f292b2f8c9052a720bb91c43cea5272c882"
+    },
+    {
+      "name": "sort.svg",
+      "source": "arrow_sort_down_lines_20_regular.svg",
+      "sha256": "2f68afa08bf9a5613647513f4e46ec07aa91e900b7e42d42ccef22e5e94cf6f3"
+    },
+    {
+      "name": "sort-24.svg",
+      "source": "arrow_sort_down_lines_24_regular.svg",
+      "sha256": "f1aca55d2e60d321cf2231e467db90262151583547f0612ecbfd875a852a2d1b"
+    },
+    {
+      "name": "archive.svg",
+      "source": "archive_20_regular.svg",
+      "sha256": "6a442fa7604b852835be9cdcea33e4ee70bde92ca672daa8a08da73880e03b10"
+    },
+    {
+      "name": "archive-24.svg",
+      "source": "archive_24_regular.svg",
+      "sha256": "9ff53ff5b658312674d176c15e82d3800cdc14a5eea96ccfe46475eb193dc89a"
+    },
+    {
+      "name": "bold.svg",
+      "source": "text_bold_20_regular.svg",
+      "sha256": "d3516c9a6fbebd141e2f7d7285958ab812bb26b011ae4a20e08d51666a1fa589"
+    },
+    {
+      "name": "bold-24.svg",
+      "source": "text_bold_24_regular.svg",
+      "sha256": "62e0662da6023de2dce2525f82c7b20158cb981aacba8883c73ee2104ab52660"
+    },
+    {
+      "name": "italic.svg",
+      "source": "text_italic_20_regular.svg",
+      "sha256": "ffa1faadf0121b7ce187a95f0d3e549384214e931faee2dc2a0649a396b054b3"
+    },
+    {
+      "name": "italic-24.svg",
+      "source": "text_italic_24_regular.svg",
+      "sha256": "dab34768970326c54e097aa1c713d603cebb9b0ea7ab2dd95c35843c44fc2b92"
+    },
+    {
+      "name": "link.svg",
+      "source": "link_20_regular.svg",
+      "sha256": "0d7ca18928ccb48ddc7dc5eb69102c49e1a83cc4aa8d7a455bf600ecdc3b5b69"
+    },
+    {
+      "name": "link-24.svg",
+      "source": "link_24_regular.svg",
+      "sha256": "a85da99fb6983ae48c63629b676dbdbad767e78f500e3d1dce9bbf4112ab891e"
+    },
+    {
+      "name": "quote.svg",
+      "source": "text_quote_20_regular.svg",
+      "sha256": "c3b4a51fe94c3d80c9f4ba00622672925a1f0ad4dcfb2a0ca0a64dfc09b5fd19"
+    },
+    {
+      "name": "quote-24.svg",
+      "source": "text_quote_24_regular.svg",
+      "sha256": "586bd281a103d01e7b473ef0b9cb017f1dbf11e77d40965d1923afbc343f14d3"
+    },
+    {
+      "name": "list-bullet.svg",
+      "source": "text_bullet_list_ltr_20_regular.svg",
+      "sha256": "e3e8e7fc40d3b9a39d731dc8c6886551d489329f792df8f20c80ffed78f3bcee"
+    },
+    {
+      "name": "list-bullet-24.svg",
+      "source": "text_bullet_list_ltr_24_regular.svg",
+      "sha256": "b250f00cdfa95365bb46c0c6ee1ef7529cc8291c3caed8be65af294fb98fd80c"
+    },
+    {
+      "name": "list-number.svg",
+      "source": "text_number_list_ltr_20_regular.svg",
+      "sha256": "66de43f9b40ed72abeaf058bd767dabb0f367c734f18b26a0d9692ea2e384719"
+    },
+    {
+      "name": "list-number-24.svg",
+      "source": "text_number_list_ltr_24_regular.svg",
+      "sha256": "54857b9968e40a77d0aca8400a3860d8e6476ad78d5b3f2bcb2fcdd787b8d2bf"
+    },
+    {
+      "name": "heading.svg",
+      "source": "text_header_1_20_regular.svg",
+      "sha256": "6c36932344854e559a093842d94b1826be7d23817ff477aa22136c4df36b18d8"
+    },
+    {
+      "name": "heading-24.svg",
+      "source": "text_header_1_24_regular.svg",
+      "sha256": "d795dd6f0ca06409c2244d3df6c5715a6c2572c44c5d33f8e4a3bb0b93ac4632"
+    },
+    {
+      "name": "undo.svg",
+      "source": "arrow_undo_20_regular.svg",
+      "sha256": "6ddfab37900746fb49d4acae7296e154274fd12f4faad3bf41fdeab66ae0bb39"
+    },
+    {
+      "name": "undo-24.svg",
+      "source": "arrow_undo_24_regular.svg",
+      "sha256": "97594666816801cf7c634dda715a5dfe6808dc5a7ea4a81880e23f10cf173a29"
+    },
+    {
+      "name": "redo.svg",
+      "source": "arrow_redo_20_regular.svg",
+      "sha256": "8f73a88da11b8732934b8136c55e8bab7470f81dedaf3aa11019ac5f472d7564"
+    },
+    {
+      "name": "redo-24.svg",
+      "source": "arrow_redo_24_regular.svg",
+      "sha256": "ff3915082dd494c7952ca8571a01615e701698b1ca940f0889489a2514fff635"
+    },
+    {
+      "name": "split.svg",
+      "source": "panel_left_expand_20_regular.svg",
+      "sha256": "ca84c8f88ccece89b126d49ea2ceb639af3bd01158c8149b5358f63c3dd1e490"
+    },
+    {
+      "name": "split-24.svg",
+      "source": "panel_left_expand_24_regular.svg",
+      "sha256": "cf9f30143295b31c3294c60b2d09c8454f3e6a2a9f1e05d9c0ad8f38398abcd5"
+    },
+    {
+      "name": "eye.svg",
+      "source": "eye_20_regular.svg",
+      "sha256": "453fff6c012ee96342c6de537404ee2927f4b6f40515c26dca890eb2f3b36327"
+    },
+    {
+      "name": "eye-24.svg",
+      "source": "eye_24_regular.svg",
+      "sha256": "97e7dbff6e40422a84db3034b3086f0403de8f665cf590ee8ddc02cb9cda1097"
+    },
+    {
+      "name": "eye-off.svg",
+      "source": "eye_off_20_regular.svg",
+      "sha256": "9e73a7eae89614f0a2dfa62f3410a6bfdd6ace03d47cd4b2dabb785f04cf07e7"
+    },
+    {
+      "name": "eye-off-24.svg",
+      "source": "eye_off_24_regular.svg",
+      "sha256": "89704bf9279aaa1df8ede9a06c0d1b524183140714489b8254faa7aca1261ae5"
+    },
+    {
+      "name": "keyboard.svg",
+      "source": "keyboard_20_regular.svg",
+      "sha256": "f923d2cb872f2e947e23a366c07dde50996b6bbdae9c72c2aba9037a9005edd4"
+    },
+    {
+      "name": "keyboard-24.svg",
+      "source": "keyboard_24_regular.svg",
+      "sha256": "857b01bc0f8bfc6f54256f0e3274e40495f4b41718444005bdf175ebd8ccd774"
+    },
+    {
+      "name": "check-square.svg",
+      "source": "checkbox_checked_20_regular.svg",
+      "sha256": "e283886c405bba6ffc78d236a38e211360e7d02b16e446d2eba71e9f8697bcc3"
+    },
+    {
+      "name": "check-square-24.svg",
+      "source": "checkbox_checked_24_regular.svg",
+      "sha256": "c937d38cf1d163b4dbe098bbbbf475748d3a102642a893780017df341a760bb9"
+    },
+    {
+      "name": "checkbox.svg",
+      "source": "checkbox_unchecked_20_regular.svg",
+      "sha256": "6732bac4e4c65055a7e800c2a14f14a337f18ede5e91fd7588394b3da5c78517"
+    },
+    {
+      "name": "checkbox-24.svg",
+      "source": "checkbox_unchecked_24_regular.svg",
+      "sha256": "0edc68fd58267a5d7d3a4d14373028b9b039e776a7a8d8e071d1d7a9449e195b"
+    },
+    {
+      "name": "strike.svg",
+      "source": "text_strikethrough_20_regular.svg",
+      "sha256": "0ae55b96caf1482d9fc22f938750efbd0507ea132320c349d0ea3634d8b860ff"
+    },
+    {
+      "name": "strike-24.svg",
+      "source": "text_strikethrough_24_regular.svg",
+      "sha256": "ecfbe90f0595e9ea6fe0ea669337a294675a541a86dc608a1b5de1bdfa66777c"
+    },
+    {
+      "name": "chevron-left.svg",
+      "source": "chevron_left_20_regular.svg",
+      "sha256": "e408bfdb55044d0d4587ad8ccb11e5d891e8dd4b6c1f14076b878699813d13ed"
+    },
+    {
+      "name": "chevron-left-24.svg",
+      "source": "chevron_left_24_regular.svg",
+      "sha256": "77e1e747195d4693256808f4f2dfb528912906d093694b54764929a8d23f0475"
+    },
+    {
+      "name": "nav-history.svg",
+      "source": "chat_24_filled.svg",
+      "sha256": "89de4bdbe2c0736ea5040e1ec995736e7c2c14d860f8dd3fc26f8ac62e3d6118"
+    },
+    {
+      "name": "nav-dashboard.svg",
+      "source": "grid_24_filled.svg",
+      "sha256": "ab7d7aff00e7ed97c8cc3eafbe3983d6764f3ad41afa34520ce2123d7124b3f3"
+    },
+    {
+      "name": "nav-tasks.svg",
+      "source": "task_list_ltr_24_filled.svg",
+      "sha256": "c9b04ba0cbaa7c9c639b6ff45a2fab24e34229b058d3b20eac9444a11bf7efdb"
+    },
+    {
+      "name": "nav-settings.svg",
+      "source": "settings_24_filled.svg",
+      "sha256": "ca4cfdc79742221d2de77e8b3bf60769477fc4ea9c2350314142960d8ab60314"
+    }
+  ]
+}

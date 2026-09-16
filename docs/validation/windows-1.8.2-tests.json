@@ -1,0 +1,41 @@
+{
+  "version": "1.8.2",
+  "host": "Linux",
+  "scope": "Targeted navigation/menu/companion regression",
+  "suites": [
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopCompanionTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopMenuBoundsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.HoldToTalkTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.MenuDismissSignalTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "totals": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

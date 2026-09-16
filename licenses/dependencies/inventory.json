@@ -1,0 +1,500 @@
+[
+  {
+    "jar": "SparseBitSet-1.3.jar",
+    "sha256": "f76b85adb0c00721ae267b7cfde4da7f71d3121cc2160c9fc00c0c89f8c53c8a",
+    "notices": []
+  },
+  {
+    "jar": "animation-core-desktop-1.10.1.jar",
+    "sha256": "41c0220ddbc55cb897feb0d5816b748f9c11162171f12743c04b50d0d84db628",
+    "notices": []
+  },
+  {
+    "jar": "animation-desktop-1.10.1.jar",
+    "sha256": "3ec5254288b1e872263009221f677063ea728f90969598f399a5b02500ebc014",
+    "notices": []
+  },
+  {
+    "jar": "annotation-jvm-1.9.1.jar",
+    "sha256": "1e343917ebf27ba96fe4dc52b1cad7fd32b738fbc6355bb6cd5b3b305d7212d0",
+    "notices": [
+      "licenses/dependencies/annotation-jvm-1.9.1/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "annotations-23.0.0.jar",
+    "sha256": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05",
+    "notices": []
+  },
+  {
+    "jar": "atomicfu-jvm-0.23.2.jar",
+    "sha256": "101ff43ff563fca167af5ade98c3b69bf569010eab745013b84d8955034d3b3c",
+    "notices": []
+  },
+  {
+    "jar": "collection-jvm-1.5.0.jar",
+    "sha256": "70b35924e4babcdffa37d0e575ee039c56a2d97123342624c48b603233704341",
+    "notices": [
+      "licenses/dependencies/collection-jvm-1.5.0/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "commonmark-0.24.0.jar",
+    "sha256": "679338e0b7fc15c02d275d598654b01a149893bc28a87992e90123c8d06af25b",
+    "notices": [
+      "licenses/dependencies/commonmark-0.24.0/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "commonmark-ext-gfm-strikethrough-0.24.0.jar",
+    "sha256": "7385cb637f04dc4cbda4ddca9c2fcd2af7ac536a50e4c8d2c77f4748bb14bf41",
+    "notices": [
+      "licenses/dependencies/commonmark-ext-gfm-strikethrough-0.24.0/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "commonmark-ext-gfm-tables-0.24.0.jar",
+    "sha256": "b54dc332f931e6d07c2766144c087b08f3693677e368151a67020b4e95bb4b99",
+    "notices": [
+      "licenses/dependencies/commonmark-ext-gfm-tables-0.24.0/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "commons-codec-1.20.0.jar",
+    "sha256": "6af66595f9f6a7bb58ce66518d6888d40b547c366d2262f06676eee19528ff66",
+    "notices": [
+      "licenses/dependencies/commons-codec-1.20.0/LICENSE.txt",
+      "licenses/dependencies/commons-codec-1.20.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-collections4-4.5.0.jar",
+    "sha256": "00f93263c267be201b8ae521b44a7137271b16688435340bf629db1bac0a5845",
+    "notices": [
+      "licenses/dependencies/commons-collections4-4.5.0/LICENSE.txt",
+      "licenses/dependencies/commons-collections4-4.5.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-compress-1.28.0.jar",
+    "sha256": "e1522945218456f3649a39bc4afd70ce4bd466221519dba7d378f2141a4642ca",
+    "notices": [
+      "licenses/dependencies/commons-compress-1.28.0/LICENSE.txt",
+      "licenses/dependencies/commons-compress-1.28.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-io-2.21.0.jar",
+    "sha256": "7d643a2afea8b058b762aa6fb90e5b256f6c729739f8b3784c3370ddc609e88d",
+    "notices": [
+      "licenses/dependencies/commons-io-2.21.0/LICENSE.txt",
+      "licenses/dependencies/commons-io-2.21.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-lang3-3.18.0.jar",
+    "sha256": "4eeeae8d20c078abb64b015ec158add383ac581571cddc45c68f0c9ae0230720",
+    "notices": [
+      "licenses/dependencies/commons-lang3-3.18.0/LICENSE.txt",
+      "licenses/dependencies/commons-lang3-3.18.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-logging-1.4.0.jar",
+    "sha256": "d175dbd751dd782a63bde28c7a039520e971f25e84b79c19b8435edc3603e0dc",
+    "notices": [
+      "licenses/dependencies/commons-logging-1.4.0/LICENSE.txt",
+      "licenses/dependencies/commons-logging-1.4.0/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "commons-math3-3.6.1.jar",
+    "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308",
+    "notices": [
+      "licenses/dependencies/commons-math3-3.6.1/LICENSE.txt",
+      "licenses/dependencies/commons-math3-3.6.1/NOTICE.txt"
+    ]
+  },
+  {
+    "jar": "core-common-2.2.0.jar",
+    "sha256": "65308a06b1c00ee186cb9e19321383f043b993813f1522c47f4a3e3303bdba41",
+    "notices": []
+  },
+  {
+    "jar": "curvesapi-1.08.jar",
+    "sha256": "ad95b08b8bbf9d7d17e5e00814898fa23324f32bc5b62f1a37801e6a56ce0079",
+    "notices": []
+  },
+  {
+    "jar": "desktop-jvm-1.10.1.jar",
+    "sha256": "fdb63de4c9bdc6570c5355eeb0f013d4635effda42907c2d084acc77e08d4f8a",
+    "notices": []
+  },
+  {
+    "jar": "fontbox-3.0.8.jar",
+    "sha256": "a1915c24e3edbe0ecec93896dfbf6d41427810b663ade97bd4e8bae86ec3fdab",
+    "notices": [
+      "licenses/dependencies/fontbox-3.0.8/LICENSE",
+      "licenses/dependencies/fontbox-3.0.8/NOTICE"
+    ]
+  },
+  {
+    "jar": "foundation-desktop-1.10.1.jar",
+    "sha256": "3a9b7bfae72f1a92a8123d3290bb7d7f61d92e5cde877af5373c3e5c2caceb2b",
+    "notices": []
+  },
+  {
+    "jar": "foundation-layout-desktop-1.10.1.jar",
+    "sha256": "bd086a9f5ce453967ea1124bb709612bca14a4fbb6522a6023092a8866ee4ef0",
+    "notices": []
+  },
+  {
+    "jar": "icu4j-76.1.jar",
+    "sha256": "732cdf18121b1642899da1f5e37e52cc7f48e3ec07fa737105d4603976781b33",
+    "notices": []
+  },
+  {
+    "jar": "javafx-base-21.0.8-win.jar",
+    "sha256": "b1aecc348fcd904a9869d661eecda9fb0d4d300724a1344bfe074cbf2ba01b3b",
+    "notices": []
+  },
+  {
+    "jar": "javafx-controls-21.0.8-win.jar",
+    "sha256": "dc1eef3dbdc721c8d42a4084d76c2f48b8b5ba35e5d76fdfce7bb210def621ac",
+    "notices": []
+  },
+  {
+    "jar": "javafx-graphics-21.0.8-win.jar",
+    "sha256": "f32a1bcbeae70cf416b8da7e7c3e6698f18ba09783d7ff77047edf119a044ccd",
+    "notices": []
+  },
+  {
+    "jar": "javafx-media-21.0.8-win.jar",
+    "sha256": "24baa5a5d22c0b6d3fdd0c65b7a632333f5e6a7ecfd69a65052a9b090007ae86",
+    "notices": []
+  },
+  {
+    "jar": "javafx-swing-21.0.8-win.jar",
+    "sha256": "5b93d786a396a51e45347c0eddd0a8da78f5d75fe573fd00826e4fd5de3dcaa6",
+    "notices": []
+  },
+  {
+    "jar": "javafx-web-21.0.8-win.jar",
+    "sha256": "d4a884af22d7c624d1d74e41872d4bde359da49c4112f3fe8629bea4922f9b39",
+    "notices": []
+  },
+  {
+    "jar": "jbr-api-1.5.0.jar",
+    "sha256": "657ede7d7f8e175c909b23caa10fcd4d4a511304fd938aa9cc8457b4378950d5",
+    "notices": []
+  },
+  {
+    "jar": "jna-5.17.0.jar",
+    "sha256": "b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0",
+    "notices": [
+      "licenses/dependencies/jna-5.17.0/LICENSE"
+    ]
+  },
+  {
+    "jar": "jna-platform-5.17.0.jar",
+    "sha256": "b7e3d46c87bad2eb409b0e704916bcd81206168e357312dfddd0e253679cd9e0",
+    "notices": [
+      "licenses/dependencies/jna-platform-5.17.0/LICENSE"
+    ]
+  },
+  {
+    "jar": "json-20240303.jar",
+    "sha256": "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed",
+    "notices": []
+  },
+  {
+    "jar": "jsoup-1.23.2.jar",
+    "sha256": "e9d8c856856680427f096d156f02a414289985c930998fcb519ce5be39b42003",
+    "notices": [
+      "licenses/dependencies/jsoup-1.23.2/LICENSE"
+    ]
+  },
+  {
+    "jar": "jspecify-1.0.0.jar",
+    "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
+    "notices": []
+  },
+  {
+    "jar": "kotlin-stdlib-2.3.20.jar",
+    "sha256": "0ae12504a5040ebaf37703908483420d1a5624dd1d93f357665f8c77c848a01e",
+    "notices": []
+  },
+  {
+    "jar": "kotlin-stdlib-jdk7-2.2.20.jar",
+    "sha256": "3bd26ecb6d12978c5c4e0b41f76c9ff551fac2a5e6268427a9d2a0cdf8a5ad91",
+    "notices": []
+  },
+  {
+    "jar": "kotlin-stdlib-jdk8-2.2.20.jar",
+    "sha256": "c314177935d8dc2eda879507117f25d6de56f6c57ede99416b14cd622bb9e09d",
+    "notices": []
+  },
+  {
+    "jar": "kotlinx-coroutines-core-jvm-1.10.2.jar",
+    "sha256": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd",
+    "notices": []
+  },
+  {
+    "jar": "kotlinx-coroutines-swing-1.10.2.jar",
+    "sha256": "02bdb85f20ec08004429abf6887e8d0e40f3ab637d7462f817f0f8abbe7d1eb5",
+    "notices": []
+  },
+  {
+    "jar": "kotlinx-datetime-jvm-0.7.1.jar",
+    "sha256": "3b8b98657c9aff3be7f6b4b575e9f3fb9a3a1f452a801da0f438901734acdade",
+    "notices": []
+  },
+  {
+    "jar": "kotlinx-serialization-core-jvm-1.7.3.jar",
+    "sha256": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb",
+    "notices": []
+  },
+  {
+    "jar": "lifecycle-common-jvm-2.9.4.jar",
+    "sha256": "37d89b2101f074ac6c260917dabb185607645ee200aa3018c7c5bde70edcf184",
+    "notices": [
+      "licenses/dependencies/lifecycle-common-jvm-2.9.4/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "lifecycle-runtime-compose-desktop-2.9.4.jar",
+    "sha256": "d25c083df93da718a1876a3293bd15f7dc7a811e998735943bce590683a57835",
+    "notices": [
+      "licenses/dependencies/lifecycle-runtime-compose-desktop-2.9.4/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "lifecycle-runtime-compose-desktop-2.9.6.jar",
+    "sha256": "31c3c4b6dea38f078c46829dee2c43abba2bf8757b7ee8a0f660f31217364898",
+    "notices": []
+  },
+  {
+    "jar": "lifecycle-runtime-desktop-2.9.4.jar",
+    "sha256": "2fb49f76d1021792fb359e0a9246c1509f2f5b555f0a46591d24d58deb68bd5c",
+    "notices": [
+      "licenses/dependencies/lifecycle-runtime-desktop-2.9.4/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "lifecycle-viewmodel-desktop-2.9.4.jar",
+    "sha256": "98f816be6869407c87d46058756f97780fa6c6cf61acdba97216f413731af15d",
+    "notices": [
+      "licenses/dependencies/lifecycle-viewmodel-desktop-2.9.4/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "lifecycle-viewmodel-savedstate-desktop-2.9.4.jar",
+    "sha256": "3e0b44e2514eafdd6938d5457d9f46e4785077c45d3b4364b5c23c4dcb93efd3",
+    "notices": [
+      "licenses/dependencies/lifecycle-viewmodel-savedstate-desktop-2.9.4/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "log4j-api-2.24.3.jar",
+    "sha256": "5b4a0a0cd0e751ded431c162442bdbdd53328d1f8bb2bae5fc1bbeee0f66d80f",
+    "notices": [
+      "licenses/dependencies/log4j-api-2.24.3/LICENSE",
+      "licenses/dependencies/log4j-api-2.24.3/NOTICE"
+    ]
+  },
+  {
+    "jar": "material-desktop-1.10.1.jar",
+    "sha256": "ee4afa33a2411e06cf1bec689667767ffb991ff02269e040a4ef64e76e392119",
+    "notices": []
+  },
+  {
+    "jar": "material-ripple-desktop-1.10.1.jar",
+    "sha256": "3257697a1a58188ec3dc31f31867f1c38209900b87df1261ebac9e6a1387db83",
+    "notices": []
+  },
+  {
+    "jar": "material3-desktop-1.9.0.jar",
+    "sha256": "78f0787a1c6d20f9b2460a387f51ecf554e211d3c874b22d66530a540390b811",
+    "notices": []
+  },
+  {
+    "jar": "navigationevent-desktop-1.0.2.jar",
+    "sha256": "43deeb5774fd737fa945e09a47f93b6f1a508d17fac8f3b65f1c863e7f7d0660",
+    "notices": [
+      "licenses/dependencies/navigationevent-desktop-1.0.2/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "okhttp-4.12.0.jar",
+    "sha256": "b1050081b14bb7a3a7e55a4d3ef01b5dcfabc453b4573a4fc019767191d5f4e0",
+    "notices": []
+  },
+  {
+    "jar": "okio-jvm-3.6.0.jar",
+    "sha256": "67543f0736fc422ae927ed0e504b98bc5e269fda0d3500579337cb713da28412",
+    "notices": []
+  },
+  {
+    "jar": "pdfbox-3.0.8.jar",
+    "sha256": "97647cfbde61ebcfc06b4cf8c9b0ffcaaee073396eceb4a7f6836a9b9128903c",
+    "notices": [
+      "licenses/dependencies/pdfbox-3.0.8/LICENSE",
+      "licenses/dependencies/pdfbox-3.0.8/NOTICE"
+    ]
+  },
+  {
+    "jar": "pdfbox-io-3.0.8.jar",
+    "sha256": "36a0e04001010b4c764857817412b96339930b19755e728959805cc0352061b2",
+    "notices": [
+      "licenses/dependencies/pdfbox-io-3.0.8/LICENSE",
+      "licenses/dependencies/pdfbox-io-3.0.8/NOTICE"
+    ]
+  },
+  {
+    "jar": "poi-5.5.1.jar",
+    "sha256": "6c52e876ca75775a11b56e4b36a7541f682827f56406725fcd87560b792ee3d8",
+    "notices": [
+      "licenses/dependencies/poi-5.5.1/LICENSE",
+      "licenses/dependencies/poi-5.5.1/NOTICE"
+    ]
+  },
+  {
+    "jar": "poi-ooxml-5.5.1.jar",
+    "sha256": "bd7be2fdfe3fd2c1684fa813351c2798fd636b44f6236e0674500d4f8ff1c2f9",
+    "notices": [
+      "licenses/dependencies/poi-ooxml-5.5.1/LICENSE",
+      "licenses/dependencies/poi-ooxml-5.5.1/NOTICE"
+    ]
+  },
+  {
+    "jar": "poi-ooxml-lite-5.5.1.jar",
+    "sha256": "e6e37adeb6d6ee8b40ec491ad955d934d8f99827ab050f105b18286e59b1d9e7",
+    "notices": [
+      "licenses/dependencies/poi-ooxml-lite-5.5.1/LICENSE",
+      "licenses/dependencies/poi-ooxml-lite-5.5.1/NOTICE"
+    ]
+  },
+  {
+    "jar": "poi-scratchpad-5.5.1.jar",
+    "sha256": "24c3f407eff517432d5cfd5628b6b8a091f94c1dbb7481384599b5a0fbeedeb9",
+    "notices": [
+      "licenses/dependencies/poi-scratchpad-5.5.1/LICENSE",
+      "licenses/dependencies/poi-scratchpad-5.5.1/NOTICE"
+    ]
+  },
+  {
+    "jar": "runtime-annotation-jvm-1.10.2.jar",
+    "sha256": "f89dda8bcd73876d0fc16568844b2bd79443ee7ca62810874d25c7dcaa394bd6",
+    "notices": [
+      "licenses/dependencies/runtime-annotation-jvm-1.10.2/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "runtime-desktop-1.10.1.jar",
+    "sha256": "05f5570c0a7ea8addd6fe9507a70f293efa7f1450d8b9b16dc3c8fee21cc6127",
+    "notices": []
+  },
+  {
+    "jar": "runtime-desktop-1.10.2.jar",
+    "sha256": "b195860542f612de0512b54a75353e0f6d58815f0c9530a03bc5b0e734474829",
+    "notices": [
+      "licenses/dependencies/runtime-desktop-1.10.2/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "runtime-retain-desktop-1.10.2.jar",
+    "sha256": "463ee9c1e93d1b913458bfecc96d128a3574a802f41c8c9781d7320c3b55ed8b",
+    "notices": [
+      "licenses/dependencies/runtime-retain-desktop-1.10.2/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "runtime-saveable-desktop-1.10.1.jar",
+    "sha256": "eb7132b55de2b0913736fdff4705022803e455810f018efecc9eb3230936520a",
+    "notices": []
+  },
+  {
+    "jar": "runtime-saveable-desktop-1.10.2.jar",
+    "sha256": "ef24e24cc8c9c3b9871007fbdf589ed9aaaecf95979a66b7484806f9f0e24d91",
+    "notices": [
+      "licenses/dependencies/runtime-saveable-desktop-1.10.2/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "savedstate-compose-desktop-1.3.3.jar",
+    "sha256": "4a94787a6e5bcfe143390a4f2737d4425d2ea867f2b34a847de6cda3c6ccc58a",
+    "notices": [
+      "licenses/dependencies/savedstate-compose-desktop-1.3.3/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "savedstate-compose-desktop-1.3.6.jar",
+    "sha256": "0f3d045c5fd7e1301ab6c38cd0778067b0484cf39acac1233be71a723a6a8075",
+    "notices": []
+  },
+  {
+    "jar": "savedstate-desktop-1.3.3.jar",
+    "sha256": "c5c89062ba8402b8f8657efd54db1ff192f91ca95fae59c3b418fbc477c3e3ea",
+    "notices": [
+      "licenses/dependencies/savedstate-desktop-1.3.3/LICENSE.txt"
+    ]
+  },
+  {
+    "jar": "skiko-awt-0.9.37.4.jar",
+    "sha256": "9e859aeb982623fab156ba6671c78255f7f5e1b73334f3de7932440fed6455df",
+    "notices": []
+  },
+  {
+    "jar": "skiko-awt-runtime-windows-x64-0.9.37.4.jar",
+    "sha256": "12cbbc1890773264d99a15a234a35001e61098f9e54a631554f89dc8d84ccd9b",
+    "notices": []
+  },
+  {
+    "jar": "ui-backhandler-desktop-1.10.1.jar",
+    "sha256": "1babf68f5a05cbe1ba8cf934f0e575bb0d0b184444514e6aa7ec1f8004c9ce33",
+    "notices": []
+  },
+  {
+    "jar": "ui-desktop-1.10.1.jar",
+    "sha256": "ec8887c03a333fa374d0b4c46bb9fb700937857f4088eaea4c4cc0ec835f7498",
+    "notices": []
+  },
+  {
+    "jar": "ui-geometry-desktop-1.10.1.jar",
+    "sha256": "cdbfdabccac8abef2d9bc0420ec0c4be7a880f6d26b2d1cc4e2317c0d252ee27",
+    "notices": []
+  },
+  {
+    "jar": "ui-graphics-desktop-1.10.1.jar",
+    "sha256": "d1710a4a15b115fc4c37878b32b10a476a0ec3b8399fa1fb588181dba83dbdd2",
+    "notices": []
+  },
+  {
+    "jar": "ui-text-desktop-1.10.1.jar",
+    "sha256": "fbca4db945be286b84f75c0c9c784218470bebefa831f73f08edfb3294b6c8e8",
+    "notices": []
+  },
+  {
+    "jar": "ui-tooling-preview-desktop-1.10.1.jar",
+    "sha256": "b5fa6fbbeea5f896ad2a8e7703bd7eb574d3a1b5ab6d44dbe0a07536bd6af6c4",
+    "notices": []
+  },
+  {
+    "jar": "ui-unit-desktop-1.10.1.jar",
+    "sha256": "f0f3439928b3d9132f07cb2d7a86091696372ebc8354d16b48830b6ce15e8161",
+    "notices": []
+  },
+  {
+    "jar": "ui-util-desktop-1.10.1.jar",
+    "sha256": "7bfc93a8cad2974cdfd5a2c817e3083e0e3c48ef99e4dbba51eb98a14c92ed2d",
+    "notices": []
+  },
+  {
+    "jar": "xmlbeans-5.3.0.jar",
+    "sha256": "6cc69da3b4d35b83c5e477cd4daba204e44109833e34af2b9a8a2c8788289917",
+    "notices": [
+      "licenses/dependencies/xmlbeans-5.3.0/LICENSE.txt",
+      "licenses/dependencies/xmlbeans-5.3.0/NOTICE.txt"
+    ]
+  }
+]

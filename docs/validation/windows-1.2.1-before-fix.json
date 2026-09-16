@@ -1,0 +1,16 @@
+{
+  "version": "1.2.0",
+  "purpose": "Reproduce the client-generated error shown in the user screenshot. HTTP fixtures are synthetic, not captured gateway responses.",
+  "tests": 10,
+  "failures": 2,
+  "failed_cases": [
+    {
+      "name": "staleTotalsDoNotDiscardSuccessfullyReadConversations",
+      "error": "com.qingyu.hermescompanion.data.ApiException: 服务器返回的会话列表不完整，请稍后重试。"
+    },
+    {
+      "name": "emptyPageEndsTheListEvenWhenTheTotalIncludesOtherSessions",
+      "error": "com.qingyu.hermescompanion.data.ApiException: 服务器返回的会话列表不完整，请稍后重试。"
+    }
+  ]
+}

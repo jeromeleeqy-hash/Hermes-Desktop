@@ -1,0 +1,9 @@
+PASS Mac-Matte 100.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS Mac-Matte 130.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS Mac-Paper 100.0%: full empty-state text, equal 12.0 px edges, control reservation
+PASS Mac-Paper 130.0%: full empty-state text, equal 12.0 px edges, control reservation
+PASS Mac-Glass 100.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS Mac-Glass 130.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS Windows-Matte 100.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS Windows-Matte 130.0%: full empty-state text, equal 8.0 px edges, control reservation
+PASS dropdown: opens, selects canonical concise value, closes and updates label

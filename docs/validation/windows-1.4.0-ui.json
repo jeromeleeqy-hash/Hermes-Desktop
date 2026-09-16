@@ -1,0 +1,230 @@
+{
+  "version": "1.4.0",
+  "recorded_at_utc": "2026-09-12T07:52:58.394467+00:00",
+  "renderer": "Compose ImageComposeScene / Skiko software renderer / Linux",
+  "data": "demo fixtures, not a production gateway",
+  "images": [
+    {
+      "scenario": "chat-dark",
+      "image": "chat-dark.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "3a553897eaf8c10efe0f414cd0c29cc21a1b69336ec4726d468783d4bd77461c"
+    },
+    {
+      "scenario": "chat-glass-wide",
+      "image": "chat-glass-wide.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "a74bca3f11ac5ec92379e61817ee99248fb50aaf21a630644a6ba860355cf2ad"
+    },
+    {
+      "scenario": "chat-glass",
+      "image": "chat-glass.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "4e3aada4d8dc6ea7cef197d88f3abe3c04680d70a69b62c4098bd0864aec5e09"
+    },
+    {
+      "scenario": "chat-large-text",
+      "image": "chat-large-text.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "719d7d3cede83e89283c2cecf546845b6b77d9621ba140b8171bf86eddcb78b6"
+    },
+    {
+      "scenario": "chat-model-error",
+      "image": "chat-model-error.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c9f9dd6701bbc562872e64b6c2ef7c84d7a1a4573221bec047d68f7492b75b04"
+    },
+    {
+      "scenario": "chat-model-picker",
+      "image": "chat-model-picker.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c6e28ed3d8c11414aa47fb0c263d0bedc789e20236523f24132029857f45a109"
+    },
+    {
+      "scenario": "chat-office-wide",
+      "image": "chat-office-wide.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "53910fad525eb20f0d752ad034b67ca5c2f879a68271ee6a31f27787b037630c"
+    },
+    {
+      "scenario": "chat-paper-wide",
+      "image": "chat-paper-wide.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "1629226900c88086caba316b0e2f98dd365812188a6d10477a5aa66e2b07f71d"
+    },
+    {
+      "scenario": "chat-paper",
+      "image": "chat-paper.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "31c2eb0b4e9f5bb88d7208bb63bfc2bcb60c22dda45f049cc23860925594aeb5"
+    },
+    {
+      "scenario": "chat-split",
+      "image": "chat-split.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "097233a985c760c114348c2913181189e92099570bcf9a0667150670fc4d46e9"
+    },
+    {
+      "scenario": "chat-windows",
+      "image": "chat-windows.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "835f15d88062219fabf8f0c8dad0723ed6e1d48d43ee55f02b3e0770867c8c53"
+    },
+    {
+      "scenario": "chat",
+      "image": "chat.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "aa99797166c89039a49705bc60080748e2edbcdc3658e70a0d27ffa005e93df1"
+    },
+    {
+      "scenario": "files-diff",
+      "image": "files-diff.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "25ff4aded83e40b60510f1a5cc6cda0b1366b82c12d0e4584e66c41eb66b7fd7"
+    },
+    {
+      "scenario": "files-wide",
+      "image": "files-wide.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "9494dce52341962e2e6ac887ca83c1f33a248b13b0d5c3e0c515fe4069c52808"
+    },
+    {
+      "scenario": "files",
+      "image": "files.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "43821e8cbd8f80854eb07e86d7e0f477e027eb362ded3b250850e2f839384af6"
+    },
+    {
+      "scenario": "home-error",
+      "image": "home-error.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "be7ae2b3f7e3c0f00d12ee8e3bd2e4755f5d1a973a1f560f88a3810137090d08"
+    },
+    {
+      "scenario": "home-loading",
+      "image": "home-loading.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "80b12162a0e0f0d59bca1c1f516dfa835f6a4e18c08dc8b1d23e24bb6e772473"
+    },
+    {
+      "scenario": "home-wide",
+      "image": "home-wide.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "9c1cf23ce34d5f6ecb1dfdc9cb266303b58a85a1998a7e3b23777f3b7d76d403"
+    },
+    {
+      "scenario": "quick-keyboard",
+      "image": "quick-keyboard.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c7d9172b4ff2659f83385420734f877293f5514e858bb216318d36b8fc51deb1"
+    },
+    {
+      "scenario": "settings-draft",
+      "image": "settings-draft.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8e7ed746e66d1bfe6dbcbff976ac17dc8915675187e767bec2bcabb164505086"
+    },
+    {
+      "scenario": "settings-memory",
+      "image": "settings-memory.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "ce56807a1f565d3dfd69e702037fa57c85dda2743762201513ae35d336f9f9a1"
+    },
+    {
+      "scenario": "settings-model",
+      "image": "settings-model.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "3c4b2503ac0526825b5658ffbcb82fa2906154a998709ebfe9c782c7a8ac7ff1"
+    },
+    {
+      "scenario": "settings-office",
+      "image": "settings-office.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "754db8ad0368e0dfd2a930571fed134d84a2f05ec0f1a0f3d2b01415c0000210"
+    },
+    {
+      "scenario": "settings-retina-glass-scrolled",
+      "image": "settings-retina-glass-scrolled.png",
+      "width": 2320,
+      "height": 1520,
+      "sha256": "ad6033020819bd4a5f183600444a388f6675767487ab67e7cac9e10b4940f00d"
+    },
+    {
+      "scenario": "settings-retina-glass",
+      "image": "settings-retina-glass.png",
+      "width": 2320,
+      "height": 1520,
+      "sha256": "84f0b01584d03cd73f5859e35cec923aa29ef7dea93f259cb7ab2f0f0b86193b"
+    },
+    {
+      "scenario": "settings-skills",
+      "image": "settings-skills.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "6cbd936473a9580b93e457e496e7ebcd6a316646b4e62f31c0f011c5e4320b65"
+    },
+    {
+      "scenario": "settings-tools",
+      "image": "settings-tools.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "f556b10eeb238f7658217dce0c8f40e9035ade419a9237444054774809e968bb"
+    },
+    {
+      "scenario": "settings-voice",
+      "image": "settings-voice.png",
+      "width": 1920,
+      "height": 990,
+      "sha256": "c83537bb559aaff42c6893b26c6cbcd9088460c4a0d9ddf78c2d66d9680fad94"
+    },
+    {
+      "scenario": "tasks-narrow",
+      "image": "tasks-narrow.png",
+      "width": 1160,
+      "height": 760,
+      "sha256": "e4bb18d82515932d03c8a37c884a5267c4a207581b386f8ec8361080c40e1ccb"
+    },
+    {
+      "scenario": "tasks-wide-active",
+      "image": "tasks-wide-active.png",
+      "width": 2048,
+      "height": 1012,
+      "sha256": "102556f6cdc49a7002b56fbbb3f21dc94dab96ca6e16901f15d137811ba7d2fd"
+    }
+  ],
+  "checks": [
+    "Actual model popup opening, row hit area, selection and dismissal",
+    "Restart guard, retry, current model and draft preservation",
+    "59 SVG icons use a 24-unit grid",
+    "Model remains inside composer; workspace in navigation; files follows refresh",
+    "Narrow, 130 percent text scale, dark mode and all three skins",
+    "Two-times-density theme selection and scrolling to profile save",
+    "File pane toggle and drag preserve conversation and document",
+    "Quick switch filtering, arrows, Enter, Escape",
+    "Settings draft survives page navigation"
+  ],
+  "windows_native_execution": false
+}

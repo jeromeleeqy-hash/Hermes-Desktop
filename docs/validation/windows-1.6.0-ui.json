@@ -1,0 +1,62 @@
+{
+  "renderer": "Actual Compose components and PDFBox page render / demo fixtures",
+  "native_windows": false,
+  "screenshots": [
+    {
+      "name": "chat-model-picker-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "5a3b0679405d354430a0b63fd6b1f120d5aed9dcb7cfc3b859849d5b6add6555"
+    },
+    {
+      "name": "files-edit-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "f0d642f886b434720513b8117931090b566da4e72f9bd325db04c5076df83dd2"
+    },
+    {
+      "name": "files-image-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "5adabe0a16ed600baf1c0a529dd60c9f5b7c3a0a0dc7badc43e95f5b29b01650"
+    },
+    {
+      "name": "files-pdf-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "ac7abb6098bac828f26f8247e28ac9da1496704d8ff572b61f5abd38306082fd"
+    },
+    {
+      "name": "files.png",
+      "pixels": [
+        1440,
+        900
+      ],
+      "sha256": "a213f6b3db8f42a1c04bb87f3b2af9f7b4f9074fdc04f40d40447ea9c3dc9fc9"
+    },
+    {
+      "name": "home-scroll-before.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "461e04f316c5f62e129e9e72d4afe72e18bcddc00bd828c52fd935880445bb1c"
+    },
+    {
+      "name": "home-scroll-windows.png",
+      "pixels": [
+        1920,
+        990
+      ],
+      "sha256": "a781d24172a8f3d3a6daa4856858af03f8ff7586f3e353218d34821759af8c60"
+    }
+  ]
+}

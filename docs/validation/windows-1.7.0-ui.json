@@ -1,0 +1,51 @@
+{
+  "renderer": "Actual Compose components, 1280x800 logical viewport, 150% scale, local illustrative fixtures",
+  "native_windows": false,
+  "additional_assertions": [
+    "Provider page rendered configured endpoint even when model catalog has an error",
+    "Configured custom avatar rendered beside user message",
+    "Markdown split mode selected by actual pointer action"
+  ],
+  "screenshots": [
+    {
+      "name": "Markdown-Reading.png",
+      "pixels": [
+        1920,
+        1200
+      ],
+      "sha256": "dbfec653900ba12857a639a0b606f447735f1050622aa0dd01a3f59efc57b326"
+    },
+    {
+      "name": "Markdown-Split.png",
+      "pixels": [
+        1920,
+        1200
+      ],
+      "sha256": "fe1ed637eb27a92dbf4754a5afff225c434823845effcca7bd21c4b8f080e845"
+    },
+    {
+      "name": "Markdown-Details.png",
+      "pixels": [
+        1920,
+        1200
+      ],
+      "sha256": "b0b355036ba1cfef8a0bcb249d5130c20658b463749cbba36302add0ecb3ad42"
+    },
+    {
+      "name": "Provider-Settings.png",
+      "pixels": [
+        1920,
+        1200
+      ],
+      "sha256": "e9b49c1d00cf8b67dc211589bccd21a63e1073ad79689e3980ae3860dcec02c0"
+    },
+    {
+      "name": "Chat-Attachments.png",
+      "pixels": [
+        1920,
+        1200
+      ],
+      "sha256": "1b8b5377112dba2824a2ddb7e0b5c4bda117f6163b8ecdb3f31153f03a9bef54"
+    }
+  ]
+}

@@ -1,35 +1,51 @@
 # Hermes Desktop
 
-Hermes Agent 的桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。
+Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。
 
-当前准备发布：**1.8.3 · UI 修订 3**。安装文件已构建并校验；Release 附件上传尚未完成。
+当前版本：**1.8.4**。安装包和完整源码见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
 
 ## 核心功能
 
 - 会话管理：工作空间与项目、多会话、搜索置顶、会话大纲、引用与运行中追加要求。
 - 工作台：快速交办任务、继续最近会话、查看近期成果。
-- 任务中心：审批与澄清选项、执行进度、完成记录、定时任务。
+- 任务中心：审批与澄清、待处理请求、执行进度、完成记录、定时任务。
 - 文件工作区：附件预览、图片与常见文档预览、Markdown 编辑与本机草稿。
 - 桌面助手：悬浮球、小窗、截图、语音输入、托盘与 Mac 菜单栏入口。
-- AI 配置：模型供应商、默认与备用模型、辅助模型、专家会审、Skills、工具集及 MCP。
+- AI 配置：模型供应商、默认与备用模型、思考强度、专家会审、Skills、工具集及 MCP。
 - 个性化：主题、字号、头像、回复风格、长期记忆和助理设定。
 
-使用需要连接已部署的 Hermes Agent；模型、工具和语音能力取决于服务器配置。
+使用需要连接已部署的 Hermes Agent，模型、工具与语音能力取决于服务器配置。
 
-## UI 修订 3
+## 1.8.4 更新
 
-1. 任务中心说明文字完整显示，适配放大字号和较矮窗口。
-2. 顶部、右侧、底部留白一致。
-3. 回复风格改为下拉选框，兼容服务器自定义风格，并修正保存字段。
+- 整合悬浮球鼠标移入移出闪烁修复。
+- 按服务器能力提供思考强度选择，并显示实际生效的模型状态。
+- 完善待处理请求及取消、过期状态展示。
+- 增加连接健康检查、断线恢复、登录过期恢复；保留草稿与附件，避免自动重复发送任务。
+- 展示 MCP 连接和授权状态，支持服务器提供的授权入口。
+- 改善 HEIC/HEIF/AVIF 预览，支持添加 PNG 副本；解码取决于系统能力。
 
-243 项测试通过，4 项本机平台检查跳过；100% / 130% 字号与三种外观布局检查通过。
+## 下载与构建
 
-## 发布文件
+Windows 优先选择 Setup.exe，另提供 MSI 和便携 ZIP；Mac M 系列使用 DMG。安装包内置 Java，无需另装 JDK。
 
-准备上传到 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)：Windows 安装包、便携包、两端完整源码包、Mac ARM64 BuildKit 和 SHA-256 校验文件。
+本仓库已同步安装包使用的完整源码。开发构建需要 JDK 21：
 
-BuildKit 在 M 系列 Mac 上运行 `Build-Mac-App.command` 可离线生成 app 和 DMG。本仓库的 **Publish desktop source and build macOS ARM64 DMG** 工作流可在附件上传后校验并同步完整源码，再构建原生 DMG。完整源码尚未同步到本仓库目录。
+```sh
+# Windows
+gradlew.bat test -PheadlessTests=true
+gradlew.bat packageExe packageMsi packageWindowsPortable
+# macOS
+bash packaging/prepare-native.sh
+bash gradlew test packageDmg -PheadlessTests=true
+```
 
-尚未完成 Windows 与 macOS 27 真机验收。Mac 构建使用本地签名，不含 Apple Developer ID 公证。
+`-PheadlessTests=true` 用于云端离屏测试；省略该参数可在真实交互桌面运行原生窗口检查。
 
-Android 版：[Hermes-Android](https://github.com/jeromeleeqy-hash/Hermes-Android)
+## 验证
+
+[成功构建记录](https://github.com/jeromeleeqy-hash/Hermes-Desktop/actions/runs/35096879478)：Windows 255 项测试，253 通过、0 失败、2 跳过；Mac 255 项，251 通过、0 失败、4 跳过。
+
+尚未完成用户 Windows/macOS 27 真机安装和真实网关联调。没有 Windows 商业代码签名或 Apple Developer ID 公证，首次安装可能出现系统验证提示。
+
+源码附件与实际构建输入完全一致；其内部构建前的待验证说明保留作为历史记录，最新构建结果以本页、Release 和验证报告为准。

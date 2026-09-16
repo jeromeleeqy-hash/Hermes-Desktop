@@ -1,0 +1,12 @@
+{
+  "version": "1.5.0",
+  "nsis": "3.09",
+  "compiler_warnings": 0,
+  "pe_machine": "0x14c",
+  "archive_integrity": "7-Zip test passed",
+  "portable_payload_files_matched": 438,
+  "setup_bytes": 181536455,
+  "setup_sha256": "2792128787b523270835d113f88bbf6257324ca1b58e284ff4fb44cd2129c294",
+  "portable_sha256": "7df8fabb9223fd01300f6364a933dc7edd68924a455b2a97de21ad88de1bb8d5",
+  "windows_native_execution": false
+}

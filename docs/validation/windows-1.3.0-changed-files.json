@@ -1,0 +1,417 @@
+[
+  {
+    "path": "build.gradle.kts",
+    "change": "modified",
+    "sha256": "1175584eb5f784411051443c736a86ea9680a5e80ac4d65d4b095329cff4dd98"
+  },
+  {
+    "path": "packaging/assemble-source.py",
+    "change": "added",
+    "sha256": "5fca6014525afd2f468c7b1964fcea196c0803f54979408c9c63c51917eed18c"
+  },
+  {
+    "path": "packaging/assemble-windows-from-portable.py",
+    "change": "added",
+    "sha256": "f1695301a713e04b16fe0d0570d71be0b718b7edc4d13ca54adc258bc21d954e"
+  },
+  {
+    "path": "packaging/assemble-windows-portable.py",
+    "change": "modified",
+    "sha256": "5f06c3849c9420fc18b67c25ee2fb257daaf2d0ce98f81bb643d855238f65119"
+  },
+  {
+    "path": "packaging/assemble-windows-update.py",
+    "change": "modified",
+    "sha256": "7bdaa76a82cf3b8ee4124463b8683def71c4926b88621df568510e7ef038d723"
+  },
+  {
+    "path": "packaging/redraw-icons.py",
+    "change": "added",
+    "sha256": "ebf7edaa130be67f641987509dc90d109d9ff77168884bdbc2bff0d8af7d3f56"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/R.kt",
+    "change": "modified",
+    "sha256": "e795e3b403ba2a1a12ce2cd635e5b47dc4708e83dd488f783b24a796e6425412"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/CapabilitiesSettings.kt",
+    "change": "modified",
+    "sha256": "27a38055cd51f2ca6cdb0b6815d9ee96663ebf008eafe6c3bcd43c3818bc65a4"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatAndFiles.kt",
+    "change": "modified",
+    "sha256": "2603e1b170ccb32f09ed24b27d3fd6873c28bed4119743b8b490425945fe8f49"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatComposer.kt",
+    "change": "added",
+    "sha256": "f4b70155f2dcea222ea379453ffa4a8a4525a474825097f0e27ade0f0c7d933a"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatPresentation.kt",
+    "change": "added",
+    "sha256": "81e3f3649f116b4abc92eb7480a1f611dce43de2d1d20fbd0cc6333834e5a5c4"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatThread.kt",
+    "change": "added",
+    "sha256": "54ca5a0753461719d6701aefe6354b066eebd70358f00f7931587370247fdfe4"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopController.kt",
+    "change": "modified",
+    "sha256": "5ce994c5296c34a61c65ab9a11958fc035644553a1022042fb466698fc6d9e9d"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt",
+    "change": "modified",
+    "sha256": "70043598e9227d099f19e8fbb767dca1d86f4933dfddbb654cea1faf203cb384"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDesign.kt",
+    "change": "modified",
+    "sha256": "cc2fa960c00a8b330a8651dca31d53ee0637b0f2837135e0ccdff83cd5254c1e"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopExperience.kt",
+    "change": "modified",
+    "sha256": "5e8f1b471143520bd10a9ea6b6496bdb62b5976c1a47ea1a9d7be521f38b3184"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopLocalization.kt",
+    "change": "modified",
+    "sha256": "c85317ca5557aa22ae633f445c05e314bbe859e3c7336771740175cfa0ed079e"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopNavigation.kt",
+    "change": "modified",
+    "sha256": "19b68bd49fcaeb87c274f080cf523957fb45ac0f6a575ec5182c25f197c001da"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopPanels.kt",
+    "change": "modified",
+    "sha256": "592bbd9a4a411cf1ac8c823f78b3d558c40bfcca11d22bd87d1a225c56e85503"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopTaskBoard.kt",
+    "change": "modified",
+    "sha256": "edf7bfa7ea0b3dc735816e7d28edf96aadadbbebbed3e7bf98bd4f13b5a45ba7"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/ExperienceControls.kt",
+    "change": "modified",
+    "sha256": "ff52194e0a23460d6da17c6af49391b9514f9c5c8b78066826d478969aee28d4"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt",
+    "change": "modified",
+    "sha256": "8a0013548278823c262034e3d7f6b8b622e3b1d27d40676284dab3ec2406c20f"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/SettingsView.kt",
+    "change": "modified",
+    "sha256": "e75ddd9d5bd5130f7bbf2fc80b130c244e06be7662a93d39b002e5e054717fde"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/TasksAndSettings.kt",
+    "change": "modified",
+    "sha256": "e11f5b60a4c63de111829bb7ea302c12a0213a6b0144ad1138c4c6c4d41e7745"
+  },
+  {
+    "path": "src/main/kotlin/com/qingyu/hermescompanion/desktop/WorkspaceState.kt",
+    "change": "modified",
+    "sha256": "23c5c4ce683cb7b63063bc8625fa5ec3d6ab9b2b60b29680c678058f4b341d66"
+  },
+  {
+    "path": "src/main/resources/icons/add.svg",
+    "change": "modified",
+    "sha256": "5cb248057cdbedb528bacd56b02caec3eb3652454d1c079e16279ebfa4505375"
+  },
+  {
+    "path": "src/main/resources/icons/alert.svg",
+    "change": "added",
+    "sha256": "46f12526895c64df6446369230ee78d6f5caf10e3db7d388fa9dbd8fc1813182"
+  },
+  {
+    "path": "src/main/resources/icons/arrow-down.svg",
+    "change": "added",
+    "sha256": "5ebc78c23351ff12d49c04d9c3e4c58bb35a88586e6c1bddf98d2533703aa1e3"
+  },
+  {
+    "path": "src/main/resources/icons/arrow-up.svg",
+    "change": "added",
+    "sha256": "2e6477a968ed650cf9fd1d1676f2449ad79f08e80c3bd7aa009dd96ae2521a3b"
+  },
+  {
+    "path": "src/main/resources/icons/attachment.svg",
+    "change": "added",
+    "sha256": "d4ed6e91da2983af089943ada991e8bf0cc61a623ad5ddf3d461964a86b226a4"
+  },
+  {
+    "path": "src/main/resources/icons/audio.svg",
+    "change": "added",
+    "sha256": "6d380e2d174c40f37542c2f639e5c2940c375de6d14b8917f64708a48c3da86c"
+  },
+  {
+    "path": "src/main/resources/icons/back.svg",
+    "change": "modified",
+    "sha256": "c316e5153e78d985e9600383443e4b62045f51f31479b0dbc1ae1545737a6564"
+  },
+  {
+    "path": "src/main/resources/icons/bookmark.svg",
+    "change": "added",
+    "sha256": "7d6d0fbce2220b8c3654ec3c139b6bf46a74c41f6db15beeb848173f9af6a3be"
+  },
+  {
+    "path": "src/main/resources/icons/calendar.svg",
+    "change": "added",
+    "sha256": "939b36b36d47ecfc98f4fd8380cfba90864a3e13a6ecd643a9ac9d987ede66ad"
+  },
+  {
+    "path": "src/main/resources/icons/check.svg",
+    "change": "modified",
+    "sha256": "717cbbca2f40d3f71ce80ef458da0ea2ec24288522693793bb6e1fdcf384df01"
+  },
+  {
+    "path": "src/main/resources/icons/chevron-down.svg",
+    "change": "added",
+    "sha256": "5f4d176cf20cbad03fb80ab83dce73631734bc910436806e2145076c6ff4dd66"
+  },
+  {
+    "path": "src/main/resources/icons/chevron-right.svg",
+    "change": "added",
+    "sha256": "c781930936c6e6ee1b62f790924a5c7b67555ec3453fba907ca79de70be24ff2"
+  },
+  {
+    "path": "src/main/resources/icons/clock.svg",
+    "change": "modified",
+    "sha256": "e84f5754ff20884c954b210af42b57c46c3a0dacbb98b21bcdfe1b8e1d8f6c6e"
+  },
+  {
+    "path": "src/main/resources/icons/close.svg",
+    "change": "modified",
+    "sha256": "3f27d60c2958275da782236d7fc9a937a9aebab175c78fe8e8edfac55eec2358"
+  },
+  {
+    "path": "src/main/resources/icons/code.svg",
+    "change": "added",
+    "sha256": "34c171bc580094325a9646f8fbfc59b5d43a8e42e14aa953fbf057415e80e9ac"
+  },
+  {
+    "path": "src/main/resources/icons/command.svg",
+    "change": "added",
+    "sha256": "e0368d2649857ee93849373f0ddf067a2cdc7119c525d5fe284f65ae1056d190"
+  },
+  {
+    "path": "src/main/resources/icons/connect.svg",
+    "change": "added",
+    "sha256": "8a12b8f1e62e0716f79c3f795a691fdd5a33e5431bf5730017fa8e7a1f462237"
+  },
+  {
+    "path": "src/main/resources/icons/copy.svg",
+    "change": "added",
+    "sha256": "52545a17dd44a000a4171e43cd7811a601a7d5c7877669dd3005aabb1008aca5"
+  },
+  {
+    "path": "src/main/resources/icons/dashboard.svg",
+    "change": "modified",
+    "sha256": "152de38e17b1ef53ebaeb3eb56449bce3daeea446b1be498f0f5289cb513fe2d"
+  },
+  {
+    "path": "src/main/resources/icons/document.svg",
+    "change": "modified",
+    "sha256": "d4fa33534bb71affe5997f61c788e6ff693db0c3c7ad02fae0879bddec79a811"
+  },
+  {
+    "path": "src/main/resources/icons/files.svg",
+    "change": "modified",
+    "sha256": "637b52d9ab7b40aadbdb300d4c4992341143482dc760da4f83ac19fcaace8842"
+  },
+  {
+    "path": "src/main/resources/icons/focus.svg",
+    "change": "added",
+    "sha256": "b381056b866847a6fa044f9afecf0db4e4b9c1896df2f6bec4e007ec0ce0bb8a"
+  },
+  {
+    "path": "src/main/resources/icons/folder.svg",
+    "change": "modified",
+    "sha256": "b3b44c8b505824e14ac39c19f172cf266d54b73b0f6335f7ec6fe1b6c5d8b1dc"
+  },
+  {
+    "path": "src/main/resources/icons/help.svg",
+    "change": "added",
+    "sha256": "9c5dbb885c62600c8a15b8567e311bc3d8cbc477a7366dad558918fec811c2d3"
+  },
+  {
+    "path": "src/main/resources/icons/history.svg",
+    "change": "modified",
+    "sha256": "e545dafbef22316f64793762d0b7753d69ebab92329299fa955becc2497003a0"
+  },
+  {
+    "path": "src/main/resources/icons/home.svg",
+    "change": "added",
+    "sha256": "1c312c467f7adcf227280510b8f4bf0c3adf424de329dc6ac89f6e22c6266853"
+  },
+  {
+    "path": "src/main/resources/icons/image.svg",
+    "change": "added",
+    "sha256": "6cecf834ebbb75e4ae1b71fe7bbcce99b4d00368d7efee08f898285903b632aa"
+  },
+  {
+    "path": "src/main/resources/icons/inbox.svg",
+    "change": "modified",
+    "sha256": "5c22f793f9f49ff0acf1bba528dd679e44c20d19e55adf01ed244d228d750b80"
+  },
+  {
+    "path": "src/main/resources/icons/memory.svg",
+    "change": "added",
+    "sha256": "d5b8edf2677e2515b92a59f68019c3ecf225ec93cd1ae081cb199da1a443f657"
+  },
+  {
+    "path": "src/main/resources/icons/mic.svg",
+    "change": "added",
+    "sha256": "d39368a8538f877a56ecf727dad04402c2697dc8da1440bb733569ee5a4960a6"
+  },
+  {
+    "path": "src/main/resources/icons/minus.svg",
+    "change": "added",
+    "sha256": "f85a5896fbc05c483d7a02273979ecf231bcb6849aef47e92845f4cd00c3d07c"
+  },
+  {
+    "path": "src/main/resources/icons/model.svg",
+    "change": "added",
+    "sha256": "f20730ba1510f25b114a4596439c9ce3d61a3e0021d319bb0017d08d89fc2df4"
+  },
+  {
+    "path": "src/main/resources/icons/more.svg",
+    "change": "added",
+    "sha256": "1c2f7c00d5e6fc2c99d04c2d1575d0534787f1dc05a51bfa0120d4cbcb58b76e"
+  },
+  {
+    "path": "src/main/resources/icons/notification.svg",
+    "change": "added",
+    "sha256": "581f3dcabfc7ace4343ee1581c349ff9a05c3ce0e515fa3af63b3956598a9b3d"
+  },
+  {
+    "path": "src/main/resources/icons/outline.svg",
+    "change": "added",
+    "sha256": "dbee7fbb1be2d3af9b2e538ec8380cc97dd27e665a0b804d04cb8369153eaced"
+  },
+  {
+    "path": "src/main/resources/icons/palette.svg",
+    "change": "added",
+    "sha256": "541e5b2a17ed6fca1c5332a41581a23a132079eb5041e87141089f44a0fd0ba5"
+  },
+  {
+    "path": "src/main/resources/icons/panel.svg",
+    "change": "modified",
+    "sha256": "e7296cf65d2ba07f1422a2953597da9d3a1ee9441d5e157e634d4f573fbabbcf"
+  },
+  {
+    "path": "src/main/resources/icons/pause.svg",
+    "change": "added",
+    "sha256": "459399cde76ef9c739db51b91aa3774d5b9318851061cda273985b515859ca76"
+  },
+  {
+    "path": "src/main/resources/icons/pin.svg",
+    "change": "added",
+    "sha256": "d8aff9be7d93c011a76a13b04bca8cf620b93930160e29016b52cebc44eccae4"
+  },
+  {
+    "path": "src/main/resources/icons/play.svg",
+    "change": "added",
+    "sha256": "9a5890955f9a100a0f81a8e300f98f59a550e0c03dcf77ca40fa78bdeb00e00a"
+  },
+  {
+    "path": "src/main/resources/icons/profile.svg",
+    "change": "modified",
+    "sha256": "69fab73b393cdd3fbb34edd82999b940bdad6274cae6953a707fe4d6c13059d8"
+  },
+  {
+    "path": "src/main/resources/icons/queue.svg",
+    "change": "added",
+    "sha256": "aa21f6dfa27ba3e7abd737441c0fa0b5f6fb3c05ead51601aa241e7ff4d538a8"
+  },
+  {
+    "path": "src/main/resources/icons/refresh.svg",
+    "change": "modified",
+    "sha256": "8c315b4d9b3df2415e29cb7154a05984c0982979a2dbe5ab4c7d9e5f2c3918b1"
+  },
+  {
+    "path": "src/main/resources/icons/search.svg",
+    "change": "modified",
+    "sha256": "b0667f9829cf1e661438926c3d32b02b0c918402cbfaed2cd2a80fa948a6021d"
+  },
+  {
+    "path": "src/main/resources/icons/send.svg",
+    "change": "modified",
+    "sha256": "424d66561d22d9bd878f306f5d8560c9999980e19ab2202407d900c813715a4a"
+  },
+  {
+    "path": "src/main/resources/icons/settings.svg",
+    "change": "modified",
+    "sha256": "2ff1b041053535e3c4dfbcad93e8b448415cca2b8bfd1866e5327d60a8e6e2ef"
+  },
+  {
+    "path": "src/main/resources/icons/sidebar.svg",
+    "change": "added",
+    "sha256": "84e3e0a36b2cdeeedb7fb32f0d159011278508a144b66ad299abb9373ed494fe"
+  },
+  {
+    "path": "src/main/resources/icons/stop.svg",
+    "change": "added",
+    "sha256": "ea6596d29e5732e6f1707306a25185ffdc5dec2fb55f17e8c4f9841e7be3627a"
+  },
+  {
+    "path": "src/main/resources/icons/table.svg",
+    "change": "added",
+    "sha256": "32fc6d527e70f464a2571dc1310c6791021889578de83093b193084a0ca60227"
+  },
+  {
+    "path": "src/main/resources/icons/tasks.svg",
+    "change": "modified",
+    "sha256": "6b36665b8d4f27b9378c471c939fdec493795dbd73053493347975d84430a306"
+  },
+  {
+    "path": "src/main/resources/icons/tool.svg",
+    "change": "added",
+    "sha256": "9938a7880c7c93c3675ddac978b18f81845b932a5d77910d90b665baa0eae716"
+  },
+  {
+    "path": "src/main/resources/icons/workspace.svg",
+    "change": "added",
+    "sha256": "2930f75d4ac432f6e4a2e9ad970898847e09c94f1b82c81ab9b5b567f9524899"
+  },
+  {
+    "path": "src/main/resources/messages-en.json",
+    "change": "modified",
+    "sha256": "b5b3dd2cb50e7b99603c33f6090f28d78a1acf7d75a31f9ad50f9387c86c00bc"
+  },
+  {
+    "path": "src/test/kotlin/com/qingyu/hermescompanion/data/HermesApiClientTest.kt",
+    "change": "modified",
+    "sha256": "99ea2876625b2d00f982b450311694b4e54a84d8d0238f313be5a5931e0c0a3c"
+  },
+  {
+    "path": "src/test/kotlin/com/qingyu/hermescompanion/desktop/ChatPresentationTest.kt",
+    "change": "added",
+    "sha256": "719f329c33255419d22b4f906b3221f6f8e188b14cc74b92f8a3bfb391ddbe80"
+  },
+  {
+    "path": "src/test/kotlin/com/qingyu/hermescompanion/desktop/ComposerFlowTest.kt",
+    "change": "added",
+    "sha256": "3a16de05c85f65051d07be801f3d825cf6693463f2fd312a04ae12b258308d7e"
+  },
+  {
+    "path": "src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderPreviews.kt",
+    "change": "modified",
+    "sha256": "80999657560f9617c77210ee96fe32b0e3a59492b56d55ffe7fc72f598e090dd"
+  },
+  {
+    "path": "src/test/kotlin/com/qingyu/hermescompanion/desktop/WorkspaceRecoveryTest.kt",
+    "change": "modified",
+    "sha256": "9ce3fdc136176e6b3b64050348cba991f604f74a0a4a6b410e17dab6c731c2a5"
+  }
+]
