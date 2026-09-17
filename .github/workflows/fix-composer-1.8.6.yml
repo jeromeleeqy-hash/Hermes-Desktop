@@ -24,6 +24,9 @@ jobs:
           p=Path('src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderComposer186.kt')
           s=p.read_text()
           p.write_text(s.replace('c.filesPanelOpen=true','c.setFilesPanel(true)'))
+          p=Path('src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt')
+          s=p.read_text()
+          p.write_text(s.replace('Box(Modifier.width(5.dp).fillMaxHeight()\n','Box(Modifier.width(5.dp).fillMaxHeight().background(if(design.glass)colors.surface.copy(alpha=.88f)else colors.surface)\n'))
       - name: Save repair and regression test
         id: commit
         shell: bash
@@ -109,7 +112,7 @@ jobs:
                   for p in folder.rglob('*'):
                       if p.is_file(): z.write(p,p.relative_to('artifacts'))
           (out/'Hermes-1.8.6-SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir())),encoding='utf-8')
-          Path('release-notes.md').write_text('修复主聊天、工作台和悬浮小窗输入框的草稿异步回写问题，避免快速编辑时旧草稿覆盖新输入或干扰光标位置。相同文字同步保留选区和中文输入法组合状态。\n\n移除深色模式文件侧栏拖拽分隔区域的额外色带，保留拖拽调宽能力。继续保留 1.8.5 悬浮球初始化修复，停用会回写旧版源码的历史导入任务。\n\n新增连续退格、中间删除、选区、输入法组合状态、外部插入和会话切换回归检查。两端完整测试和安装包构建结果见附件。\n\nWindows 使用 Setup.exe，Mac M 系列使用 DMG。含 MSI、便携包、完整源码、校验文件和测试报告。用户本机中文输入法实测仍需确认，未使用商业代码签名或 Apple Developer ID 公证。',encoding="utf-8")
+          Path('release-notes.md').write_text('修复主聊天、工作台和悬浮小窗输入框的草稿异步回写问题，避免快速编辑时旧草稿覆盖新输入或干扰光标位置。相同文字同步保留选区和中文输入法组合状态。\n\n统一深色模式文件侧栏拖拽分隔区域与面板的底色，保留拖拽调宽能力。继续保留 1.8.5 悬浮球初始化修复，停用会回写旧版源码的历史导入任务。\n\n新增连续退格、中间删除、选区、输入法组合状态、外部插入和会话切换回归检查。两端完整测试和安装包构建结果见附件。\n\nWindows 使用 Setup.exe，Mac M 系列使用 DMG。含 MSI、便携包、完整源码、校验文件和测试报告。用户本机中文输入法实测仍需确认，未使用商业代码签名或 Apple Developer ID 公证。',encoding="utf-8")
       - name: Create tested repair draft
         env:
           GH_TOKEN: ${{ github.token }}
