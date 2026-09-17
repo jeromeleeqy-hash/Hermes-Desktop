@@ -1,0 +1,50 @@
+name: Diagnose macOS native IME
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/diagnose-ime.yml']
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Fetch official WeType installer for compatibility test
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p build/probe-report
+          curl -fLsS --max-time 120 https://z.weixin.qq.com/web/mac/download -o /tmp/WeType.dmg
+          file /tmp/WeType.dmg
+          hdiutil attach /tmp/WeType.dmg -nobrowse -mountpoint /tmp/wetype-mount
+          find /tmp/wetype-mount -maxdepth 5 -name '*.app' -print
+          find /tmp/wetype-mount -maxdepth 5 -name '*.pkg' -print
+          ls -la /tmp/wetype-mount
+      - name: Write isolated native input probe
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/test/java/com/qingyu/hermescompanion/desktop/ImeCocoa.java');p.parent.mkdir(parents=True,exist_ok=True);p.write_text('package com.qingyu.hermescompanion.desktop;\npublic class ImeCocoa {\n    static {System.load(System.getProperty("user.dir")+"/build/imeprobe.dylib");}\n    public static native String sources(String select);\n    public static native void key(int code, String chars);\n}\n')
+          p=Path('src/test/kotlin/com/qingyu/hermescompanion/desktop/NativeImeProbe.kt');p.parent.mkdir(parents=True,exist_ok=True);p.write_text('@file:OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)\npackage com.qingyu.hermescompanion.desktop\nimport androidx.compose.foundation.layout.*\nimport androidx.compose.foundation.text.BasicTextField\nimport androidx.compose.runtime.*\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.awt.ComposeWindow\nimport androidx.compose.ui.focus.*\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.compose.ui.unit.dp\nimport kotlinx.coroutines.*\nimport kotlinx.coroutines.swing.Swing\nimport javax.swing.*\nimport java.awt.*\nimport java.awt.event.*\nimport java.text.CharacterIterator\nimport kotlin.system.exitProcess\nobject NativeImeProbe {\n @JvmStatic fun main(args:Array<String>) {\n try {runBlocking {\n   val sources=ImeCocoa.sources("");println(sources)\n   val ids=sources.lineSequence().map{it.substringBefore(\' \')}.filter{it=="com.apple.inputmethod.SCIM.ITABC" || it.contains("wetype",true)||it.contains("WeType",true)||it.contains("Tencent",true)}.toList()\n   for(id in ids)for(mode in listOf("swing","compose")) {\n    println("BEGIN $id $mode")\n    var value=TextFieldValue();var win:Window?=null;var area:JTextArea?=null\n    withContext(Dispatchers.Swing){\n     if(mode=="swing") {area=JTextArea().apply{font=Font("Dialog",0,20)};win=JFrame("Hermes native IME probe").apply{add(area);setSize(600,240);setLocation(100,100);isVisible=true;toFront();requestFocus()};area!!.requestFocusInWindow()}\n     else {val focus=FocusRequester();val w=ComposeWindow().apply{setSize(600,240);setLocation(100,100);title="Hermes Compose IME probe"};win=w;w.setContent {var field by remember{mutableStateOf(TextFieldValue())};BasicTextField(field,{field=it;value=it;println("VALUE $it")},Modifier.fillMaxSize().padding(20.dp).preserveMacImeComposition {field}.focusRequester(focus));LaunchedEffect(Unit){focus.requestFocus()}};w.isVisible=true;w.toFront();w.requestFocus();delay(800);focus.requestFocus()}\n    }\n    delay(1000);println(ImeCocoa.sources(id).lineSequence().filter{it.startsWith("CURRENT")||it.startsWith("ENABLE")}.joinToString("\\n"));delay(500)\n    withContext(Dispatchers.Swing){KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner?.addInputMethodListener(object:InputMethodListener{\n      override fun inputMethodTextChanged(e:InputMethodEvent){val text=buildString {val it=e.text;if(it!=null){var c=it.first();while(c!=CharacterIterator.DONE){append(c);c=it.next()}}};println("IME text=$text committed=${e.committedCharacterCount} caret=${e.caret}")}\n      override fun caretPositionChanged(e:InputMethodEvent){println("CARET $e")}\n    })}\n    for((ch,key) in listOf(\'n\' to 45,\'i\' to 34,\'h\' to 4,\'a\' to 0,\'o\' to 31,\'s\' to 1,\'h\' to 4,\'i\' to 34,\'j\' to 38,\'i\' to 34,\'e\' to 14)){ImeCocoa.key(key,ch.toString());delay(160)}\n    delay(500)\n    withContext(Dispatchers.Swing){println("BEFORE ${area?.text?:value}")}\n    repeat(3){ImeCocoa.key(51,"\\b");delay(350);withContext(Dispatchers.Swing){println("AFTER $it ${area?.text?:value}")}}\n    withContext(Dispatchers.Swing){win!!.dispose()};delay(400)\n   }\n }}catch(e:Throwable){e.printStackTrace();exitProcess(1)}\n exitProcess(0)\n }\n}\n')
+          p=Path('probe.m');p.parent.mkdir(parents=True,exist_ok=True);p.write_text('#import <Cocoa/Cocoa.h>\n#import <Carbon/Carbon.h>\n#import <jni.h>\nJNIEXPORT jstring JNICALL Java_com_qingyu_hermescompanion_desktop_ImeCocoa_sources(JNIEnv *env,jclass cls,jstring name) {\n const char *utf=(*env)->GetStringUTFChars(env,name,0);NSString *match=[NSString stringWithUTF8String:utf];(*env)->ReleaseStringUTFChars(env,name,utf);\n __block NSString *result;\n dispatch_sync(dispatch_get_main_queue(),^{\n NSMutableString *out=[NSMutableString string];CFArrayRef arr=TISCreateInputSourceList(NULL,true);\n for(CFIndex i=0;i<CFArrayGetCount(arr);i++) {TISInputSourceRef s=(TISInputSourceRef)CFArrayGetValueAtIndex(arr,i);NSString *sid=(NSString*)TISGetInputSourceProperty(s,kTISPropertyInputSourceID);NSString *label=(NSString*)TISGetInputSourceProperty(s,kTISPropertyLocalizedName);[out appendFormat:@"%@ %@\\n",sid,label];\n if(match.length && [sid isEqualToString:match]) {[out appendFormat:@"ENABLE %d SELECT %d\\n",(int)TISEnableInputSource(s),(int)TISSelectInputSource(s)];}}\n CFRelease(arr);TISInputSourceRef current=TISCopyCurrentKeyboardInputSource();[out appendFormat:@"CURRENT %@\\n",TISGetInputSourceProperty(current,kTISPropertyInputSourceID)];CFRelease(current);result=[out copy];});\n jstring res=(*env)->NewStringUTF(env,[result UTF8String]);[result release];return res;\n}\nJNIEXPORT void JNICALL Java_com_qingyu_hermescompanion_desktop_ImeCocoa_key(JNIEnv *env,jclass cls,jint code,jstring chars) {\n const char *utf=(*env)->GetStringUTFChars(env,chars,0);NSString *str=[NSString stringWithUTF8String:utf];(*env)->ReleaseStringUTFChars(env,chars,utf);\n dispatch_sync(dispatch_get_main_queue(),^{NSWindow *w=[NSApp keyWindow];[NSApp activateIgnoringOtherApps:YES];\n for(NSNumber *type in @[@(NSEventTypeKeyDown),@(NSEventTypeKeyUp)]){NSEvent *e=[NSEvent keyEventWithType:type.integerValue location:NSZeroPoint modifierFlags:0 timestamp:NSProcessInfo.processInfo.systemUptime windowNumber:w.windowNumber context:nil characters:str charactersIgnoringModifiers:str isARepeat:NO keyCode:code];[NSApp postEvent:e atStart:NO];}});\n}\n')
+          p=Path("build.gradle.kts");p.write_text(p.read_text()+'\ntasks.register<JavaExec>("probeIme") {dependsOn(tasks.testClasses);classpath=sourceSets.test.get().runtimeClasspath;mainClass.set("com.qingyu.hermescompanion.desktop.NativeImeProbe")}\n')
+      - name: Drive macOS input protocol
+        shell: bash
+        run: |
+          mkdir -p build
+          clang -dynamiclib -fblocks -I "$JAVA_HOME/include" -I "$JAVA_HOME/include/darwin" probe.m -framework Cocoa -framework Carbon -o build/imeprobe.dylib
+          chmod +x gradlew
+          ./gradlew probeIme --no-daemon --console=plain 2>&1 | tee build/probe-report/events.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Hermes-native-ime-probe
+          path: build/probe-report
