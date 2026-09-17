@@ -231,7 +231,7 @@ fun main(args:Array<String>) {
                 }}
             }
             if(side) {
-                Box(Modifier.width(5.dp).fillMaxHeight()
+                Box(Modifier.width(5.dp).fillMaxHeight().background(if(design.glass)colors.surface.copy(alpha=.88f)else colors.surface)
                     .semantics {testTag="files-divider"}.pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))
                     .pointerInput(panelLimit){detectHorizontalDragGestures(onDragEnd={c.savePreference("panelWidth",c.panelWidth.toString())}) {change,drag->change.consume();c.panelWidth=(c.panelWidth-drag/density).coerceIn(260f,panelLimit)}})
                 Column(Modifier.width(width.dp).fillMaxHeight().desktopPanel()) {
