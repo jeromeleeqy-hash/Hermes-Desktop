@@ -101,7 +101,10 @@ fun main(args:Array<String>) {
                 CheckboxItem(tr("桌面悬浮球"),checked=controller.floatingAssistantEnabled,onCheckedChange={enabled->controller.floatingAssistantEnabled=enabled;controller.savePreference("floatingAssistantEnabled",enabled.toString())})
                 Item(tr("随时问"),onClick={controller.floatingAssistantEnabled=true;controller.savePreference("floatingAssistantEnabled","true");controller.companion.open()})
             }
-            Menu(tr("帮助")) {Item(tr("快捷键"),onClick={controller.settingsSection="帮助";controller.loadSettings()})}
+            Menu(tr("帮助")) {
+                Item(tr("快捷键"),onClick={controller.settingsSection="帮助";controller.loadSettings()})
+                Item(tr("输入法诊断"),onClick={showComposerImeDiagnostics(controller)})
+            }
         }
         LaunchedEffect(controller.unread.size,controller.decisions.size,controller.notificationBadge) {
             DesktopNotifications.updateBadge(if(controller.notificationBadge)controller.unread.size+controller.decisions.size else 0)

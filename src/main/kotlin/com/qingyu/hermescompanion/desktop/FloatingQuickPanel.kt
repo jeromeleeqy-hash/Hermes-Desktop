@@ -109,12 +109,14 @@ import com.qingyu.hermescompanion.model.scopedId
         if(files.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(5.dp),verticalArrangement=Arrangement.spacedBy(4.dp),modifier=Modifier.heightIn(max=100.dp).verticalScroll(rememberScrollState())) {
             files.forEach {file->ComposerAttachment(c,key,file)}
         }
+        ComposerImeSession {
         BasicTextField(field,{field=it;c.setDraft(key,it.text)},Modifier.fillMaxWidth().heightIn(min=58.dp,max=120.dp).focusRequester(focus).preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {
             isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true
             shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{q.send();true}
             shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}
             else->false
         }}.semantics {testTag="quick-input";contentDescription="向助理提问"},textStyle=MaterialTheme.typography.bodyMedium.copy(color=colors.onSurface,lineHeight=23.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(text.isBlank())Text("写下问题…",color=colors.onSurfaceVariant);inner()}})
+        }
         ComposerModelPicker(c,s,Modifier.fillMaxWidth())
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(3.dp)) {
             Hint("添加文件"){DeskIconButton(onClick={c.chooseFiles(key)}){Glyph("attachment",Modifier.size(18.dp))}}

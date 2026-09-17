@@ -117,6 +117,7 @@ import java.time.format.DateTimeFormatter
     var focused by remember{mutableStateOf(false)}
     var fileHover by remember(key){mutableStateOf(false)}
     Column(Modifier.fillMaxWidth().composerFileDrop(c,key){fileHover=it}.background(colors.surface,shape).border(if(focused||fileHover)1.5.dp else 1.dp,if(focused||fileHover)colors.primary.copy(alpha=.7f)else colors.outline,shape).padding(18.dp).semantics {testTag="home-composer"},verticalArrangement=Arrangement.spacedBy(14.dp)) {
+        ComposerImeSession {
         BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.preserveMacImeComposition {field}.onPreviewKeyEvent {e->
             when {
                 isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true
@@ -125,6 +126,7 @@ import java.time.format.DateTimeFormatter
                 else->false
             }
         }.semantics {contentDescription=tr("交办新任务")},textStyle=MaterialTheme.typography.bodyLarge.copy(color=colors.onSurface,fontSize=17.sp,lineHeight=27.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(draft.isEmpty())Text(tr("想把什么事交给 ${c.hermesName}？"),fontSize=17.sp,color=colors.onSurfaceVariant);inner()}})
+        }
         if(fileHover)Text(tr("松开鼠标，添加到新任务"),color=colors.primary,fontSize=13.sp)
         c.attachmentErrors[key]?.let {Text(it,color=colors.error,fontSize=12.sp,maxLines=4)}
         if(attached.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {attached.forEach {a->

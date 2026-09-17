@@ -48,7 +48,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)
             packageName = "Hermes"
-            packageVersion = "1.8.7"
+            packageVersion = "1.8.8"
             vendor = "Jerome"
             description = "Hermes desktop companion"
             includeAllModules = true
@@ -68,7 +68,7 @@ compose.desktop {
                 minimumSystemVersion = "13.0"
                 dockName = "Hermes"
                 infoPlist {
-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>ime-compat-1.8.7</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>ime-compat-1.8.8</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
                 }
             }
         }
@@ -166,5 +166,14 @@ tasks.register<Test>("nativeImeTest") {
     classpath = sourceSets.test.get().runtimeClasspath
     filter { includeTestsMatching("*ComposerNativeImeTest") }
     systemProperty("java.awt.headless", "false")
+    maxHeapSize = "1g"
+}
+
+tasks.register<Test>("systemImeTest") {
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    filter { includeTestsMatching("*ComposerSystemImeTest") }
+    systemProperty("java.awt.headless", "false")
+    systemProperty("hermes.systemImeTest", "true")
     maxHeapSize = "1g"
 }

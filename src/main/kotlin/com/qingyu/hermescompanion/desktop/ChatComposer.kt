@@ -62,6 +62,7 @@ import com.qingyu.hermescompanion.model.*
             if(draft.startsWith("/")&&draft.length<30)c.commands.filter {it.command.contains(draft,true)}.take(4).forEach {command->
                 DeskTextButton(onClick={c.setDraft(key,command.command+" ");focus.requestFocus()}){Text(command.command+"  "+command.description)}
             }
+            ComposerImeSession {
             BasicTextField(field,{field=it;c.composerHasComposition=it.composition!=null;c.setDraft(key,it.text)},
                 modifier=Modifier.fillMaxWidth().heightIn(min=56.dp,max=180.dp).focusRequester(focus).onFocusChanged {focused=it.isFocused}
                     .preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {
@@ -73,6 +74,7 @@ import com.qingyu.hermescompanion.model.*
                     .semantics {contentDescription=tr("消息输入框");testTag="chat-input"}.padding(6.dp),
                 textStyle=MaterialTheme.typography.bodyMedium.copy(color=colors.onSurface,lineHeight=24.sp),cursorBrush=SolidColor(colors.primary),
                 decorationBox={inner->Box {if(draft.isEmpty())Text(tr(if(run!=null)"任务进行中，可以继续补充…"else"写下想法，或添加资料…"),color=colors.onSurfaceVariant);inner()}})
+        }
             BoxWithConstraints {
                 val narrow=maxWidth<610.dp
                 Column(verticalArrangement=Arrangement.spacedBy(5.dp)) {
