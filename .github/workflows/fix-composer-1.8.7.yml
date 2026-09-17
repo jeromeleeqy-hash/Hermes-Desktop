@@ -1,0 +1,144 @@
+name: Fix composer and build Hermes 1.8.7
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-composer-1.8.7.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Apply composer and dark divider repair
+        shell: python
+        run: |
+          import subprocess
+          patch='diff --git a/build.gradle.kts b/build.gradle.kts\nindex 30faea1..a633519 100644\n--- a/build.gradle.kts\n+++ b/build.gradle.kts\n@@ -48,7 +48,7 @@ compose.desktop {\n         nativeDistributions {\n             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)\n             packageName = "Hermes"\n-            packageVersion = "1.8.6"\n+            packageVersion = "1.8.7"\n             vendor = "Jerome"\n             description = "Hermes desktop companion"\n             includeAllModules = true\n@@ -68,7 +68,7 @@ compose.desktop {\n                 minimumSystemVersion = "13.0"\n                 dockName = "Hermes"\n                 infoPlist {\n-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>composer-fix-1.8.6</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"\n+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>ime-compat-1.8.7</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"\n                 }\n             }\n         }\n@@ -160,3 +160,11 @@ tasks.register<JavaExec>("renderComposer186") {\n     systemProperty("java.awt.headless", "true")\n     systemProperty("skiko.renderApi", "SOFTWARE")\n }\n+\n+tasks.register<Test>("nativeImeTest") {\n+    testClassesDirs = sourceSets.test.get().output.classesDirs\n+    classpath = sourceSets.test.get().runtimeClasspath\n+    filter { includeTestsMatching("*ComposerNativeImeTest") }\n+    systemProperty("java.awt.headless", "false")\n+    maxHeapSize = "1g"\n+}\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/R.kt b/src/main/kotlin/com/qingyu/hermescompanion/R.kt\nindex 564e094..6a90300 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/R.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/R.kt\n@@ -104,4 +104,4 @@ const val ui_0183 = 98\n const val ui_0184 = 99\n const val ui_0185 = 100\n } }\n-object BuildConfig { const val VERSION_NAME = "1.8.6" }\n+object BuildConfig { const val VERSION_NAME = "1.8.7" }\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatComposer.kt b/src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatComposer.kt\nindex 8c8b241..4b1ab19 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatComposer.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/desktop/ChatComposer.kt\n@@ -64,7 +64,7 @@ import com.qingyu.hermescompanion.model.*\n             }\n             BasicTextField(field,{field=it;c.composerHasComposition=it.composition!=null;c.setDraft(key,it.text)},\n                 modifier=Modifier.fillMaxWidth().heightIn(min=56.dp,max=180.dp).focusRequester(focus).onFocusChanged {focused=it.isFocused}\n-                    .onPreviewKeyEvent {e->when {\n+                    .preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {\n                         isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true\n                         shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{submit();true}\n                         shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt b/src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt\nnew file mode 100644\nindex 0000000..a5f5a2c\n--- /dev/null\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt\n@@ -0,0 +1,17 @@\n+package com.qingyu.hermescompanion.desktop\n+\n+import androidx.compose.ui.Modifier\n+import androidx.compose.ui.input.key.*\n+import androidx.compose.ui.text.input.TextFieldValue\n+import com.qingyu.hermescompanion.platform.DesktopHost\n+\n+/** Native IME events have already reached AWT before Compose receives these keys.\n+ * Do not let BasicTextField finish composing and delete the marked selection a\n+ * second time when a macOS IME also forwards Backspace to the application.\n+ * The IME remains responsible for editing its preedit string; never edit it here.\n+ */\n+internal fun Modifier.preserveMacImeComposition(value: () -> TextFieldValue): Modifier =\n+    onPreviewKeyEvent { event ->\n+        DesktopHost.isMac && value().composition != null &&\n+            event.key == Key.Backspace && event.type == KeyEventType.KeyDown\n+    }\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt b/src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt\nindex c47edb2..1ebc3a1 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/desktop/DesktopDashboard.kt\n@@ -117,7 +117,7 @@ import java.time.format.DateTimeFormatter\n     var focused by remember{mutableStateOf(false)}\n     var fileHover by remember(key){mutableStateOf(false)}\n     Column(Modifier.fillMaxWidth().composerFileDrop(c,key){fileHover=it}.background(colors.surface,shape).border(if(focused||fileHover)1.5.dp else 1.dp,if(focused||fileHover)colors.primary.copy(alpha=.7f)else colors.outline,shape).padding(18.dp).semantics {testTag="home-composer"},verticalArrangement=Arrangement.spacedBy(14.dp)) {\n-        BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.onPreviewKeyEvent {e->\n+        BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.preserveMacImeComposition {field}.onPreviewKeyEvent {e->\n             when {\n                 isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true\n                 shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{c.startFromHome();true}\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/desktop/FloatingQuickPanel.kt b/src/main/kotlin/com/qingyu/hermescompanion/desktop/FloatingQuickPanel.kt\nindex 0075998..782bf6b 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/desktop/FloatingQuickPanel.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/desktop/FloatingQuickPanel.kt\n@@ -109,7 +109,7 @@ import com.qingyu.hermescompanion.model.scopedId\n         if(files.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(5.dp),verticalArrangement=Arrangement.spacedBy(4.dp),modifier=Modifier.heightIn(max=100.dp).verticalScroll(rememberScrollState())) {\n             files.forEach {file->ComposerAttachment(c,key,file)}\n         }\n-        BasicTextField(field,{field=it;c.setDraft(key,it.text)},Modifier.fillMaxWidth().heightIn(min=58.dp,max=120.dp).focusRequester(focus).onPreviewKeyEvent {e->when {\n+        BasicTextField(field,{field=it;c.setDraft(key,it.text)},Modifier.fillMaxWidth().heightIn(min=58.dp,max=120.dp).focusRequester(focus).preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {\n             isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true\n             shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{q.send();true}\n             shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt b/src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt\nindex f3aef65..fe5a922 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/desktop/Main.kt\n@@ -212,7 +212,8 @@ fun main(args:Array<String>) {\n                 ConversationSidebar(c,Modifier.width(sessionListWidth).fillMaxHeight())\n                 Spacer(Modifier.width(design.gap))\n             }\n-            Column(Modifier.weight(1f).fillMaxHeight().desktopPanel().semantics {testTag="workspace-main-panel"}) {\n+            Row(Modifier.weight(1f).fillMaxHeight().desktopPanel()) {\n+            Column(Modifier.weight(1f).fillMaxHeight().semantics {testTag="workspace-main-panel"}) {\n                 Header(c) {onSearchChange(true)}\n                 HorizontalDivider(color=colors.outline.copy(alpha=.6f))\n                 if(c.documentLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))\n@@ -231,10 +232,12 @@ fun main(args:Array<String>) {\n                 }}\n             }\n             if(side) {\n-                Box(Modifier.width(5.dp).fillMaxHeight().background(if(design.glass)colors.surface.copy(alpha=.88f)else colors.surface)\n+                Box(Modifier.width(5.dp).fillMaxHeight()\n                     .semantics {testTag="files-divider"}.pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))\n-                    .pointerInput(panelLimit){detectHorizontalDragGestures(onDragEnd={c.savePreference("panelWidth",c.panelWidth.toString())}) {change,drag->change.consume();c.panelWidth=(c.panelWidth-drag/density).coerceIn(260f,panelLimit)}})\n-                Column(Modifier.width(width.dp).fillMaxHeight().desktopPanel()) {\n+                    .pointerInput(panelLimit){detectHorizontalDragGestures(onDragEnd={c.savePreference("panelWidth",c.panelWidth.toString())}) {change,drag->change.consume();c.panelWidth=(c.panelWidth-drag/density).coerceIn(260f,panelLimit)}},contentAlignment=Alignment.Center) {\n+                    VerticalDivider(Modifier.fillMaxHeight(),color=colors.outline.copy(alpha=.45f))\n+                }\n+                Column(Modifier.width(width.dp).fillMaxHeight()) {\n                     Row(Modifier.fillMaxWidth().height(50.dp).padding(horizontal=12.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {\n                         DeskTextButton(onClick={c.assistantPanel=false;c.setFilesPanel(true)}){Text(tr("文件"),fontWeight=if(!c.assistantPanel)FontWeight.SemiBold else FontWeight.Normal)}\n                         if(c.page==Page.CHAT)DeskTextButton(onClick={c.assistantPanel=true}){Text(tr("助理"),fontWeight=if(c.assistantPanel)FontWeight.SemiBold else FontWeight.Normal)}\n@@ -246,6 +249,7 @@ fun main(args:Array<String>) {\n                 }\n             }\n         }\n+        }\n         if(c.sessionDrawer) {\n             Box(Modifier.fillMaxSize().padding(start=if(LocalMacWindowDragArea.current!=null)MacWindowChrome.SIDEBAR_WIDTH.dp else 64.dp).background(Color.Black.copy(alpha=.12f)).clickable(interactionSource=remember {androidx.compose.foundation.interaction.MutableInteractionSource()},indication=null){c.sessionDrawer=false})\n             Surface(Modifier.padding(start=if(LocalMacWindowDragArea.current!=null)(MacWindowChrome.SIDEBAR_WIDTH+4).dp else 68.dp,top=52.dp,bottom=12.dp).width(300.dp).fillMaxHeight(),shape=LocalDesktopDesign.current.shape,color=colors.surface,shadowElevation=8.dp,border=BorderStroke(1.dp,colors.outline)) {\ndiff --git a/src/test/kotlin/com/qingyu/hermescompanion/desktop/ComposerNativeImeTest.kt b/src/test/kotlin/com/qingyu/hermescompanion/desktop/ComposerNativeImeTest.kt\nnew file mode 100644\nindex 0000000..dff1cab\n--- /dev/null\n+++ b/src/test/kotlin/com/qingyu/hermescompanion/desktop/ComposerNativeImeTest.kt\n@@ -0,0 +1,78 @@\n+@file:OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class, androidx.compose.ui.InternalComposeUiApi::class)\n+package com.qingyu.hermescompanion.desktop\n+\n+import androidx.compose.foundation.layout.*\n+import androidx.compose.foundation.text.BasicTextField\n+import androidx.compose.runtime.*\n+import androidx.compose.ui.Modifier\n+import androidx.compose.ui.awt.ComposeWindow\n+import androidx.compose.ui.focus.FocusRequester\n+import androidx.compose.ui.focus.focusRequester\n+import androidx.compose.ui.text.TextRange\n+import androidx.compose.ui.text.input.TextFieldValue\n+import androidx.compose.ui.unit.dp\n+import com.qingyu.hermescompanion.platform.DesktopHost\n+import java.awt.GraphicsEnvironment\n+import java.awt.KeyboardFocusManager\n+import java.awt.event.InputMethodEvent\n+import java.awt.event.KeyEvent\n+import java.awt.font.TextHitInfo\n+import java.text.AttributedString\n+import kotlinx.coroutines.*\n+import kotlinx.coroutines.swing.Swing\n+import org.junit.Assert.*\n+import org.junit.Assume.*\n+import org.junit.Test\n+\n+/** Real AWT -> Compose input events. This models an IME forwarding a raw key;\n+ * it does not claim to run WeChat\'s proprietary input method itself. */\n+class ComposerNativeImeTest {\n+    @Test fun awtPreeditUpdatesAndForwardedBackspacePreserveComposition() {\n+        assumeTrue(DesktopHost.isMac)\n+        assumeFalse(GraphicsEnvironment.isHeadless())\n+        runBlocking(Dispatchers.Swing) {\n+            var field by mutableStateOf(TextFieldValue("前文后文",TextRange(2)))\n+            val focus=FocusRequester()\n+            val window=ComposeWindow().apply {setSize(620,240);setLocation(80,80);title="Hermes IME regression"}\n+            try {\n+                window.setContent {\n+                    BasicTextField(field,{field=it},Modifier.fillMaxSize().padding(20.dp)\n+                        .preserveMacImeComposition {field}.focusRequester(focus))\n+                    LaunchedEffect(Unit) {focus.requestFocus()}\n+                }\n+                window.isVisible=true;window.toFront();window.requestFocus()\n+                delay(800);focus.requestFocus();delay(250)\n+                val target=KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner\n+                assertNotNull("Native Compose editor must have focus",target)\n+                fun ime(text:String,committed:Int=0) {\n+                    target.dispatchEvent(InputMethodEvent(target,InputMethodEvent.INPUT_METHOD_TEXT_CHANGED,\n+                        AttributedString(text).iterator,committed,TextHitInfo.leading(text.length-committed),null))\n+                }\n+                fun rawBackspace() {\n+                    target.dispatchEvent(KeyEvent(target,KeyEvent.KEY_PRESSED,System.currentTimeMillis(),0,KeyEvent.VK_BACK_SPACE,\'\\b\'))\n+                    target.dispatchEvent(KeyEvent(target,KeyEvent.KEY_RELEASED,System.currentTimeMillis(),0,KeyEvent.VK_BACK_SPACE,\'\\b\'))\n+                }\n+                ime("nihaoshijie");delay(120)\n+                assertEquals("前文nihaoshijie后文",field.text)\n+                assertNotNull(field.composition)\n+                // Both possible orderings: the forwarded key before/after the IME update.\n+                for (length in 9 downTo 1) {\n+                    val before=field\n+                    rawBackspace();delay(80);assertEquals("Raw key must not cancel preedit",before,field)\n+                    val remaining="nihaoshijie".take(length)\n+                    ime(remaining);delay(80)\n+                    val after=field\n+                    assertEquals("前文${remaining}后文",after.text)\n+                    assertNotNull(after.composition)\n+                    rawBackspace();delay(80);assertEquals(after,field)\n+                }\n+                ime("");delay(120)\n+                assertEquals("前文后文",field.text);assertNull(field.composition)\n+                ime("nihao");delay(100);ime("你好",2);delay(100)\n+                assertEquals("前文你好后文",field.text);assertNull(field.composition)\n+                rawBackspace();delay(100)\n+                assertEquals("前文你后文",field.text)\n+            } finally {window.dispose()}\n+        }\n+    }\n+}\ndiff --git a/src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderComposer186.kt b/src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderComposer186.kt\nindex 14016e1..c4d7718 100644\n--- a/src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderComposer186.kt\n+++ b/src/test/kotlin/com/qingyu/hermescompanion/desktop/RenderComposer186.kt\n@@ -9,12 +9,12 @@ object RenderComposer186 {\n         try {runBlocking(Dispatchers.Swing) {\n             val c=DesktopController(true);c.reduceMotion=true;c.appearance="深色";c.page=Page.CHAT;c.sidebarCollapsed=true;c.setFilesPanel(true)\n             try {\n-                for(skin in listOf("轻盈办公","纸间留白","流光玻璃")) {\n-                    c.skin=skin\n+                for(appearance in listOf("浅色","深色")) for(skin in listOf("轻盈办公","纸间留白","流光玻璃")) {\n+                    c.skin=skin;c.appearance=appearance\n                     val scene=ImageComposeScene(1600,920,coroutineContext=Dispatchers.Swing){HermesTheme(c){DesktopBackdrop{DesktopWorkspace(c)}}}\n                     try {\n                         repeat(8){scene.render(System.nanoTime()).close();delay(25)}\n-                        val out=File("build/reports/visual-1.8.6/$skin.png");out.parentFile.mkdirs()\n+                        val out=File("build/reports/visual-1.8.7/$appearance-$skin.png");out.parentFile.mkdirs()\n                         out.writeBytes(scene.render(System.nanoTime()).use {it.encodeToData()!!.use {data->data.bytes}})\n                     }finally {scene.close()}\n                 }\n'
+          check=subprocess.run(["git","apply","--check","-"],input=patch,text=True,capture_output=True)
+          if check.returncode==0:
+              subprocess.run(["git","apply","-"],input=patch,text=True,check=True)
+          else:
+              subprocess.run(["git","apply","--reverse","--check","-"],input=patch,text=True,check=True)
+      - name: Save repair and regression test
+        id: commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src build.gradle.kts
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix composer draft synchronization and dark mode divider in 1.8.7'
+            git push origin HEAD:main
+          fi
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  desktop:
+    needs: source
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Windows tests and installers
+        if: runner.os == 'Windows'
+        run: .\gradlew.bat test packageExe packageMsi packageWindowsPortable -PheadlessTests=true --no-daemon --console=plain
+      - name: Reproduce forwarded Backspace without compatibility guard
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          chmod +x gradlew
+          guard=src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt
+          cp "$guard" /tmp/ComposerIme.original
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p=Path('src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt')
+          p.write_text(p.read_text().replace('DesktopHost.isMac &&', 'false &&'))
+          PYCODE
+          set +e
+          ./gradlew nativeImeTest --no-daemon --console=plain > /tmp/ime-baseline.log 2>&1
+          baseline_exit=$?
+          set -e
+          cp /tmp/ComposerIme.original "$guard"
+          cat /tmp/ime-baseline.log
+          test "$baseline_exit" -ne 0
+          grep -q 'Raw key must not cancel preedit' build/test-results/nativeImeTest/TEST-*.xml
+          mkdir -p build/reports/ime-baseline
+          cp build/test-results/nativeImeTest/TEST-*.xml build/reports/ime-baseline/
+      - name: macOS ARM64 tests and DMG
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          chmod +x gradlew
+          bash packaging/prepare-native.sh
+          ./gradlew test nativeImeTest renderComposer186 packageDmg -PheadlessTests=true --no-daemon --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Hermes-1.8.7-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            build/windows/*.zip
+            build/compose/binaries/main/exe/*.exe
+            build/compose/binaries/main/msi/*.msi
+            build/compose/binaries/main/dmg/*.dmg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Hermes-1.8.7-tests-${{ runner.os }}
+          path: |
+            build/reports/tests/
+            build/reports/ime-baseline/
+            build/test-results/test/*.xml
+            build/test-results/nativeImeTest/*.xml
+            build/reports/visual-1.8.7/*.png
+  release:
+    needs: [source, desktop]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: Hermes-1.8.7-*
+      - name: Prepare versioned downloads
+        shell: python
+        run: |
+          from pathlib import Path
+          import shutil, hashlib, subprocess, zipfile
+          out=Path('release-files');out.mkdir()
+          patterns={'*.dmg':'Hermes-macOS-arm64-1.8.7.dmg','*.exe':'Hermes-Windows-x64-1.8.7-Setup.exe','*.msi':'Hermes-Windows-x64-1.8.7.msi','Hermes-Windows-x64.zip':'Hermes-Windows-x64-1.8.7-portable.zip'}
+          for pattern,name in patterns.items():
+              matches=list(Path('artifacts').rglob(pattern));assert len(matches)==1,(pattern,matches)
+              shutil.copy2(matches[0],out/name)
+          subprocess.run(['git','archive','--format=zip','--prefix=Hermes-Desktop-1.8.7-source/','-o',str(out/'Hermes-Desktop-1.8.7-source.zip'),'HEAD'],check=True)
+          with zipfile.ZipFile(out/'Hermes-1.8.7-test-reports.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for folder in Path('artifacts').glob('Hermes-1.8.7-tests-*'):
+                  for p in folder.rglob('*'):
+                      if p.is_file(): z.write(p,p.relative_to('artifacts'))
+          (out/'Hermes-1.8.7-SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir())),encoding='utf-8')
+          Path('release-notes.md').write_text('Mac 输入法组合状态下，避免原始退格键再次进入普通文本删除路径。覆盖主聊天、首页、悬浮输入框；微信输入法本机实际兼容性待确认。\n\n统一主面板和文件栏外框圆角，消除拼接缺口；采用细分隔线，保留拖拽调宽能力。继续保留 1.8.5 悬浮球初始化修复，停用会回写旧版源码的历史导入任务。\n\n新增连续退格、中间删除、选区、输入法组合状态、外部插入和会话切换回归检查。两端完整测试和安装包构建结果见附件。\n\nWindows 使用 Setup.exe，Mac M 系列使用 DMG。含 MSI、便携包、完整源码、校验文件和测试报告。用户本机中文输入法实测仍需确认，未使用商业代码签名或 Apple Developer ID 公证。',encoding="utf-8")
+      - name: Create tested repair draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create v1.8.7 release-files/* --draft --target '${{ needs.source.outputs.revision }}' --title 'Hermes Desktop 1.8.7 · 输入法兼容性验证版' --notes-file release-notes.md
