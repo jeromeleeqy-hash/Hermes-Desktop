@@ -109,7 +109,7 @@ import com.qingyu.hermescompanion.model.scopedId
         if(files.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(5.dp),verticalArrangement=Arrangement.spacedBy(4.dp),modifier=Modifier.heightIn(max=100.dp).verticalScroll(rememberScrollState())) {
             files.forEach {file->ComposerAttachment(c,key,file)}
         }
-        BasicTextField(field,{field=it;c.setDraft(key,it.text)},Modifier.fillMaxWidth().heightIn(min=58.dp,max=120.dp).focusRequester(focus).onPreviewKeyEvent {e->when {
+        BasicTextField(field,{field=it;c.setDraft(key,it.text)},Modifier.fillMaxWidth().heightIn(min=58.dp,max=120.dp).focusRequester(focus).preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {
             isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true
             shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{q.send();true}
             shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}

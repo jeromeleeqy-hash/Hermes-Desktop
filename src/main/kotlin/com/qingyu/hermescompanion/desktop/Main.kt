@@ -212,7 +212,8 @@ fun main(args:Array<String>) {
                 ConversationSidebar(c,Modifier.width(sessionListWidth).fillMaxHeight())
                 Spacer(Modifier.width(design.gap))
             }
-            Column(Modifier.weight(1f).fillMaxHeight().desktopPanel().semantics {testTag="workspace-main-panel"}) {
+            Row(Modifier.weight(1f).fillMaxHeight().desktopPanel()) {
+            Column(Modifier.weight(1f).fillMaxHeight().semantics {testTag="workspace-main-panel"}) {
                 Header(c) {onSearchChange(true)}
                 HorizontalDivider(color=colors.outline.copy(alpha=.6f))
                 if(c.documentLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
@@ -231,10 +232,12 @@ fun main(args:Array<String>) {
                 }}
             }
             if(side) {
-                Box(Modifier.width(5.dp).fillMaxHeight().background(if(design.glass)colors.surface.copy(alpha=.88f)else colors.surface)
+                Box(Modifier.width(5.dp).fillMaxHeight()
                     .semantics {testTag="files-divider"}.pointerHoverIcon(PointerIcon(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.E_RESIZE_CURSOR)))
-                    .pointerInput(panelLimit){detectHorizontalDragGestures(onDragEnd={c.savePreference("panelWidth",c.panelWidth.toString())}) {change,drag->change.consume();c.panelWidth=(c.panelWidth-drag/density).coerceIn(260f,panelLimit)}})
-                Column(Modifier.width(width.dp).fillMaxHeight().desktopPanel()) {
+                    .pointerInput(panelLimit){detectHorizontalDragGestures(onDragEnd={c.savePreference("panelWidth",c.panelWidth.toString())}) {change,drag->change.consume();c.panelWidth=(c.panelWidth-drag/density).coerceIn(260f,panelLimit)}},contentAlignment=Alignment.Center) {
+                    VerticalDivider(Modifier.fillMaxHeight(),color=colors.outline.copy(alpha=.45f))
+                }
+                Column(Modifier.width(width.dp).fillMaxHeight()) {
                     Row(Modifier.fillMaxWidth().height(50.dp).padding(horizontal=12.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {
                         DeskTextButton(onClick={c.assistantPanel=false;c.setFilesPanel(true)}){Text(tr("文件"),fontWeight=if(!c.assistantPanel)FontWeight.SemiBold else FontWeight.Normal)}
                         if(c.page==Page.CHAT)DeskTextButton(onClick={c.assistantPanel=true}){Text(tr("助理"),fontWeight=if(c.assistantPanel)FontWeight.SemiBold else FontWeight.Normal)}
@@ -245,6 +248,7 @@ fun main(args:Array<String>) {
                     if(c.assistantPanel&&c.page==Page.CHAT)AssistantPanel(c,Modifier.weight(1f))else FileBrowserPanel(c,Modifier.weight(1f))
                 }
             }
+        }
         }
         if(c.sessionDrawer) {
             Box(Modifier.fillMaxSize().padding(start=if(LocalMacWindowDragArea.current!=null)MacWindowChrome.SIDEBAR_WIDTH.dp else 64.dp).background(Color.Black.copy(alpha=.12f)).clickable(interactionSource=remember {androidx.compose.foundation.interaction.MutableInteractionSource()},indication=null){c.sessionDrawer=false})

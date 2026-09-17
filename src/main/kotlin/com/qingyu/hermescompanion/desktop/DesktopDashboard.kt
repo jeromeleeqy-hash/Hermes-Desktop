@@ -117,7 +117,7 @@ import java.time.format.DateTimeFormatter
     var focused by remember{mutableStateOf(false)}
     var fileHover by remember(key){mutableStateOf(false)}
     Column(Modifier.fillMaxWidth().composerFileDrop(c,key){fileHover=it}.background(colors.surface,shape).border(if(focused||fileHover)1.5.dp else 1.dp,if(focused||fileHover)colors.primary.copy(alpha=.7f)else colors.outline,shape).padding(18.dp).semantics {testTag="home-composer"},verticalArrangement=Arrangement.spacedBy(14.dp)) {
-        BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.onPreviewKeyEvent {e->
+        BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.preserveMacImeComposition {field}.onPreviewKeyEvent {e->
             when {
                 isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true
                 shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{c.startFromHome();true}

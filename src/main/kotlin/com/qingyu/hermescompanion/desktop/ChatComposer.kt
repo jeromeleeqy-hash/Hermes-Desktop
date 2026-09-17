@@ -64,7 +64,7 @@ import com.qingyu.hermescompanion.model.*
             }
             BasicTextField(field,{field=it;c.composerHasComposition=it.composition!=null;c.setDraft(key,it.text)},
                 modifier=Modifier.fillMaxWidth().heightIn(min=56.dp,max=180.dp).focusRequester(focus).onFocusChanged {focused=it.isFocused}
-                    .onPreviewKeyEvent {e->when {
+                    .preserveMacImeComposition {field}.onPreviewKeyEvent {e->when {
                         isFilePaste(e)&&field.composition==null&&c.pasteFiles(key)->true
                         shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{submit();true}
                         shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}

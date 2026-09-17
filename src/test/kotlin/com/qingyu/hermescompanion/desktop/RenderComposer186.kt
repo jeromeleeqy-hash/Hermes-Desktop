@@ -9,12 +9,12 @@ object RenderComposer186 {
         try {runBlocking(Dispatchers.Swing) {
             val c=DesktopController(true);c.reduceMotion=true;c.appearance="深色";c.page=Page.CHAT;c.sidebarCollapsed=true;c.setFilesPanel(true)
             try {
-                for(skin in listOf("轻盈办公","纸间留白","流光玻璃")) {
-                    c.skin=skin
+                for(appearance in listOf("浅色","深色")) for(skin in listOf("轻盈办公","纸间留白","流光玻璃")) {
+                    c.skin=skin;c.appearance=appearance
                     val scene=ImageComposeScene(1600,920,coroutineContext=Dispatchers.Swing){HermesTheme(c){DesktopBackdrop{DesktopWorkspace(c)}}}
                     try {
                         repeat(8){scene.render(System.nanoTime()).close();delay(25)}
-                        val out=File("build/reports/visual-1.8.6/$skin.png");out.parentFile.mkdirs()
+                        val out=File("build/reports/visual-1.8.7/$appearance-$skin.png");out.parentFile.mkdirs()
                         out.writeBytes(scene.render(System.nanoTime()).use {it.encodeToData()!!.use {data->data.bytes}})
                     }finally {scene.close()}
                 }
