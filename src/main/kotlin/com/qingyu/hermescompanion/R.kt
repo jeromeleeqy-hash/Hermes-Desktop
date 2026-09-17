@@ -104,4 +104,4 @@ const val ui_0183 = 98
 const val ui_0184 = 99
 const val ui_0185 = 100
 } }
-object BuildConfig { const val VERSION_NAME = "1.8.4" }
+object BuildConfig { const val VERSION_NAME = "1.8.6" }

@@ -99,9 +99,8 @@ import com.qingyu.hermescompanion.model.scopedId
 @Composable private fun QuickComposer(c:DesktopController) {
     val q=c.companion;val s=q.session?:return;val key=s.scopedId;val colors=MaterialTheme.colorScheme
     val text=c.drafts[key].orEmpty();val files=c.attachments[key].orEmpty();val preparing=(c.attachmentLoads[key]?:0)>0
-    var field by remember(key){mutableStateOf(TextFieldValue(text,TextRange(text.length)))}
+    var field by rememberComposerValue(key,text)
     var hover by remember {mutableStateOf(false)};val focus=remember {FocusRequester()}
-    LaunchedEffect(text){if(field.text!=text)field=TextFieldValue(text,TextRange(text.length))}
     LaunchedEffect(key,q.panelOpen){if(q.panelOpen)focus.requestFocus()}
     Column(Modifier.fillMaxWidth().padding(12.dp).composerFileDrop(c,key){hover=it}.background(colors.surfaceVariant.copy(alpha=.45f),RoundedCornerShape(12.dp))
         .border(1.dp,if(hover)colors.primary else colors.outline,RoundedCornerShape(12.dp)).padding(10.dp),verticalArrangement=Arrangement.spacedBy(7.dp)) {

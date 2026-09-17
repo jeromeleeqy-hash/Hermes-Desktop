@@ -113,10 +113,9 @@ import java.time.format.DateTimeFormatter
     val key=c.homeDraftKey();val draft=c.drafts[key].orEmpty();val attached=c.attachments[key].orEmpty()
     val loading=(c.attachmentLoads[key]?:0)>0
     val colors=MaterialTheme.colorScheme;val shape=LocalDesktopDesign.current.composerShape
-    var field by remember(key){mutableStateOf(TextFieldValue(draft,TextRange(draft.length)))}
+    var field by rememberComposerValue(key,draft)
     var focused by remember{mutableStateOf(false)}
     var fileHover by remember(key){mutableStateOf(false)}
-    LaunchedEffect(draft){if(field.text!=draft)field=TextFieldValue(draft,TextRange(draft.length))}
     Column(Modifier.fillMaxWidth().composerFileDrop(c,key){fileHover=it}.background(colors.surface,shape).border(if(focused||fileHover)1.5.dp else 1.dp,if(focused||fileHover)colors.primary.copy(alpha=.7f)else colors.outline,shape).padding(18.dp).semantics {testTag="home-composer"},verticalArrangement=Arrangement.spacedBy(14.dp)) {
         BasicTextField(field,{field=it;c.setDraft(key,it.text)},modifier=Modifier.fillMaxWidth().heightIn(min=66.dp,max=180.dp).onFocusChanged {focused=it.isFocused}.onPreviewKeyEvent {e->
             when {

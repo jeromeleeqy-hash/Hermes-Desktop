@@ -103,7 +103,7 @@ internal class DesktopFloatingHost(private val c:DesktopController):AutoCloseabl
     }
     override fun close(){if(disposed)return;disposed=true;contextMenu?.close();macContextMenu?.close();captureJob?.cancel();selection?.close();selection=null;bubble.stop();ball.dispose();quick?.dispose();quick=null;c.companion.capture=null}
 
-    private inner class BallPanel:JPanel() {
+    private inner class BallPanel:FloatingBallSurface() {
         private val gesture=FloatingGestures((Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval") as? Int?:300).toLong().coerceIn(180,500))
         private var hover=false
         private var dropping=false
@@ -117,8 +117,6 @@ internal class DesktopFloatingHost(private val c:DesktopController):AutoCloseabl
         private val timer=Timer(16){tick()}
         init {
             isOpaque=false
-            // A native tooltip can cover this unowned window and synthesize exit/enter events.
-            accessibleContext.accessibleDescription="单击提问 · 双击截图 · 按住说话，松开发送 · 拖动移动"
             val listener=object:MouseAdapter() {
                 override fun mouseEntered(e:MouseEvent){updateHover(pointerInside()?:true)}
                 override fun mouseExited(e:MouseEvent){updateHover(pointerInside()?:false)}

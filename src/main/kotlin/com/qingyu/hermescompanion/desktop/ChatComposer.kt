@@ -26,12 +26,11 @@ import com.qingyu.hermescompanion.model.*
     val key=s.scopedId;val draft=c.drafts[key].orEmpty();val attached=c.attachments[key].orEmpty()
     val run=c.runs[key];val preparing=(c.attachmentLoads[key]?:0)>0
     val switching=c.modelSwitching[key]==true;val steering=c.steering[key]==true
-    var field by remember(key){mutableStateOf(TextFieldValue(draft,TextRange(draft.length)))}
+    var field by rememberComposerValue(key,draft)
     var focused by remember(key){mutableStateOf(false)}
     var fileHover by remember(key){mutableStateOf(false)}
     var more by remember {mutableStateOf(false)}
     val focus=remember(key){FocusRequester()}
-    LaunchedEffect(draft){if(field.text!=draft)field=TextFieldValue(draft,TextRange(draft.length))}
     DisposableEffect(key){onDispose {c.composerHasComposition=false}}
     fun submit(){c.submitDraft()}
     Column(Modifier.fillMaxWidth().padding(horizontal=20.dp,vertical=12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
