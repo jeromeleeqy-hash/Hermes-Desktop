@@ -1,13 +1,12 @@
 name: Sync verified Hermes 1.8.4 source
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/sync-source-1.8.4.yml'
 permissions:
   contents: write
 jobs:
   sync:
+    # One-time import completed. Archived to prevent overwriting newer releases.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
