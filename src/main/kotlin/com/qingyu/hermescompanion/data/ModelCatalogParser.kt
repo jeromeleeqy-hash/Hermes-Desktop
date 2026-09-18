@@ -38,8 +38,17 @@ internal fun parseModelCatalog(root:JSONObject):ModelCatalog {
                     for(j in 0 until models.length()) {
                         val value=models.opt(j)
                         val id=when(value){is String->value.trim();is JSONObject->text(value,"id","model");else->null}?:continue
-                        val info=(value as? JSONObject)?:metadata?.optJSONObject(id)?:capabilities?.optJSONObject(id)?:continue
-                        advertisedReasoningOptions(info)?.let {put(id,it)}
+                        val modelInfo=value as? JSONObject
+                        val capabilityInfo=capabilities?.optJSONObject(id)
+                        val metadataInfo=metadata?.optJSONObject(id)
+                        // Current Hermes Agent responses may include both model_metadata and a
+                        // separate capabilities map. Prefer an explicit capability result, but
+                        // fall back when a metadata entry carries the older array contract.
+                        sequenceOf(modelInfo,capabilityInfo,metadataInfo)
+                            .filterNotNull()
+                            .map {advertisedReasoningOptions(it)}
+                            .firstOrNull {it!=null}
+                            ?.let {put(id,it!!)}
                     }
                 }
                 if(ids.isNotEmpty())add(ModelProvider(slug,text(provider,"name")?:slug,ids,options))

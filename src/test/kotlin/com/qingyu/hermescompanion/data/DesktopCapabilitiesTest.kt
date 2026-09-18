@@ -33,6 +33,15 @@ class DesktopCapabilitiesTest {
         assertEquals(listOf("minimal","low","medium","high","xhigh","max","ultra"),
             result.providers.single().reasoningOptions["model"])
     }
+    @Test fun capabilitiesWinWhenMetadataIsPresentWithoutReasoning() {
+        val result=parseModelCatalog(JSONObject("""{
+            "providers":[{"slug":"openrouter","models":["model"],
+            "model_metadata":{"model":{"context_length":128000}},
+            "capabilities":{"model":{"reasoning":true,"can_disable_reasoning":true}}}]
+        }"""))
+        assertEquals(listOf("none","minimal","low","medium","high","xhigh","max","ultra"),
+            result.providers.single().reasoningOptions["model"])
+    }
     @Test fun authorizationLinksRejectExecutableSchemesAndCredentials() {
         listOf("file:///etc/passwd","javascript:alert(1)","https://user:secret@example.com/","http://example.com/login","https://example.com/\n").forEach {assertNull(safeActionUrl(it))}
         assertEquals("https://example.com/auth?state=1",safeActionUrl("https://example.com/auth?state=1"))
