@@ -1,0 +1,147 @@
+name: Fix model reasoning capability display and build Hermes 1.8.9
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-composer-1.8.9.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Apply model reasoning capability compatibility repair
+        shell: python
+        run: |
+          import subprocess
+          patch='diff --git a/build.gradle.kts b/build.gradle.kts\nindex 4218005..185ccfe 100644\n--- a/build.gradle.kts\n+++ b/build.gradle.kts\n@@ -48,7 +48,7 @@ compose.desktop {\n         nativeDistributions {\n             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)\n             packageName = "Hermes"\n-            packageVersion = "1.8.8"\n+            packageVersion = "1.8.9"\n             vendor = "Jerome"\n             description = "Hermes desktop companion"\n             includeAllModules = true\n@@ -68,7 +68,7 @@ compose.desktop {\n                 minimumSystemVersion = "13.0"\n                 dockName = "Hermes"\n                 infoPlist {\n-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>ime-compat-1.8.8</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"\n+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>reasoning-capabilities-1.8.9</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"\n                 }\n             }\n         }\ndiff --git a/docs/RELEASE-1.8.9.md b/docs/RELEASE-1.8.9.md\nnew file mode 100644\nindex 0000000..ddc384a\n--- /dev/null\n+++ b/docs/RELEASE-1.8.9.md\n@@ -0,0 +1,7 @@\n+# Hermes Desktop 1.8.9\n+\n+修复聊天输入区的思考深度菜单误报“服务器尚未提供该模型的档位”。\n+\n+Hermes Agent Dashboard 使用 `capabilities.reasoning` 与 `can_disable_reasoning` 描述模型能力，而桌面端此前只识别 `reasoning_efforts` 数组，导致同一模型在 Dashboard 能看到思考档位、聊天输入区却显示空菜单。1.8.9 同时兼容两种协议：服务器明确支持思考时显示标准档位；明确不支持或强制思考时，分别隐藏全部档位或隐藏“关闭”。\n+\n+本版本保留 1.8.8 的输入法原子更新修复、分隔线修复和悬浮球修复。\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/R.kt b/src/main/kotlin/com/qingyu/hermescompanion/R.kt\nindex d9a97ae..7482734 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/R.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/R.kt\n@@ -104,4 +104,4 @@ const val ui_0183 = 98\n const val ui_0184 = 99\n const val ui_0185 = 100\n } }\n-object BuildConfig { const val VERSION_NAME = "1.8.8" }\n+object BuildConfig { const val VERSION_NAME = "1.8.9" }\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilities.kt b/src/main/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilities.kt\nindex 0542a2b..3d5fc5f 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilities.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilities.kt\n@@ -9,11 +9,28 @@ internal fun advertisedReasoningOptions(info:JSONObject):List<String>? {\n     val caps=info.optJSONObject("capabilities")?:info\n     if((caps.has("supports_reasoning")&&!caps.optBoolean("supports_reasoning"))||\n         (caps.opt("reasoning") is Boolean&&!caps.optBoolean("reasoning")))return emptyList()\n-    val options=caps.optJSONArray("reasoning_efforts")?:info.optJSONArray("reasoning_efforts")?:return null\n-    val values=(0 until options.length()).mapNotNull {i->\n-        (options.opt(i) as? String)?.lowercase()?.trim()?.takeIf {it in setOf("none","minimal","low","medium","high","xhigh","max","ultra","default")}\n-    }.distinct()\n-    return if(caps.has("thinking_off")&&!caps.optBoolean("thinking_off"))values.filterNot {it=="none"}else values\n+    // Hermes Agent\'s dashboard contract advertises a boolean `reasoning`\n+    // capability (and optionally `can_disable_reasoning`), while older\n+    // gateways expose an explicit `reasoning_efforts`/`supported_efforts`\n+    // array. Accept both shapes.\n+    val reasoningObject=caps.optJSONObject("reasoning")\n+    val options=caps.optJSONArray("reasoning_efforts")\n+        ?:caps.optJSONArray("supported_efforts")\n+        ?:reasoningObject?.optJSONArray("supported_efforts")\n+        ?:reasoningObject?.optJSONArray("efforts")\n+        ?:info.optJSONArray("reasoning_efforts")\n+    if(reasoningObject?.has("supported") == true && !reasoningObject.optBoolean("supported"))return emptyList()\n+    val supportsReasoning=caps.opt("supports_reasoning") is Boolean ||\n+        caps.opt("reasoning") is Boolean || (reasoningObject!=null && reasoningObject.optBoolean("supported",true))\n+    val values=(options?.let {array -> (0 until array.length()).mapNotNull {i->\n+        (array.opt(i) as? String)?.lowercase()?.trim()?.takeIf {it in setOf("none","minimal","low","medium","high","xhigh","max","ultra","default")}\n+    }} ?: if(supportsReasoning) {\n+        listOf("none","minimal","low","medium","high","xhigh","max","ultra")\n+    } else return null).distinct()\n+    return if((caps.has("thinking_off")&&!caps.optBoolean("thinking_off"))||\n+        (caps.has("can_disable_reasoning")&&!caps.optBoolean("can_disable_reasoning"))||\n+        (caps.has("mandatory")&&caps.optBoolean("mandatory"))||\n+        (reasoningObject?.optBoolean("mandatory",false)==true)) values.filterNot {it=="none"} else values\n }\n \n /** Only server-advertised web destinations; no file:, scripts, userinfo, or control characters. */\ndiff --git a/src/main/kotlin/com/qingyu/hermescompanion/data/ModelCatalogParser.kt b/src/main/kotlin/com/qingyu/hermescompanion/data/ModelCatalogParser.kt\nindex 6c46393..2c2ea15 100644\n--- a/src/main/kotlin/com/qingyu/hermescompanion/data/ModelCatalogParser.kt\n+++ b/src/main/kotlin/com/qingyu/hermescompanion/data/ModelCatalogParser.kt\n@@ -34,10 +34,11 @@ internal fun parseModelCatalog(root:JSONObject):ModelCatalog {\n                 }.distinct()\n                 val options=buildMap<String,List<String>> {\n                     val metadata=provider.optJSONObject("model_metadata")\n+                    val capabilities=provider.optJSONObject("capabilities")\n                     for(j in 0 until models.length()) {\n                         val value=models.opt(j)\n                         val id=when(value){is String->value.trim();is JSONObject->text(value,"id","model");else->null}?:continue\n-                        val info=(value as? JSONObject)?:metadata?.optJSONObject(id)?:continue\n+                        val info=(value as? JSONObject)?:metadata?.optJSONObject(id)?:capabilities?.optJSONObject(id)?:continue\n                         advertisedReasoningOptions(info)?.let {put(id,it)}\n                     }\n                 }\ndiff --git a/src/test/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilitiesTest.kt b/src/test/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilitiesTest.kt\nindex 13919d4..0629839 100644\n--- a/src/test/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilitiesTest.kt\n+++ b/src/test/kotlin/com/qingyu/hermescompanion/data/DesktopCapabilitiesTest.kt\n@@ -17,6 +17,22 @@ class DesktopCapabilitiesTest {\n         assertEquals(listOf("low"),result.providers[0].reasoningOptions["same"])\n         assertEquals(listOf("high"),result.providers[1].reasoningOptions["same"])\n     }\n+    @Test fun dashboardCapabilityMapAdvertisesStandardReasoningLevels() {\n+        val result=parseModelCatalog(JSONObject("""{\n+            "providers":[{"slug":"openrouter","models":["deepseek/deepseek-v4-pro"],\n+            "capabilities":{"deepseek/deepseek-v4-pro":{"reasoning":true,"can_disable_reasoning":true}}}]\n+        }"""))\n+        assertEquals(listOf("none","minimal","low","medium","high","xhigh","max","ultra"),\n+            result.providers.single().reasoningOptions["deepseek/deepseek-v4-pro"])\n+    }\n+    @Test fun mandatoryDashboardReasoningOmitsOffButKeepsLevels() {\n+        val result=parseModelCatalog(JSONObject("""{\n+            "providers":[{"slug":"openrouter","models":["model"],\n+            "capabilities":{"model":{"reasoning":true,"can_disable_reasoning":false}}}]\n+        }"""))\n+        assertEquals(listOf("minimal","low","medium","high","xhigh","max","ultra"),\n+            result.providers.single().reasoningOptions["model"])\n+    }\n     @Test fun authorizationLinksRejectExecutableSchemesAndCredentials() {\n         listOf("file:///etc/passwd","javascript:alert(1)","https://user:secret@example.com/","http://example.com/login","https://example.com/\\n").forEach {assertNull(safeActionUrl(it))}\n         assertEquals("https://example.com/auth?state=1",safeActionUrl("https://example.com/auth?state=1"))\n'
+          check=subprocess.run(["git","apply","--check","-"],input=patch,text=True,capture_output=True)
+          if check.returncode==0:
+              subprocess.run(["git","apply","-"],input=patch,text=True,check=True)
+          else:
+              subprocess.run(["git","apply","--reverse","--check","-"],input=patch,text=True,check=True)
+      - name: Save repair and regression test
+        id: commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src build.gradle.kts docs/validation/ime-1.8.8.md docs/RELEASE-1.8.9.md
+          if ! git diff --cached --quiet; then
+            git commit -m 'Display server reasoning capabilities in the desktop composer in 1.8.9'
+            git push origin HEAD:main
+          fi
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  desktop:
+    needs: source
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Windows tests and installers
+        if: runner.os == 'Windows'
+        run: .\gradlew.bat test packageExe packageMsi packageWindowsPortable -PheadlessTests=true --no-daemon --console=plain
+      - name: Prove preedit clearing regression against previous event handling
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          chmod +x gradlew
+          guard=src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt
+          cp "$guard" /tmp/ComposerIme.original
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p=Path('src/main/kotlin/com/qingyu/hermescompanion/desktop/ComposerIme.kt')
+          p.write_text(p.read_text().replace('if (DesktopHost.isMac) InterceptPlatformTextInput', 'if (false) InterceptPlatformTextInput'))
+          PYCODE
+          set +e
+          ./gradlew nativeImeTest --no-daemon --console=plain > /tmp/ime-baseline.log 2>&1
+          baseline_exit=$?
+          set -e
+          cp /tmp/ComposerIme.original "$guard"
+          cat /tmp/ime-baseline.log
+          test "$baseline_exit" -ne 0
+          grep -q 'Atomic IME update must not publish an empty intermediate draft' build/test-results/nativeImeTest/TEST-*.xml
+          mkdir -p build/reports/ime-baseline
+          cp build/test-results/nativeImeTest/TEST-*.xml build/reports/ime-baseline/
+      - name: macOS ARM64 tests and DMG
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          chmod +x gradlew
+          bash packaging/prepare-native.sh
+          mkdir -p build
+          clang -dynamiclib -fblocks -I "$JAVA_HOME/include" -I "$JAVA_HOME/include/darwin" src/test/native/ImeCocoa.m -framework Cocoa -framework Carbon -o build/imeprobe.dylib
+          ./gradlew test nativeImeTest systemImeTest packageDmg -PheadlessTests=true --no-daemon --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Hermes-1.8.9-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            build/windows/*.zip
+            build/compose/binaries/main/exe/*.exe
+            build/compose/binaries/main/msi/*.msi
+            build/compose/binaries/main/dmg/*.dmg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Hermes-1.8.9-tests-${{ runner.os }}
+          path: |
+            build/reports/tests/
+            build/reports/ime-baseline/
+            build/test-results/test/*.xml
+            build/test-results/nativeImeTest/*.xml
+            build/test-results/systemImeTest/*.xml
+            docs/RELEASE-1.8.9.md
+  release:
+    needs: [source, desktop]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: Hermes-1.8.9-*
+      - name: Prepare versioned downloads
+        shell: python
+        run: |
+          from pathlib import Path
+          import shutil, hashlib, subprocess, zipfile
+          out=Path('release-files');out.mkdir()
+          patterns={'*.dmg':'Hermes-macOS-arm64-1.8.9.dmg','*.exe':'Hermes-Windows-x64-1.8.9-Setup.exe','*.msi':'Hermes-Windows-x64-1.8.9.msi','Hermes-Windows-x64.zip':'Hermes-Windows-x64-1.8.9-portable.zip'}
+          for pattern,name in patterns.items():
+              matches=list(Path('artifacts').rglob(pattern));assert len(matches)==1,(pattern,matches)
+              shutil.copy2(matches[0],out/name)
+          subprocess.run(['git','archive','--format=zip','--prefix=Hermes-Desktop-1.8.9-source/','-o',str(out/'Hermes-Desktop-1.8.9-source.zip'),'HEAD'],check=True)
+          with zipfile.ZipFile(out/'Hermes-1.8.9-test-reports.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for folder in Path('artifacts').glob('Hermes-1.8.9-tests-*'):
+                  for p in folder.rglob('*'):
+                      if p.is_file(): z.write(p,p.relative_to('artifacts'))
+          (out/'Hermes-1.8.9-SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir())),encoding='utf-8')
+          Path('release-notes.md').write_text('模型思考深度显示修复：兼容 Hermes Agent Dashboard 使用的 capabilities.reasoning/can_disable_reasoning 能力格式，以及旧版 reasoning_efforts/supported_efforts 数组格式。聊天输入区现在与 Dashboard 显示一致；明确不支持或强制思考的模型仍会正确隐藏对应选项。\\n\\n保留 1.8.8 的输入法原子更新、深色模式分隔线和悬浮球修复。包含 Mac ARM64 DMG、Windows x64 安装包、源码及测试报告。',encoding='utf-8')
+      - name: Create tested repair draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create v1.8.9 release-files/* --draft --target '${{ needs.source.outputs.revision }}' --title 'Hermes Desktop 1.8.9 · 输入法原子更新修复' --notes-file release-notes.md
