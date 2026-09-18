@@ -29,6 +29,7 @@ data class DesktopRun(
 @OptIn(FlowPreview::class)
 class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=SecureConfigStore(), private val autoConnect:Boolean=true, voiceAudio:DesktopAudio=DesktopAudio()) {
     internal val scope=CoroutineScope(SupervisorJob()+Dispatchers.Swing+CoroutineExceptionHandler { _,e -> error=e.message ?: "操作失败，内容已保留。" })
+    val desktopUpdates by lazy { DesktopUpdates(this) }
     internal var epoch=0
     private var config: ConnectionConfig? = null
     private var jar: SecureCookieJar? = null

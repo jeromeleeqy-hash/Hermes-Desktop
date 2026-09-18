@@ -163,6 +163,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
 }
 
 @Composable private fun HelpSettings(c:DesktopController) {
+    DesktopUpdateSettings(c)
     SettingCard("Hermes ${DesktopHost.os.label} ${BuildConfig.VERSION_NAME}","对话、任务和文件，在一个工作空间里继续。") {
         listOf("新对话" to "Ctrl N","快速查找" to "Ctrl K","命令面板" to "Ctrl P","展开或收起导航" to "Ctrl B","专注模式" to "Ctrl Shift F","保存文档" to "Ctrl S","发送消息" to if(c.sendOnEnter)"Enter"else"Ctrl+Enter","打开设置" to "Ctrl ,").forEach {(label,keys)->SettingLine(label){Text(keys.replace("Ctrl",shortcutKey()),fontFamily=FontFamily.Monospace,fontSize=13.sp)}}
     }

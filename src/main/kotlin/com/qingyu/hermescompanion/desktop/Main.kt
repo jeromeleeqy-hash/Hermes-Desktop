@@ -57,7 +57,9 @@ fun main(args:Array<String>) {
     var restoreWindow by remember {mutableStateOf<()->Unit>({mainVisible=true;state.isMinimized=false})}
     var floatingHost by remember {mutableStateOf<DesktopFloatingHost?>(null)}
     var macHooks by remember {mutableStateOf<MacApplicationHooks?>(null)}
-    val exitNow={if(controller.close()){floatingHost?.close();DesktopNotifications.close();FxRuntime.shutdown();exitApplication()}else restoreWindow();Unit}
+    val exitNow={if(controller.close()){controller.desktopUpdates.confirmExit();floatingHost?.close();DesktopNotifications.close();FxRuntime.shutdown();exitApplication()}else restoreWindow();Unit}
+    LaunchedEffect(Unit) { controller.desktopUpdates.monitor() }
+    SideEffect { controller.desktopUpdates.installAction={controller.desktopUpdates.prepareInstall(exitNow)} }
     val quitApplication={controller.flushEditor?.invoke(exitNow)?:exitNow();Unit}
     val hideWindow={
         if(controller.flushCheckpoint()) {
@@ -103,6 +105,7 @@ fun main(args:Array<String>) {
             }
             Menu(tr("帮助")) {
                 Item(tr("快捷键"),onClick={controller.settingsSection="帮助";controller.loadSettings()})
+                Item(tr("检查软件更新"),onClick={controller.desktopUpdates.check()})
                 Item(tr("输入法诊断"),onClick={showComposerImeDiagnostics(controller)})
             }
         }
@@ -140,6 +143,7 @@ fun main(args:Array<String>) {
         }
         if(frameless)RememberWindowCorners(window,state)
         HermesTheme(controller) {
+            DesktopUpdateDialog(controller)
             val toggleMaximize={WindowsWindowFrame.refreshWorkArea(window);state.placement=if(state.placement==WindowPlacement.Maximized)WindowPlacement.Floating else WindowPlacement.Maximized}
             val controls=if(frameless)DesktopWindowControls(state.placement==WindowPlacement.Maximized,
                 minimize={state.isMinimized=true},toggleMaximize=toggleMaximize,close=closeWindow,
