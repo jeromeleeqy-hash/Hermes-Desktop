@@ -34,10 +34,11 @@ internal fun parseModelCatalog(root:JSONObject):ModelCatalog {
                 }.distinct()
                 val options=buildMap<String,List<String>> {
                     val metadata=provider.optJSONObject("model_metadata")
+                    val capabilities=provider.optJSONObject("capabilities")
                     for(j in 0 until models.length()) {
                         val value=models.opt(j)
                         val id=when(value){is String->value.trim();is JSONObject->text(value,"id","model");else->null}?:continue
-                        val info=(value as? JSONObject)?:metadata?.optJSONObject(id)?:continue
+                        val info=(value as? JSONObject)?:metadata?.optJSONObject(id)?:capabilities?.optJSONObject(id)?:continue
                         advertisedReasoningOptions(info)?.let {put(id,it)}
                     }
                 }
