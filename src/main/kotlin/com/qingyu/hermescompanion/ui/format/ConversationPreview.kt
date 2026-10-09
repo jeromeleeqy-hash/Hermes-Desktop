@@ -9,8 +9,11 @@ import java.time.ZoneId
 
 /** Presentation only: do not rewrite the source message or ordinary HTML comments. */
 fun conversationPreview(raw: String): String {
-    val marker = Regex("<!--\\s*hermes-mobile-context-v1:").find(raw)
-    val visible = if (marker == null) raw else raw.substring(0, marker.range.first)
+    // Gateway previews can be truncated before the closing envelope. Redact that
+    // preview suffix, while the full chat body uses the strict length-checked parser.
+    val full = visibleAppMessage(raw)
+    val marker = Regex("<!--\\s*hermes-mobile-context-v1:").find(full)
+    val visible = if(marker==null)full else full.substring(0,marker.range.first)
     return visible.replace(Regex("@file:(?:/[^\\s]+)")) { match ->
         val file = match.value.substringAfterLast('/').ifBlank { uiText(R.string.ui_0051, "附件") }
         uiText(R.string.ui_0474, "附件 · %1\$s", file)
