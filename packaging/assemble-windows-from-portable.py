@@ -9,7 +9,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from windows_runtime import validate_runtime_image, validate_runtime_bytes
 
-VERSION = "2.0.3"
+VERSION = "2.0.4"
 
 def digest(value):
     return hashlib.sha256(value).hexdigest()
@@ -89,7 +89,7 @@ def main():
                     out.write(project / "packaging" / name, destination + name)
                 out.write(project / "docs/PORTABLE-README.txt", destination + "开始使用.txt")
                 out.write(project / "THIRD_PARTY_NOTICES.md", destination + "THIRD_PARTY_NOTICES.md")
-                for name in ("CHANGELOG.md", "WINDOWS-QUICKSTART.md", "WINDOWS-VALIDATION.md", "RELEASE-2.0.3.md", "STARTUP-FIX-1.8.0.md"):
+                for name in ("CHANGELOG.md", "WINDOWS-QUICKSTART.md", "WINDOWS-VALIDATION.md", "RELEASE-2.0.4.md", "STARTUP-FIX-1.8.0.md"):
                     out.write(project / "docs" / name, destination + "docs/" + name)
                 for file in sorted((project / "docs/previews/windows-1.8.0").glob("*.png")):
                     out.write(file, destination + "docs/previews/windows-1.8.0/" + file.name)
@@ -97,7 +97,7 @@ def main():
                     out.write(file, destination + "docs/validation/" + file.name)
                 manifest.update({
                     "version": VERSION,
-                    "build": "2.0.3",
+                    "build": "2.0.4",
                     "launcher": "Hermes.exe",
                     "launcher_sha256": digest(launcher.read_bytes()),
                     "runtime_reused_from": None if args.runtime else args.base.name,
@@ -108,7 +108,7 @@ def main():
                     "dependency_changes": dependency_changes,
                     "runtime_base_archive_sha256": args.base_sha256,
                     "jars": [{"name": p.name, "bytes": p.stat().st_size, "sha256": digest(p.read_bytes())} for p in jars],
-                    "validation": "Targeted JVM, HTTP and desktop state tests. Windows native execution not performed. See docs/ACCEPTANCE-2.0.3.md."
+                    "validation": "Targeted JVM, HTTP and desktop state tests. Windows native execution not performed. See docs/ACCEPTANCE-2.0.4.md."
                 })
                 if args.runtime:
                     origin = manifest['runtime_build']
