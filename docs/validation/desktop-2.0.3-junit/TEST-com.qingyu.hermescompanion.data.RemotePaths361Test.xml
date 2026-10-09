@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.RemotePaths361Test" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-09T06:45:32.471Z" hostname="69622ecc2839" time="0.632">
+  <properties/>
+  <testcase name="acceptsPosixDriveRootsUnicodeAndUncWithoutGuessingRelativePaths" classname="com.qingyu.hermescompanion.data.RemotePaths361Test" time="0.0"/>
+  <testcase name="windowsFileLinksAndRelativeImagesUseServerPathSyntax" classname="com.qingyu.hermescompanion.data.RemotePaths361Test" time="0.001"/>
+  <testcase name="windowsCwdSurvivesJsonRpcHttpBrowsingAndProfileRouting" classname="com.qingyu.hermescompanion.data.RemotePaths361Test" time="0.629"/>
+  <testcase name="projectContainmentKeepsVolumeAndSegmentBoundaries" classname="com.qingyu.hermescompanion.data.RemotePaths361Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
