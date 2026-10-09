@@ -8,11 +8,15 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.*
 import com.qingyu.hermescompanion.BuildConfig
 import com.qingyu.hermescompanion.model.*
@@ -26,11 +30,18 @@ import com.qingyu.hermescompanion.model.*
     val zone=c.settings?.conversation?.timezone?.takeIf {it.isNotBlank()}?.let {runCatching {ZoneId.of(it)}.getOrNull()}
     DesktopPage(scrollable=false,tag="tasks-content") {
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(12.dp)) {
-            SegmentTabs(listOf("执行中心","定时任务","执行记录"),c.taskTab){c.taskTab=it}
+            SegmentTabs(listOf("执行中心","定时任务","执行记录","首页任务"),c.taskTab){c.taskTab=it}
             Spacer(Modifier.weight(1f))
             if(c.taskTab=="定时任务")SmallButton("新建定时任务",{creating=true},true)
         }
         when(c.taskTab) {
+            "首页任务"->{
+                val tasks=c.sessions.filter {c.today.isBackground(it)}
+                SubtleText("首页整理、卡片操作与规则配置的处理记录",maxLines=2)
+                if(tasks.isEmpty())PanelEmpty("tasks","暂无首页任务","整理或处理首页事项后，记录会出现在这里。")
+                else LazyColumn(Modifier.weight(1f)){items(tasks,key={it.scopedId}){s->SessionRow(s,{c.openSession(s)}){SubtleText(if(s.scopedId in c.runs)"处理中"else friendlyTime(s.updatedAt))}}}
+            }
+
             "执行中心"->TaskBoard(c,{selected=it},Modifier.weight(1f))
             "执行记录"->{
                 SubtleText("服务器返回的定时任务会话 · 打开可查看实际回复与生成文件",maxLines=2)
@@ -78,7 +89,7 @@ import com.qingyu.hermescompanion.model.*
         }
     }
     selected?.let {id->c.decisions[id]?.let {decision->
-        HermesDialog(onDismissRequest={selected=null},title={Text(tr(when(decision.request.type){AgentRequestType.APPROVAL->"审批详情";AgentRequestType.CLARIFICATION->"澄清详情";else->"处理详情"}))},text={DecisionPanel(c,decision,Modifier.width(552.dp).height(if(decision.request.type==AgentRequestType.APPROVAL)280.dp else 340.dp))},confirmButton={DeskTextButton(onClick={selected=null}){Text(tr("返回任务"))}})
+        DecisionDialog(c,decision){selected=null}
     }}
     details?.let {job->HermesDialog(onDismissRequest={details=null},title={Text(job.name)},text={Column(Modifier.width(520.dp).heightIn(max=420.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         StatusPill(taskStatusLabel(job.lastStatus.ifBlank {job.state}));Text(scheduleLabel(job.schedule.expression),fontWeight=FontWeight.SemiBold)
@@ -90,17 +101,38 @@ import com.qingyu.hermescompanion.model.*
     deleteCron?.let {job->ConfirmDialog("删除定时任务？",job.name,{deleteCron=null}){val p=c.profile;c.request(p,{it.deleteCronJob(job.id)}){if(c.profile==p)c.cronJobs=c.cronJobs.filterNot {it.id==job.id};c.notice="定时任务已删除"};deleteCron=null}}
 }
 
-@Composable internal fun DecisionPanel(c:DesktopController,value:PendingDecision,modifier:Modifier) {
+@Composable internal fun DecisionDialog(c:DesktopController,value:PendingDecision,inlinePreview:Boolean=false,onDismiss:()->Unit) {
+    HermesDialog(onDismissRequest=onDismiss,inlinePreview=inlinePreview,showFooter=false,maxWidth=760.dp,
+        title={Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)){
+            Glyph(if(value.request.type==AgentRequestType.APPROVAL)"code"else"inbox",Modifier.size(21.dp),MaterialTheme.colorScheme.primary)
+            Text(when(value.request.type){AgentRequestType.APPROVAL->"确认这一步操作";AgentRequestType.CLARIFICATION->"需要你补充一下";else->"处理授权请求"})
+        }},text={DecisionPanel(c,value,Modifier.fillMaxWidth().height(500.dp),onDismiss)},confirmButton={})
+}
+
+@Composable internal fun DecisionPanel(c:DesktopController,value:PendingDecision,modifier:Modifier,onDismiss:(()->Unit)?=null) {
     val live=c.decisions.values.firstOrNull {it.session.scopedId==value.session.scopedId&&it.request.requestId==value.request.requestId}
     if(live==null){Text("此请求已处理或已过期。");return}
-    val r=live.request;var dismiss by remember {mutableStateOf(false)}
+    val r=live.request;val colors=MaterialTheme.colorScheme;var dismiss by remember {mutableStateOf(false)}
     var answer by remember(r.requestId){mutableStateOf("")}
     val answers=remember(r.requestId){mutableStateMapOf<String,String>().apply {r.questions.forEach {q->q.lockedAnswer?.let {put(q.id,it)}}}}
     Column(modifier,verticalArrangement=Arrangement.spacedBy(12.dp)) {
-        Text(r.title,fontSize=19.sp,fontWeight=FontWeight.SemiBold)
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)) {
-            if(r.detail.isNotBlank())Text(r.detail)
-            Caption("来自：${value.session.title}")
+        val scroll=rememberScrollState()
+        Box(Modifier.weight(1f).fillMaxWidth().semantics {testTag="decision-scroll"}) {
+        Column(Modifier.fillMaxSize().verticalScroll(scroll).padding(end=12.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
+            SubtleText("来自对话 · ${value.session.title}",maxLines=2)
+            if(r.type==AgentRequestType.APPROVAL) {
+                Column(Modifier.fillMaxWidth().background(colors.surfaceVariant.copy(alpha=.5f),RoundedCornerShape(10.dp)).border(1.dp,colors.outline.copy(alpha=.45f),RoundedCornerShape(10.dp)).padding(14.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
+                    Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
+                        Text("请求内容",Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant)
+                        DeskTextButton(onClick={DesktopFiles.copy(r.title);c.notice="命令已复制"}){Glyph("copy",Modifier.size(14.dp));Spacer(Modifier.width(5.dp));Text("复制",fontSize=12.sp)}
+                    }
+                    SelectionContainer {Text(r.title,fontSize=12.sp,lineHeight=20.sp,fontFamily=FontFamily.Monospace)}
+                }
+            }else SelectionContainer {Text(r.title,fontSize=16.sp,lineHeight=25.sp,fontWeight=FontWeight.Medium)}
+            if(r.detail.isNotBlank())Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                Text("操作说明",fontSize=12.sp,fontWeight=FontWeight.Medium,color=colors.onSurfaceVariant)
+                SelectionContainer {Markdown(r.detail){url->runCatching {DesktopFiles.openLink(url)}.onFailure {c.error=it.message}}}
+            }
             if(r.type==AgentRequestType.CLARIFICATION) {
                 if(r.questions.isEmpty())ClarificationAnswer(r.requestId,r.choices,r.allowMultiple,!r.isResponding){answer=it}
                 else r.questions.forEachIndexed {index,q->
@@ -111,24 +143,27 @@ import com.qingyu.hermescompanion.model.*
             }
             DeskTextButton(onClick={c.openSession(value.session)}){Text(tr("查看来源对话 →"))}
             DeskTextButton(onClick={dismiss=true},enabled=!r.isResponding){Text(tr("移出待处理列表"))}
+            if(r.type==AgentRequestType.ACTION_REQUIRED)Caption("服务器需要处理：${r.method}。请通过授权页面处理，完成后检查结果。")
         }
-        HorizontalDivider(color=MaterialTheme.colorScheme.outline)
+        if(scroll.maxValue>0)VerticalScrollbar(rememberScrollbarAdapter(scroll),Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(6.dp))
+        }
+        HorizontalDivider(color=colors.outline.copy(alpha=.5f))
+        FlowRow(Modifier.fillMaxWidth().semantics {testTag="decision-actions"},horizontalArrangement=Arrangement.spacedBy(8.dp,Alignment.End),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+        if(onDismiss!=null)DeskTextButton(onClick=onDismiss){Text("稍后处理")}
         if(r.type==AgentRequestType.ACTION_REQUIRED) {
-            Caption("服务器需要处理：${r.method}。当前终端不能直接填写此类请求；不会自动批准或发送凭据。")
-            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                 r.actionUrl?.let {url->SmallButton("打开授权页面",{runCatching {DesktopFiles.openLink(url)}.onFailure {c.error=it.message}})}
                 SmallButton("检查处理结果",{c.refreshDecision(value)})
                 if(r.serverRpcId!=null)SmallButton("拒绝此请求",{c.respond(live,"unsupported")},enabled=!r.isResponding)
-            }
         }else if(r.type==AgentRequestType.APPROVAL) {
             val choices=r.choices.ifEmpty { listOf(AgentRequestChoice("拒绝","deny"),AgentRequestChoice("允许一次","once")) }
-            FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){choices.forEach {choice->
+            choices.sortedBy {if(it.value in listOf("once","allow_once","allow"))1 else 0}.forEach {choice->
                 SmallButton(when(choice.label){"once"->"允许一次";"session"->"本会话允许";"always"->"始终允许";"deny"->"拒绝";else->choice.label},
                     {c.respond(live,choice.value)},primary=choice.value in listOf("once","allow_once","allow"),enabled=!r.isResponding)
-            }}
+            }
         }else {
             val allAnswered=if(r.questions.isEmpty())answer.isNotBlank() else r.questions.all {q->q.lockedAnswer!=null||!answers[q.id].isNullOrBlank()}
             SmallButton(if(r.isResponding)"正在提交…"else"提交回答",{c.respond(live,answer,answers.toMap()+r.questions.mapNotNull {q->q.lockedAnswer?.let {q.id to it}})},true,!r.isResponding&&allAnswered)
+        }
         }
     }
     if(dismiss)ConfirmDialog("移出待处理列表？","此操作只移除本机记录，不会替你回答或停止服务器任务。",{dismiss=false}){c.decisions.entries.firstOrNull {it.value==value}?.let {c.dismissDecision(it.key)};dismiss=false}

@@ -33,7 +33,7 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
         Spacer(Modifier.height(5.dp))
         NavigationItem("search","搜索",false,expanded,shortcut=shortcutKey()+" K",onClick=onSearch)
         Spacer(Modifier.height(9.dp))
-        NavigationItem("history","会话",c.page in listOf(Page.CHAT,Page.SESSIONS),expanded,badge=c.unread.size){c.navigate(if(c.currentSession!=null)Page.CHAT else Page.SESSIONS)}
+        NavigationItem("history","会话",c.page in listOf(Page.CHAT,Page.SESSIONS),expanded,badge=c.conversationUnread.size){c.currentSession?.let {c.openSession(it)}?:c.navigate(Page.SESSIONS)}
         NavigationItem("dashboard","工作台",c.page==Page.HOME,expanded){c.navigate(Page.HOME)}
         NavigationItem("tasks","任务中心",c.page==Page.TASKS,expanded,badge=c.decisions.values.count {it.profile==c.profile}){c.navigate(Page.TASKS)}
         Spacer(Modifier.height(14.dp))
@@ -86,8 +86,8 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
 /** A small continuation shelf remains useful when the full conversation column isn't visible. */
 @Composable private fun RecentSessionShortcuts(c:DesktopController,expanded:Boolean,modifier:Modifier) {
     val colors=MaterialTheme.colorScheme
-    val recent=c.sessions.filter {it.profile==c.profile&&(c.project==null||it.workspacePath==c.project?.primaryPath)}
-        .sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)}).take(4)
+    val recent=c.sessions.filter {!c.today.isBackground(it)&&it.profile==c.profile&&(c.project==null||it.workspacePath==c.project?.primaryPath)}
+        .sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)}).take(8)
     var open by remember(c.profile,c.project?.id,expanded){mutableStateOf(false)}
     if(expanded)Column(modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(top=12.dp)) {
         if(recent.isNotEmpty()) {
@@ -139,7 +139,7 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
             }
         }
         Spacer(Modifier.height(8.dp))
-        val recent=c.sessions.filter {(c.project==null||it.workspacePath==c.project?.primaryPath)&&
+        val recent=c.sessions.filter {!c.today.isBackground(it)&&(c.project==null||it.workspacePath==c.project?.primaryPath)&&
             (c.sidebarQuery.isBlank()||it.title.contains(c.sidebarQuery,true)||(c.sessionSummaries[it.scopedId]?:it.preview).contains(c.sidebarQuery,true))&&
             when(filter){"未读"->it.scopedId in c.unread;"置顶"->it.isPinned;else->true}}
             .sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)})
@@ -173,7 +173,8 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
                     Text(s.title,Modifier.weight(1f),fontSize=13.sp,fontWeight=if(active)FontWeight.Medium else FontWeight.Normal,maxLines=1,overflow=TextOverflow.Ellipsis)
                     if(s.updatedAt.isNotBlank())Text(conversationTime(s.updatedAt),fontSize=10.sp,color=colors.onSurfaceVariant,maxLines=1)
                     if(s.isPinned)Glyph("pin",Modifier.size(11.dp),colors.onSurfaceVariant)
-                    if(s.scopedId in c.unread)Box(Modifier.size(6.dp).background(colors.primary,CircleShape))
+                    if(s.scopedId in c.unread)Text(tr("未读"),fontSize=10.sp,fontWeight=FontWeight.Medium,color=colors.primary,
+                        modifier=Modifier.background(colors.primary.copy(alpha=.10f),RoundedCornerShape(4.dp)).padding(horizontal=4.dp,vertical=2.dp).semantics {testTag="unread:"+s.scopedId})
                 }
                 Text(tr(preview),fontSize=11.sp,lineHeight=17.sp,color=colors.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
             }

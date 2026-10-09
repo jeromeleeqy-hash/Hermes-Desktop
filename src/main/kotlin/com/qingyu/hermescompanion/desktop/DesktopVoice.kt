@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import com.qingyu.hermescompanion.data.*
 import com.qingyu.hermescompanion.model.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import okhttp3.Call
 import java.nio.file.Files
 import javax.swing.SwingUtilities
@@ -20,6 +21,11 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
     var transcript by mutableStateOf("");private set
     var provider by mutableStateOf("");private set
     var sessionKey:String?=null;private set
+    val models by lazy {DesktopVoiceModels(c)}
+    private var voiceText:StreamingVoiceText?=null
+    private var sentences:Channel<String>?=null
+    private var streamKey:String?=null
+    private var streamFinished=false
     private var target:HermesSession?=null
     private var targetProfile="default"
     private var generation=0L
@@ -40,6 +46,10 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
         active=true
         if(DesktopHost.isWindows)windowsAwake=WindowsVoiceWakeLock()
         if(System.getProperty("os.name").startsWith("Mac"))awake=runCatching { ProcessBuilder("/usr/bin/caffeinate","-d","-w",ProcessHandle.current().pid().toString()).start() }.getOrNull()
+        val pref=c.voicePreferences
+        if(pref.sttEngine=="local" || pref.ttsEngine=="local")c.scope.launch {
+            runCatching {models.engine.warm(pref.sttEngine=="local",pref.ttsEngine=="local",pref.language)}
+        }
         startCapture(!holdToTalk)
     }
     fun releaseHoldToTalk() {
@@ -57,7 +67,8 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
         if(c.demo)return
         if(holdToTalk&&!holdPressed){message="按住悬浮球说话，松开后发送";return}
         if(!c.voicePreferences.enabled){onFailure("请先在语音设置中启用语音输入。");return}
-        if(!c.connected){onFailure("请先连接网关。");return}
+        if(!c.connected && !(settingsTest&&c.voicePreferences.sttEngine in setOf("local","system"))){onFailure("请先连接网关；本地识别可在语音设置中离线测试。");return}
+        if(c.voicePreferences.sttEngine=="local"&&!models.store.installed(LocalVoiceModels.recognition)){onFailure("请先在语音设置下载并启用本地识别模型。");return}
         if(phase==VoicePhase.LISTENING || phase==VoicePhase.TRANSCRIBING)return
         val captureSession=if(active)target else c.currentSession
         if(!settingsTest && captureSession==null){c.newSession(true) { startCapture(continuous) };return}
@@ -83,7 +94,7 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
         val token=generation;val epoch=c.epoch;val session=target;val profile=targetProfile
         val note=try {
             val file=audio.stop()
-            try {VoiceNote(profile=profile,session=session,blob=c.store.saveBlob(file.readBytes()))}finally{file.delete()}
+            try {VoiceNote(profile=profile,session=session,blob=c.store.saveBlob(file.readBytes()),engine=c.voicePreferences.sttEngine)}finally{file.delete()}
         } catch(e:Exception){onFailure(e.message ?: "录音失败");return}
         c.voiceNotes+=note
         job=c.scope.launch {
@@ -101,16 +112,17 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
         job=c.scope.launch { try { transcribe(note,token,epoch) } catch(e:CancellationException){throw e}catch(e:Exception){if(token==generation)onFailure(e.message ?: "识别失败")} }
     }
     private suspend fun transcribe(note:VoiceNote,token:Long,epoch:Int) {
-        val api=c.client(note.profile)
-        val preference=c.voicePreferences
+        val preference=c.voicePreferences.let {if(note.engine.isBlank())it else it.copy(sttEngine=note.engine)}
+        val api=if(preference.sttEngine in setOf("local","system"))null else c.client(note.profile)
         val result=withContext(Dispatchers.IO) {
             val file=Files.createTempFile("hermes-retry-",".wav").toFile()
             try {
                 file.writeBytes(c.store.readBlob(note.blob))
-                if(preference.engine=="system") NativeSpeech.transcribe(file,voiceRecognitionLanguage(preference.language,preference.transcriptScript))
-                else try { api.transcribeAudioFile(file,note.profile) { call=it } }
+                if(preference.sttEngine=="local") models.engine.transcribe(file,preference.language)
+                else if(preference.sttEngine=="system") NativeSpeech.transcribe(file,voiceRecognitionLanguage(preference.language,preference.transcriptScript))
+                else try { requireNotNull(api).transcribeAudioFile(file,note.profile) { call=it } }
                 catch(e:Exception) {
-                    if(preference.engine=="automatic" && e is ApiException && e.statusCode in setOf(404,501,503) && NativeSpeech.available())NativeSpeech.transcribe(file,voiceRecognitionLanguage(preference.language,preference.transcriptScript))
+                    if(preference.sttEngine=="automatic" && e is ApiException && e.statusCode in setOf(404,501,503) && NativeSpeech.available())NativeSpeech.transcribe(file,voiceRecognitionLanguage(preference.language,preference.transcriptScript))
                     else throw e
                 }
             } finally { file.delete();call=null }
@@ -154,56 +166,102 @@ class DesktopVoice(private val c:DesktopController,private val audio:DesktopAudi
     }
     fun reuse(note:VoiceNote) { note.session?.let { s->c.setDraft(s.scopedId,(c.drafts[s.scopedId].orEmpty()+"\n"+note.transcript).trim());c.openSession(s) } }
     fun remove(note:VoiceNote) { c.voiceNotes.removeAll { it.id==note.id } }
+    fun beginTurn(key:String) {
+        if(!active || sessionKey!=key || !c.voicePreferences.autoRead)return
+        beginPlayback(key,restart=!holdToTalk)
+    }
+    fun updateReply(key:String,text:String) {
+        if(streamKey!=key || streamFinished)return
+        enqueueSpeech(text,false)
+    }
+    private fun enqueueSpeech(text:String,finished:Boolean) {
+        val pieces=voiceText?.update(text,finished).orEmpty()
+        for(piece in pieces)if(sentences?.trySend(piece)?.isSuccess!=true){
+            pause();message="朗读暂未跟上回复，完整内容已保留，可手动朗读";return
+        }
+        if(finished){streamFinished=true;sentences?.close()}
+    }
     fun onReply(key:String,text:String) {
         if(!active || sessionKey!=key)return
         if(phase==VoicePhase.LISTENING||phase==VoicePhase.TRANSCRIBING)return
-        if(c.voicePreferences.autoRead)speak(text,!holdToTalk)
-        else { phase=VoicePhase.IDLE;message=if(holdToTalk)"回复已完成，按住悬浮球可以继续说话"else"回复已完成";if(!holdToTalk&&(c.voicePreferences.continuous||fromCompanion))startCapture(true) }
+        if(c.voicePreferences.autoRead){
+            if(streamKey!=key&&!beginPlayback(key,restart=!holdToTalk))return
+            enqueueSpeech(text,true)
+        }else {phase=VoicePhase.IDLE;message="回复已完成";if(!holdToTalk&&(c.voicePreferences.continuous||fromCompanion))startCapture(true)}
     }
     fun speak(text:String,restart:Boolean=false) {
         if(c.demo)return
-        if(phase==VoicePhase.LISTENING){message="请先结束录音，再朗读。";return}
-        if(phase==VoicePhase.TRANSCRIBING){message="请先完成或取消识别。";return}
-        job?.cancel();audio.stopPlayback();val token=++generation;val epoch=c.epoch;val profile=if(active)targetProfile else c.profile;val api=c.client(profile)
-        val pref=c.voicePreferences;val chunks=speechChunks(spokenReply(text))
-        if(chunks.isEmpty())return
-        phase=VoicePhase.SPEAKING;message="正在朗读"
+        if(phase==VoicePhase.LISTENING || phase==VoicePhase.TRANSCRIBING){message="请先结束录音或识别，再朗读。";return}
+        if(beginPlayback(null,restart))enqueueSpeech(text,true)
+    }
+    private data class PreparedSpeech(val text:String,val audio:SpeechAudio?,val rate:Float)
+    private fun beginPlayback(key:String?,restart:Boolean):Boolean {
+        generation++;job?.cancel();sentences?.cancel();audio.stopPlayback()
+        voiceText=null;sentences=null;streamKey=null
+        val pref=c.voicePreferences
+        if(pref.ttsEngine=="local"&&!models.store.installed(LocalVoiceModels.playback)){onFailure("请先在语音设置下载并启用本地朗读模型。");return false}
+        if(pref.ttsEngine !in setOf("local","system")&&!c.connected){onFailure("服务器语音需要连接网关；也可以在语音设置使用本地朗读。");return false}
+        voiceText=StreamingVoiceText();streamKey=key;streamFinished=false
+        val queue=Channel<String>(64);sentences=queue
+        val token=++generation;val epoch=c.epoch;val profile=if(active)targetProfile else c.profile
+        val api=if(pref.ttsEngine in setOf("local","system"))null else c.client(profile)
+        phase=VoicePhase.THINKING;message="正在准备回应"
         job=c.scope.launch {
             try {
-                val serverVoice=if(pref.engine=="automatic")withContext(Dispatchers.IO) {runCatching {api.voiceSettings(profile).tts}.getOrNull()}else null
-                for(chunk in chunks) {
-                    ensureActive();if(token!=generation || epoch!=c.epoch)return@launch
-                    withContext(Dispatchers.IO) {
-                        ensureActive()
-                        if(pref.engine=="system" || (pref.engine=="automatic" && speechLanguage(chunk,pref.language).startsWith("zh") && serverVoice!=null && !agentVoiceSupportsChinese(serverVoice)))audio.systemSpeak(chunk,speechLanguage(chunk,pref.language),pref.speechRate)
-                        else try { val result=api.synthesizeSpeech(chunk,profile);ensureActive();audio.play(result,pref.speechRate) }
-                        catch(e:Exception) { if(pref.engine=="automatic" && isActive)audio.systemSpeak(chunk,speechLanguage(chunk,pref.language),pref.speechRate) else throw e }
+                coroutineScope {
+                    // One prepared chunk ahead: synthesis overlaps playback, with bounded memory.
+                    val prepared=Channel<PreparedSpeech>(1)
+                    val producer=launch(Dispatchers.IO) {
+                        try {
+                            val serverVoice=if(pref.ttsEngine=="automatic")runCatching {requireNotNull(api).voiceSettings(profile).tts}.getOrNull()else null
+                            for(chunk in queue){
+                                ensureActive()
+                                val system=pref.ttsEngine=="system" || (pref.ttsEngine=="automatic" && speechLanguage(chunk,pref.language).startsWith("zh") && serverVoice!=null && !agentVoiceSupportsChinese(serverVoice))
+                                val sound=if(system)null else try {
+                                    if(pref.ttsEngine=="local")models.engine.synthesize(chunk,pref.localSpeaker,pref.speechRate)
+                                    else requireNotNull(api).synthesizeSpeech(chunk,profile)
+                                }catch(e:CancellationException){throw e}catch(e:Exception){ensureActive();if(pref.ttsEngine=="automatic")null else throw e}
+                                ensureActive()
+                                prepared.send(PreparedSpeech(chunk,sound,if(pref.ttsEngine=="local")1f else pref.speechRate))
+                            }
+                        }finally{prepared.close()}
                     }
+                    for(chunk in prepared){
+                        ensureActive();if(token!=generation || epoch!=c.epoch)return@coroutineScope
+                        phase=VoicePhase.SPEAKING;message="正在朗读"
+                        withContext(Dispatchers.IO){ensureActive();if(chunk.audio!=null)audio.play(chunk.audio,chunk.rate)else audio.systemSpeak(chunk.text,speechLanguage(chunk.text,pref.language),pref.speechRate)}
+                        if(token==generation && !streamFinished){phase=VoicePhase.THINKING;message="正在继续回应"}
+                    }
+                    producer.join()
                 }
-                if(token==generation) {phase=VoicePhase.IDLE;message=if(holdToTalk)"朗读结束，按住悬浮球可以继续说话"else"朗读结束";if(restart && active && !holdToTalk && (pref.continuous||fromCompanion))startCapture(true)}
-            } catch(e:CancellationException){throw e}catch(e:Exception){if(token==generation)onFailure(e.message ?: "朗读失败")}
+                if(token==generation){
+                    phase=VoicePhase.IDLE;message=if(holdToTalk)"朗读结束，按住悬浮球可以继续说话"else"朗读结束"
+                    if(restart && active && !holdToTalk && (pref.continuous||fromCompanion))startCapture(true)
+                }
+            }catch(e:CancellationException){throw e}catch(e:Exception){if(token==generation)onFailure(e.message?:"朗读失败")}
         }
+        return true
     }
     fun interrupt() {
         val s=target
         pause()
-        if(s!=null && c.runs.containsKey(s.scopedId))c.stop(s)
+        if(s!=null && c.runs.containsKey(s.scopedId))c.stop(s){if(active && sessionKey==s.scopedId && targetProfile==c.profile)startCapture(true)}
         else startCapture(active)
     }
     fun pause() {
         allowAutoSend=false
         if(phase==VoicePhase.LISTENING){stopCapture();return}
-        generation++;job?.cancel();call?.cancel();NativeSpeech.cancel();audio.stopPlayback();phase=VoicePhase.IDLE;level=0f;message="已暂停"
+        generation++;job?.cancel();sentences?.cancel();sentences=null;voiceText=null;streamKey=null;call?.cancel();NativeSpeech.cancel();audio.stopPlayback();phase=VoicePhase.IDLE;level=0f;message="已暂停"
     }
     fun onFailure(text:String) { phase=VoicePhase.ERROR;message=text;level=0f }
     fun onRunFailure(key:String,text:String) {
         // A finishing/cancelled older task must not overwrite a newer capture's phase.
-        if(active&&sessionKey==key&&phase==VoicePhase.THINKING)onFailure(text)
+        if(active&&sessionKey==key&&phase in setOf(VoicePhase.THINKING,VoicePhase.SPEAKING)){pause();onFailure(text)}
     }
     fun dismiss() { active=false;fromCompanion=false;holdPressed=false;continuousCapture=false;pause();holdToTalk=false;awake?.destroy();awake=null;windowsAwake?.close();windowsAwake=null }
     fun close() {
-        active=false;fromCompanion=false;holdPressed=false;holdToTalk=false;generation++;job?.cancel();call?.cancel();NativeSpeech.cancel()
-        if(phase==VoicePhase.LISTENING)runCatching { val file=audio.stop();try { val blob=c.store.saveBlob(file.readBytes());c.voiceNotes+=VoiceNote(profile=targetProfile,session=target,blob=blob) } finally { file.delete() } }
+        active=false;fromCompanion=false;holdPressed=false;holdToTalk=false;generation++;job?.cancel();sentences?.cancel();sentences=null;voiceText=null;streamKey=null;call?.cancel();NativeSpeech.cancel()
+        if(phase==VoicePhase.LISTENING)runCatching { val file=audio.stop();try { val blob=c.store.saveBlob(file.readBytes());c.voiceNotes+=VoiceNote(profile=targetProfile,session=target,blob=blob,engine=c.voicePreferences.sttEngine) } finally { file.delete() } }
         audio.close();awake?.destroy();awake=null;windowsAwake?.close();windowsAwake=null;phase=VoicePhase.IDLE
     }
 }

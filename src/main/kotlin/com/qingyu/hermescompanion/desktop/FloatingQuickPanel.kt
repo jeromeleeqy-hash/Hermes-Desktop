@@ -88,7 +88,7 @@ import com.qingyu.hermescompanion.model.scopedId
                 var showDecision by remember(key){mutableStateOf(false)}
                 if(pending!=null) {
                     SmallButton("有问题需要你回答 · 点击选择",{showDecision=true})
-                    if(showDecision)HermesDialog(onDismissRequest={showDecision=false},title={Text("待你确认")},text={DecisionPanel(c,pending,Modifier.width(430.dp).height(340.dp))},confirmButton={DeskTextButton(onClick={showDecision=false}){Text("稍后处理")}})
+                    if(showDecision)DecisionDialog(c,pending){showDecision=false}
                 }else LaunchedEffect(Unit){showDecision=false}
                 QuickComposer(c)
             }

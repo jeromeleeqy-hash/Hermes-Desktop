@@ -21,12 +21,12 @@ import com.qingyu.hermescompanion.platform.DesktopHost
 import java.time.*
 import java.time.format.DateTimeFormatter
 
-@Composable fun HomeView(c:DesktopController) {
+@Composable fun SimpleHomeView(c:DesktopController) {
     val d=LocalDesktopDesign.current;val colors=MaterialTheme.colorScheme
     val pending=c.decisions.values.filter {it.profile==c.profile}
     val running=c.runs.values.count {it.session.profile==c.profile}
     val artifacts=c.recentArtifacts.filter {it.profile==c.profile&&artifactMatchesProject(it,c.project)}
-    val sessions=c.sessions.filter {c.project==null||it.workspacePath==c.project?.primaryPath}
+    val sessions=c.sessions.filter {!c.today.isBackground(it)&&(c.project==null||it.workspacePath==c.project?.primaryPath)}
         .sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)})
     DesktopPage(maxContentWidth=1440.dp,tag="home-content") {
         Row(Modifier.fillMaxWidth().background(Brush.horizontalGradient(listOf(colors.primary.copy(alpha=if(d.glass).13f else .065f),colors.primary.copy(alpha=.012f))),d.shape).padding(horizontal=26.dp,vertical=20.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(24.dp)) {
@@ -35,9 +35,10 @@ import java.time.format.DateTimeFormatter
                 Text("${tr(when(LocalTime.now().hour){in 5..10->"早上好";in 11..13->"中午好";in 14..18->"下午好";else->"晚上好"})}，${c.nickname}",fontSize=28.sp,lineHeight=39.sp,fontWeight=FontWeight.SemiBold,maxLines=2,overflow=TextOverflow.Ellipsis)
                 Text(tr("想法在这里开始，事情在这里完成。"),fontSize=15.sp,color=colors.onSurfaceVariant)
             }
-            AnimatedMascot(c,Modifier.size(100.dp).semantics {testTag="home-mascot"})
+            AnimatedMascot(c,Modifier.size(100.dp).semantics {testTag="home-mascot"},homePortrait=true)
         }
         HomeComposer(c)
+        TodayPreview(c)
         FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             listOf(
                 Triple("document","写一份文档","帮我写一份文档。先和我确认用途、读者和需要包含的信息。"),

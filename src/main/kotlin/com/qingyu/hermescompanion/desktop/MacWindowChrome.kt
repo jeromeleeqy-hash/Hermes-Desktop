@@ -88,7 +88,7 @@ internal fun macTrafficLightGeometry(windowHeight:Double,buttonWidth:Double,butt
 internal interface AppKitJob:Callback {fun invoke(context:Pointer?)}
 
 /** Lazy so Windows/Linux never load Cocoa. Strong callback ownership lasts for the process. */
-private object MacAppKit {
+internal object MacAppKit {
     private val objc=NativeLibrary.getInstance("objc")
     private val system=NativeLibrary.getInstance("System")
     private val send=objc.getFunction("objc_msgSend")

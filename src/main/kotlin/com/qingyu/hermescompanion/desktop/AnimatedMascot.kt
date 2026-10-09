@@ -10,8 +10,9 @@ import kotlinx.coroutines.*
 import org.jetbrains.skia.*
 
 /** Decode only the current frame, and suspend animation when the window is inactive. */
-@Composable fun AnimatedMascot(c:DesktopController,modifier:Modifier=Modifier) {
+@Composable fun AnimatedMascot(c:DesktopController,modifier:Modifier=Modifier,homePortrait:Boolean=false) {
     val asset=when {
+        homePortrait->"home-portrait"
         c.recording->"listening"
         c.runs.isNotEmpty()->"working"
         c.completions.firstOrNull()?.let { System.currentTimeMillis()-it.completedAtMillis<12_000 }==true->"done"

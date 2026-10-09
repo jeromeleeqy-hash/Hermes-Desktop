@@ -109,9 +109,10 @@ fun main(args:Array<String>) {
                 Item(tr("输入法诊断"),onClick={showComposerImeDiagnostics(controller)})
             }
         }
-        LaunchedEffect(controller.unread.size,controller.decisions.size,controller.notificationBadge) {
-            DesktopNotifications.updateBadge(if(controller.notificationBadge)controller.unread.size+controller.decisions.size else 0)
-            runCatching {if(java.awt.Taskbar.isTaskbarSupported())java.awt.Taskbar.getTaskbar().setIconBadge(if(controller.notificationBadge)(controller.unread.size+controller.decisions.size).takeIf {it>0}?.toString() else null)}
+        val notificationCount=controller.conversationUnread.size+controller.decisions.values.count {it.profile==controller.profile}
+        LaunchedEffect(notificationCount,controller.notificationBadge) {
+            DesktopNotifications.updateBadge(if(controller.notificationBadge)notificationCount else 0)
+            runCatching {if(java.awt.Taskbar.isTaskbarSupported())java.awt.Taskbar.getTaskbar().setIconBadge(if(controller.notificationBadge)notificationCount.takeIf {it>0}?.toString() else null)}
         }
         DisposableEffect(Unit) {
             val macChrome=MacWindowChrome.install(window)
@@ -127,8 +128,8 @@ fun main(args:Array<String>) {
                 onBackground={DesktopMenuHost.dismissActive()},
             )
             val focusListener=object:java.awt.event.WindowFocusListener {
-                override fun windowGainedFocus(e:java.awt.event.WindowEvent) {controller.appFocused=true;controller.currentSession?.takeIf {controller.page==Page.CHAT}?.let {controller.unread.remove(it.scopedId)}}
-                override fun windowLostFocus(e:java.awt.event.WindowEvent) {controller.appFocused=false}
+                override fun windowGainedFocus(e:java.awt.event.WindowEvent) {controller.onWindowFocusChanged(true)}
+                override fun windowLostFocus(e:java.awt.event.WindowEvent) {controller.onWindowFocusChanged(false)}
             }
             window.addWindowFocusListener(focusListener)
             val initial=args.firstOrNull { it.startsWith("--page=") }?.substringAfter('=')
@@ -321,10 +322,11 @@ fun main(args:Array<String>) {
     var url by remember { mutableStateOf(c.baseUrl) };var user by remember { mutableStateOf(c.username) };var password by remember { mutableStateOf("") };var insecure by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
     LaunchedEffect(c.busy) { if(c.busy) passwordVisible=false }
-    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(vertical=28.dp),contentAlignment=Alignment.Center) { Column(Modifier.width(460.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(vertical=28.dp),contentAlignment=Alignment.Center) { Column(Modifier.widthIn(max=460.dp).padding(horizontal=16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         Image(painterResource("icon.png"),"Hermes",Modifier.size(76.dp).clip(RoundedCornerShape(18.dp)))
         Heading("让 Hermes 来到你的桌面")
         Caption("连接你现有的 Hermes 网关，继续手机上的对话。")
+        GettingStartedButton()
         OutlinedTextField(url,{url=it;insecure=false},label={Text(tr("网关地址"))},placeholder={Text("https://hermes.example.com")},modifier=Modifier.fillMaxWidth(),singleLine=true,enabled=!c.busy)
         OutlinedTextField(user,{user=it},label={Text(tr("用户名"))},modifier=Modifier.fillMaxWidth(),singleLine=true,enabled=!c.busy)
         OutlinedTextField(password,{password=it},label={Text(tr("密码"))},
@@ -369,8 +371,9 @@ fun main(args:Array<String>) {
             listOf("全部","已置顶","未读","执行中").forEach {filter->DeskChip(c.sessionFilter==filter,{c.sessionFilter=filter},label={Text(filter)})}
             if(search.isNotBlank()||period!=0||c.sessionFilter!="全部")DeskTextButton(onClick={search="";period=0;c.sessionFilter="全部";c.search("")}){Text("清除筛选")}
         }
-        val candidates=c.searchResults?.map {it.session} ?: if(c.showArchived)c.archived else c.sessions.filter { c.project==null || it.workspacePath==c.project?.primaryPath }
-        val list=candidates.filter {(period==0 || sessionWithinDays(it.updatedAt,period))&&(c.project==null||it.workspacePath==c.project?.primaryPath)&&when(c.sessionFilter){"已置顶"->it.isPinned;"未读"->it.scopedId in c.unread;"执行中"->it.scopedId in c.runs;else->true}}.distinctBy {it.scopedId}.sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)})
+        DeskChip(c.allConversations,{c.allConversations=!c.allConversations},label={Text("包含后台任务的全部会话")})
+        val candidates=c.searchResults?.map {it.session} ?: if(c.showArchived)c.archived else (c.sessions+if(c.allConversations)c.cronSessions else emptyList()).filter { c.project==null || it.workspacePath==c.project?.primaryPath }
+        val list=candidates.filter {(c.allConversations||!c.today.isBackground(it))&&(period==0 || sessionWithinDays(it.updatedAt,period))&&(c.project==null||it.workspacePath==c.project?.primaryPath)&&when(c.sessionFilter){"已置顶"->it.isPinned;"未读"->it.scopedId in c.unread;"执行中"->it.scopedId in c.runs;else->true}}.distinctBy {it.scopedId}.sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)})
         Caption("${list.size} 段${if(c.showArchived)"归档"else""}会话 · ${c.project?.name?:"全部项目"}")
         val loading=if(c.showArchived)c.archivedLoading else c.sessionsLoading
         val syncError=if(c.showArchived)c.archivedError else c.sessionsLoadError
