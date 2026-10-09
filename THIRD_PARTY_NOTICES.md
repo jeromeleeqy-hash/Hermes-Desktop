@@ -21,9 +21,19 @@ Source: https://github.com/microsoft/fluentui-system-icons
 
 ## NSIS installer
 
-The Windows setup and small launcher are compiled with NSIS 3.09. NSIS uses the zlib/libpng license for the core; see https://nsis.sourceforge.io/License. No NSIS build tools are bundled in the application.
+The Windows setup and small launcher are compiled with NSIS 3.x. NSIS uses the zlib/libpng license for the core; see https://nsis.sourceforge.io/License. No NSIS build tools are bundled in the application.
 
 
 ## Document previews in 1.6.0
 
 Apache POI 5.5.1 (poi-ooxml and poi-scratchpad), Apache PDFBox 3.0.8, jsoup 1.23.2, CommonMark Java 0.24.0 GFM strikethrough. Upstream LICENSE/NOTICE files for staged JAR dependencies are retained under licenses/dependencies; their versions and hashes are recorded in the portable manifest.
+
+## Desktop 2.0.0
+
+首页协议、卡片解析／交互、操作回执、writer、连接心跳及语音文本拆分适配自用户的 Android 4.0.0 发布源码。保持原协议版本与来源说明。
+
+本地语音使用 sherpa-onnx v1.13.5 的 Java API 和对应 Windows x64／macOS arm64 原生库，Apache-2.0 许可保存在 `licenses/sherpa-onnx-LICENSE.txt`。上游：https://github.com/k2-fsa/sherpa-onnx 。依赖库的内嵌许可随 JAR 保留。
+
+SenseVoice int8 与 Kokoro multilingual v1.1 int8 模型由用户按需从 sherpa-onnx 官方 GitHub Release 下载，应用安装包不捆绑模型。模型版本、地址、完整 SHA-256 与解压要求见 `LocalVoiceModels.kt`；模型各自的许可随下载档案保留。Apache Commons Compress 用于有界解包。
+
+Windows 2.0.0 运行时由经过发布者 SHA-256 校验的 Temurin JDK 21.0.12.1+1 链接生成；Mac 验收包复用用户 1.9.0 发布包内的 Apple Silicon 启动器、Java 运行时和系统语音 helper，替换全部应用 JAR 后重新签名。构建清单保留各组件摘要。
