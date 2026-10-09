@@ -5,6 +5,26 @@ import org.junit.Assert.*
 
 class ChatPresentationTest {
     private val header="[System: The active model for this chat has changed to deepseek-v4-pro via provider deepseek. From this point forward, use this runtime metadata when answering questions about what model/provider is active.]"
+    private fun context(value:String)="\n\n<!-- hermes-mobile-context-v1:${value.length} -->\n$value\n<!-- /hermes-mobile-context-v1 -->"
+    @Test fun mobilePreferencesAreHiddenInTheBubbleAndPreviewWithoutChangingTheSource() {
+        val question="再给我写另外一个版本，不同的创意试试看"
+        val metadata="Hermes App 回复偏好：沿用当前语言。保留必要背景。🙂"
+        val raw=question+context(metadata)
+        assertEquals(question,presentUserText(raw).body)
+        assertEquals(question,com.qingyu.hermescompanion.ui.format.conversationPreview(raw))
+        assertTrue(raw.contains(metadata))
+        assertEquals(question,com.qingyu.hermescompanion.ui.format.conversationPreview(raw.dropLast(20)))
+        assertEquals(question,presentUserText(raw+context("附件：notes.txt\n供模型参考")).body)
+        assertEquals("",presentUserText(context(metadata).trimStart()).body)
+    }
+    @Test fun incompleteWrongLengthQuotedAndEmbeddedEnvelopesRemainVisible() {
+        val valid=context("偏好")
+        listOf("问题"+valid.replace(":2",":999999999999"),"问题"+valid.dropLast(5),
+            "问题"+valid+"\n这是我写的说明", "```text\n"+valid.trimStart()+"\n```",
+            "````text\n```\n"+valid+"\n```\n````", "问题\n<!-- ordinary comment -->").forEach {raw->
+            assertEquals(raw,presentUserText(raw).body)
+        }
+    }
     @Test fun runtimeHeaderBecomesANoticeAndTheQuestionStaysIntact() {
         val original=header+"\n\n请整理今天的计划。"
         val result=presentUserText(original)

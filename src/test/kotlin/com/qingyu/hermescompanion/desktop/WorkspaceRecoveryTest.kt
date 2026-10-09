@@ -28,6 +28,11 @@ class WorkspaceRecoveryTest {
         assertEquals(original,restored)
         Files.walk(dir).use {paths->paths.filter(Files::isRegularFile).forEach {path->val text=String(Files.readAllBytes(path));assertFalse(text.contains("Private attachment"));assertFalse(text.contains("unsaved"));assertFalse(text.contains("data:image"))}}
     }
+    @Test fun foreignDeviceRunKeepsItsObservationIdentityAcrossRestart() {
+        val run=RunRecord(session,"",runtimeId="runtime",observed=true)
+        WorkspaceRepository(store(),"account").save(WorkspaceState(revision=1,runs=listOf(run)))
+        assertEquals(run,WorkspaceRepository(store(),"account").load().runs.single())
+    }
     @Test fun laterCheckpointWinsWhenBackgroundSaveArrivesOutOfOrder() {
         val repo=WorkspaceRepository(store(),"account")
         repo.save(WorkspaceState(revision=4,drafts=mapOf("s" to DraftRecord("new"))))

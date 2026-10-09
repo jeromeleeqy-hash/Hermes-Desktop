@@ -106,6 +106,8 @@ class SessionSyncControllerTest {
         val key="default::first"
         val file=com.qingyu.hermescompanion.model.PendingAttachment(name="notes.txt",mimeType="text/plain",textContent="Keep me")
         withContext(Dispatchers.Swing){c.setDraft(key,"Do not resend");c.attachments[key]=listOf(file);authStatus=503;c.checkConnection()}
+        awaitState {c.connectionHealth=="checking"&&!c.connectionChecking}
+        withContext(Dispatchers.Swing){c.checkConnection()}
         awaitState {c.connectionHealth=="offline"&&!c.connectionChecking}
         withContext(Dispatchers.Swing){assertTrue(c.connected);assertEquals("Do not resend",c.drafts[key]);assertEquals(listOf(file),c.attachments[key]);authStatus=401;c.checkConnection()}
         awaitState {c.connectionHealth=="auth"&&!c.connectionChecking}
