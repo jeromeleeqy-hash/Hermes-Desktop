@@ -455,6 +455,9 @@ data class VoicePreferences(
     val transcriptScript: String = "simplified",
     val autoSend: Boolean = false,
     val engine: String = "automatic",
+    val sttEngine: String = engine,
+    val ttsEngine: String = engine,
+    val localSpeaker: Int = 0,
     val autoRead: Boolean = true,
     val continuous: Boolean = true,
     val fastReply: Boolean = true,
@@ -520,6 +523,7 @@ data class UserProfilePreferences(
 )
 
 sealed interface StreamEvent {
+    data object PromptAccepted : StreamEvent
     data class RunStarted(val runId: String) : StreamEvent
     data class ReasoningDelta(val text: String) : StreamEvent
     data class ReasoningAvailable(val text: String) : StreamEvent
