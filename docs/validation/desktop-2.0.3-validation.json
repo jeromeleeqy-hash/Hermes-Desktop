@@ -1,0 +1,59 @@
+{
+  "version": "2.0.3",
+  "jvm": [
+    {
+      "name": "com.qingyu.hermescompanion.data.ArtifactPaths203Test",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ChatInsightsTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ProviderAndAttachmentTest",
+      "tests": "12",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ArtifactIndex203Test",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.DesktopExperienceTest",
+      "tests": "20",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": "14",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "jvm_tests": 66,
+  "jvm_failures": 0,
+  "python_tests": 17,
+  "native_windows_execution": false,
+  "native_macos_execution": false
+}
