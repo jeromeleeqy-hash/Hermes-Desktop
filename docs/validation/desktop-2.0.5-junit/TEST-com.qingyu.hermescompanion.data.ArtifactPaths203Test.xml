@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.ArtifactPaths203Test" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-10-09T09:45:28.893Z" hostname="69622ecc2839" time="0.204">
+  <properties/>
+  <testcase name="windowsPathsRetainDriveAndUncRootAndHaveCleanDisplayNames" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.001"/>
+  <testcase name="publicLinksAndLinkLabelsDoNotProduceServerFileCards" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.001"/>
+  <testcase name="readsTheCorrectServerPathAndOriginalProfileOverHttp" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.004"/>
+  <testcase name="uncachedOldCardLoadsTheOriginalMessageThenReconstructsTheCompletePath" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.135"/>
+  <testcase name="inlineRelativePathKeepsTheFirstDirectoryAndResolvesUnderTheWorkspace" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.0"/>
+  <testcase name="bareRelativePathsAreNeverReclassifiedAtAnInteriorSlash" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.001"/>
+  <testcase name="sourceFromAnotherProfileIsRejectedBeforeAnyFileRequest" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.002"/>
+  <testcase name="markdownLinksDecodeOnceWithoutChangingLiteralPlusOrEncodedPercentInTheFilename" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.001"/>
+  <testcase name="identicalMarkdownAndCodeTargetsHaveOnlyOneCard" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.0"/>
+  <testcase name="oldCardRecoversFromItsOwnMessageEvenWhenAnotherMessageHasTheSameFilename" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.048"/>
+  <testcase name="permissionFailureDoesNotTriggerAlternatePathRequests" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.005"/>
+  <testcase name="ambiguousSameNameFilesAreNotGuessed" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.004"/>
+  <testcase name="quotedPathsKeepChineseSpacesParenthesesAndLiteralFilenameCharacters" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.0"/>
+  <testcase name="supportedAbsoluteAndUriSpellingsRemainIntact" classname="com.qingyu.hermescompanion.data.ArtifactPaths203Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

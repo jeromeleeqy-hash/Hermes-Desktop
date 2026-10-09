@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-09T09:45:29.443Z" hostname="69622ecc2839" time="0.137">
+  <properties/>
+  <testcase name="markdownBlockMapIncludesTablesCodeAndBlankLinesAndRoundTrips" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.022"/>
+  <testcase name="webEditorFlushBridgeCommitsBeforeTheSaveCallback" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.001"/>
+  <testcase name="batchKeepsReadableFilesAndReportsRejectedOnesToTheOriginalDraft" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.039"/>
+  <testcase name="officeAndPdfBytesSurviveDraftCheckpointAndTextStaysInline" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.009"/>
+  <testcase name="softLineBreaksFlowInChineseAndEnglishWithoutChangingHardBreaks" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.002"/>
+  <testcase name="htmlStaticPreviewRemovesActiveContentAndBoundsAssetFanout" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.06"/>
+  <testcase name="windowsFileListAndUriListKeepRealFilesWithoutTreatingTextAsAFile" classname="com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
