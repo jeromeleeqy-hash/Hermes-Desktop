@@ -9,6 +9,7 @@ import com.qingyu.hermescompanion.model.ChatImage
 import com.qingyu.hermescompanion.model.ConnectionConfig
 import com.qingyu.hermescompanion.model.CronJob
 import com.qingyu.hermescompanion.model.CronSchedule
+import com.qingyu.hermescompanion.model.providerFor
 import com.qingyu.hermescompanion.model.HermesSession
 import com.qingyu.hermescompanion.model.scopedId
 import com.qingyu.hermescompanion.model.HermesProject
@@ -128,6 +129,48 @@ class HermesApiClient(
         .retryOnConnectionFailure(true)
         .build()
 
+    @Volatile private var disposed=false
+    private val transportScope = config.baseUrl.trimEnd('/') + "\n" + config.username
+    private val transportIssues = java.util.ArrayDeque<String>().apply {
+        runCatching { val saved=JSONArray(voiceRestoreStore?.get("transport:$transportScope","[]")?:"[]"); for(n in 0 until saved.length())add(saved.getString(n)) }
+    }
+    private val heartbeat = GatewayHeartbeat()
+    private val heartbeatExecutor = lazy { java.util.concurrent.Executors.newSingleThreadScheduledExecutor { runnable ->
+        Thread(runnable, "hermes-heartbeat").apply { isDaemon = true }
+    } }
+    private var heartbeatTask: java.util.concurrent.ScheduledFuture<*>? = null
+    private fun recordTransportIssue(operation: String, category: String, attempts: Int = 1) {
+        val time = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("MM-dd HH:mm:ss"))
+        synchronized(transportIssues) {
+            if(disposed)return
+            transportIssues.addLast("$time · $operation · $category" + if (attempts > 1) " · ${com.qingyu.hermescompanion.today.todayText("已重试", "Retried")}" else "")
+            while (transportIssues.size > 40) transportIssues.removeFirst()
+            runCatching { voiceRestoreStore?.put("transport:$transportScope",JSONArray(transportIssues.toList()).toString()) }
+        }
+    }
+    fun recentTransportIssues(): String = synchronized(transportIssues) { transportIssues.toList().reversed().joinToString("\n") }
+    fun setAppForeground(value: Boolean) = synchronized(socketLock) { heartbeat.setForeground(value) }
+    private fun stopHeartbeatLocked() { heartbeat.stop(); heartbeatTask?.cancel(false); heartbeatTask = null }
+    private fun startHeartbeatLocked() {
+        stopHeartbeatLocked(); heartbeat.start()
+        val expected = socket
+        heartbeatTask = heartbeatExecutor.value.scheduleAtFixedRate({ synchronized(socketLock) {
+            if (socket !== expected || !socketOpen) return@synchronized
+            when (heartbeat.tick()) {
+                GatewayHeartbeat.Tick.WAIT -> Unit
+                GatewayHeartbeat.Tick.PING -> if (expected?.send(JSONObject().put("jsonrpc", "2.0").put("id", "desktop-heartbeat-${requestIds.incrementAndGet()}")
+                    .put("method", "gateway.ping").put("params", JSONObject()).toString()) != true) {
+                    handleSocketClosed(com.qingyu.hermescompanion.today.todayText("实时连接已断开，正在取回结果", "Live connection lost; recovering results"))
+                }
+                GatewayHeartbeat.Tick.EXPIRED -> {
+                    recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText("前台心跳探测 45 秒未获回应", "Foreground probe received no response for 45 seconds"))
+                    handleSocketClosed(com.qingyu.hermescompanion.today.todayText("实时连接无响应，正在取回结果", "Live connection unresponsive; recovering results"))
+                }
+            }
+        } }, 15, 15, TimeUnit.SECONDS)
+    }
+    private val connectionLock = Any()
+    private var socketGeneration = 0L
     private val socketLock = Any()
     private val requestIds = AtomicLong(0)
     private val pendingCalls = ConcurrentHashMap<String, CompletableFuture<Any?>>()
@@ -146,6 +189,21 @@ class HermesApiClient(
 
     private val activeStreams = ConcurrentHashMap<String, ActiveStream>()
     private val knownSessions = ConcurrentHashMap<String, HermesSession>()
+    private data class NewSessionRuntime(val runtimeId:String, val generation:Long)
+    private val newSessionRuntimes = ConcurrentHashMap<String,NewSessionRuntime>()
+    private val configurationOverrides = ConcurrentHashMap<String,HermesSession>()
+    fun isFreshSession(session:HermesSession):Boolean = synchronized(socketLock) {
+        val value=newSessionRuntimes[session.scopedId]
+        value!=null && value.runtimeId==session.runtimeId && value.generation==socketGeneration && socketOpen
+    }
+    private fun sessionForNewTurn(session:HermesSession):HermesSession {
+        ensureGatewayConnected()
+        if(isFreshSession(session))return session
+        val resumed=resumeSession(session)
+        if(resumed.running==true)throw ApiException(409,"这段对话已有任务正在运行")
+        return resumed.session
+    }
+
     private val pendingAgentRequests = ConcurrentHashMap<String, AgentRequest>()
     private val answeredServerRequests = ConcurrentHashMap<String,Long>()
     @Volatile var onUnboundAgentEvent: ((HermesSession, StreamEvent) -> Unit)? = null
@@ -460,39 +518,41 @@ class HermesApiClient(
         loadRecentMessagePage(session, pageSize).messages
 
     fun loadRecentMessagePage(session: HermesSession, pageSize: Int = 60): MessagePage {
-        val offset = (session.messageCount - pageSize).coerceAtLeast(0)
+        if(isFreshSession(session))return MessagePage(emptyList(),0,0)
+        // The sidebar/session object may predate turns submitted on another device.
+        // Read the stored count before choosing the tail; a cached count can keep
+        // returning an old, full page forever in a long conversation.
+        val root = JSONObject(request("GET", appendProfileQuery("/api/sessions/${pathSegment(session.id)}",session.profile),includeProfile=false))
+        val item = root.optJSONObject("session") ?: root
+        val total = item.optInt("message_count",session.messageCount).coerceAtLeast(0)
+        val offset = (total - pageSize).coerceAtLeast(0)
         return MessagePage(
-            messages = loadMessagePage(session.id, pageSize, offset),
+            messages = loadMessagePage(session.id, pageSize, offset,session.profile),
             offset = offset,
-            totalCount = session.messageCount,
+            totalCount = total,
         )
     }
 
     fun loadMessagePage(session: HermesSession, pageSize: Int, offset: Int): MessagePage {
         val safeOffset = offset.coerceAtLeast(0)
         return MessagePage(
-            messages = loadMessagePage(session.id, pageSize, safeOffset),
+            messages = loadMessagePage(session.id, pageSize, safeOffset,session.profile),
             offset = safeOffset,
             totalCount = session.messageCount,
         )
     }
 
-    fun loadLatestMessages(session: HermesSession): List<ChatMessage> {
-        val pageSize = 200
-        val root = JSONObject(request("GET", "/api/sessions/${pathSegment(session.id)}"))
-        val item = root.optJSONObject("session") ?: root
-        val latestCount = item.optInt("message_count", session.messageCount)
-        val offset = (latestCount - pageSize).coerceAtLeast(0)
-        return loadMessagePage(session.id, pageSize, offset)
-    }
+    fun loadLatestMessages(session: HermesSession): List<ChatMessage> = loadRecentMessagePage(session,200).messages
 
-    private fun loadMessagePage(sessionId: String, pageSize: Int, offset: Int): List<ChatMessage> {
+    private fun loadMessagePage(sessionId: String, pageSize: Int, offset: Int, profile:String): List<ChatMessage> {
+        if(knownSessions.values.any {it.id==sessionId && it.profile==profile && isFreshSession(it)})return emptyList()
         val raw = request(
             "GET",
-            "/api/sessions/${pathSegment(sessionId)}/messages?limit=$pageSize&offset=$offset",
+            appendProfileQuery("/api/sessions/${pathSegment(sessionId)}/messages?limit=$pageSize&offset=$offset",profile),includeProfile=false,
         )
         val root = JSONTokener(raw).nextValue()
-        val array = findArray(root, "messages", "items", "data") ?: JSONArray()
+        val array = findArray(root, "messages", "items", "data")
+            ?: throw ApiException(500,"服务器未返回可识别的消息列表，已有内容已保留。")
         return parseMessages(array)
     }
 
@@ -513,6 +573,8 @@ class HermesApiClient(
     fun createSession(workspacePath: String? = null): HermesSession = createSessionForProfile(workspacePath, currentProfile())
 
     fun createSessionForProfile(workspacePath: String?, profile: String): HermesSession {
+        ensureGatewayConnected()
+        val creatingGeneration=synchronized(socketLock){socketGeneration}
         val result = rpcObject(
             "session.create",
             JSONObject()
@@ -534,11 +596,14 @@ class HermesApiClient(
             profile = profile,
             workspacePath = firstString(info, "cwd", "git_repo_root").orEmpty(),
         )
-        knownSessions[runtimeId]=created
+        synchronized(socketLock) {
+            knownSessions[runtimeId]=created
+            if(socketOpen && socketGeneration==creatingGeneration)newSessionRuntimes[created.scopedId]=NewSessionRuntime(runtimeId,creatingGeneration)
+        }
         return if (workspacePath.isNullOrBlank()) created else setSessionDirectory(created, workspacePath)
     }
 
-    fun resumeSession(session: HermesSession): ResumedSession {
+    fun resumeSession(session: HermesSession, inspectRequests:Boolean=false): ResumedSession {
         val pendingBefore=pendingAgentRequests.keys.toSet()
         val result = rpcObject(
             "session.resume",
@@ -553,20 +618,29 @@ class HermesApiClient(
             ?: error(uiText(R.string.ui_0078, "远程网关没有返回运行会话 ID"))
         val info = result.optJSONObject("info") ?: JSONObject()
         val messages = parseMessages(result.optJSONArray("messages") ?: JSONArray())
-        knownSessions[runtimeId]=session.copy(runtimeId=runtimeId)
+        if(inspectRequests && result.optJSONArray("open_requests")==null) {
+            val snapshot=try {rpcObject("session.events.since",JSONObject().put("session_id",runtimeId).put("profile",session.profile).put("last_seen",0),timeoutSeconds=15)}
+                catch(e:RpcException){if(e.rpcCode == -32601)JSONObject() else throw e}
+            snapshot.optJSONArray("open_requests")?.let {result.put("open_requests",it)}
+        }
+        val override=configurationOverrides[session.scopedId]
+        val model=if(info.optBoolean("lazy") && override!=null)override.model else firstString(info,"model") ?: override?.model ?: session.model
+        val provider=if(info.optBoolean("lazy") && override!=null)override.provider else firstString(info,"provider") ?: override?.provider ?: session.provider
+        val reasoning=if(info.optBoolean("lazy") && override!=null)override.reasoningEffort else firstString(info,"reasoning_effort") ?: override?.reasoningEffort ?: session.reasoningEffort
+        knownSessions[runtimeId]=session.copy(runtimeId=runtimeId,model=model,provider=provider,reasoningEffort=reasoning)
         restorePendingAgentRequests(result,runtimeId,pendingBefore)
         return ResumedSession(
             session.copy(
                 runtimeId = runtimeId,
-                reasoningEffort = firstString(info, "reasoning_effort"),
-                model = firstString(info, "model") ?: session.model,
-                provider = firstString(info, "provider") ?: session.provider,
+                reasoningEffort = reasoning,
+                model = model,
+                provider = provider,
                 workspacePath = session.workspacePath.ifBlank { firstString(info, "cwd", "git_repo_root").orEmpty() },
             ),
             messages,
             running=if(result.has("running"))result.optBoolean("running") else null,
             pendingRequests=pendingAgentRequests.values.filter {it.runtimeSessionId==runtimeId},
-            requestSnapshotKnown=result.has("open_requests")||result.has("pending_approval")||result.has("pending_clarify")||result.has("pending_clarification")||(result.has("running")&&!result.optBoolean("running")),
+            requestSnapshotKnown=result.has("open_requests")||result.has("pending_approval")||result.has("pending_clarify")||result.has("pending_clarification"),
         )
     }
 
@@ -588,14 +662,16 @@ class HermesApiClient(
     }
 
     fun changeSessionReasoning(session:HermesSession,effort:String):HermesSession {
-        val active=resumeSession(session).session
+        val active=sessionForNewTurn(session)
         val catalog=modelCatalog()
-        val allowed=catalog.providers.firstOrNull {it.slug==active.provider}?.reasoningOptions?.get(active.model)
-        require(allowed!=null&&effort in allowed){"服务器未声明该模型支持此思考档位，请刷新模型能力。"}
+        val provider=catalog.providerFor(active)
+        val allowed=provider?.reasoningOptions?.get(active.model.ifBlank {catalog.currentModel})
+        require(allowed!=null && effort in allowed){"服务器未声明该模型支持此思考档位，请刷新模型能力。"}
         setSessionReasoning(active,effort)
-        return resumeSession(active).session.also {
-            check(it.reasoningEffort==effort){"服务器未确认思考强度已生效，请重新读取会话。"}
-        }
+        val updated=active.copy(reasoningEffort=effort)
+        configurationOverrides[active.scopedId]=updated
+        knownSessions[requireNotNull(active.runtimeId)]=updated
+        return updated
     }
 
     fun modelCatalog(): ModelCatalog = parseModelCatalog(JSONObject(request("GET", "/api/model/options?explicit_only=1")))
@@ -957,16 +1033,16 @@ class HermesApiClient(
     }
 
     fun switchSessionModel(session: HermesSession, provider: String, model: String): HermesSession {
-        val active = if (session.runtimeId.isNullOrBlank()) resumeSession(session).session else session
-        require(!model.any {it.isWhitespace()}&&!provider.any {it.isWhitespace()}){"模型标识无效。"}
-        val result=rpcObject(
-            "slash.exec",
-            JSONObject().put("session_id",active.runtimeId)
-                .put("command","/model $model --provider $provider --session"),timeoutSeconds=120,
-        )
+        require(model.isNotBlank() && provider.isNotBlank() && !model.any {it.isWhitespace()} && !provider.any {it.isWhitespace()}) {"模型标识无效。"}
+        val active = sessionForNewTurn(session)
+        val result=rpcObject("slash.exec", JSONObject().put("session_id",active.runtimeId).put("profile",active.profile)
+            .put("command","/model $model --provider $provider --session"),timeoutSeconds=120)
         checkCommandAccepted(result)
-        val updated=resumeSession(active).session
-        return updated
+        // Store only after an acknowledged command. Lazy resume metadata can describe the old defaults.
+        val updated=active.copy(model=model,provider=provider,reasoningEffort=null)
+        configurationOverrides[active.scopedId]=updated
+        knownSessions[requireNotNull(active.runtimeId)]=updated
+        return resumeSession(updated).session
     }
 
     fun sessionTitle(sessionId: String): String {
@@ -977,9 +1053,11 @@ class HermesApiClient(
     fun renameSession(sessionId: String, title: String): String = renameSessionForProfile(sessionId, title, currentProfile())
 
     fun renameSessionForProfile(sessionId: String, title: String, profile: String): String {
-        val body = JSONObject().put("title", compactSessionTitle(title)).toString()
+        val clean=title.trim()
+        require(clean.isNotEmpty() && clean.length<=120 && !clean.contains('\n') && !clean.contains('\r')){"名称请输入 1—120 个字符，且不能换行"}
+        val body = JSONObject().put("title", clean).toString()
         val result = JSONObject(request("PATCH", appendProfileQuery("/api/sessions/${pathSegment(sessionId)}", profile), body, includeProfile = false))
-        return compactSessionTitle(firstString(result, "title") ?: title)
+        return firstString(result, "title") ?: clean
     }
 
     fun setSessionPinned(sessionId: String, pinned: Boolean) {
@@ -1359,7 +1437,7 @@ class HermesApiClient(
         onNotice: (String) -> Unit, onEvent: (StreamEvent) -> Unit, attachments: List<PendingAttachment> = emptyList()) {
         withTurnLease(session) {
         if (controller.isStopped()) return
-        var active = resumeSession(session).session
+        var active = sessionForNewTurn(session)
         restoreVoiceReasoning(active)?.let { active = active.copy(reasoningEffort = it) }
         if (controller.isStopped()) return
         var changed = false
@@ -1386,7 +1464,7 @@ class HermesApiClient(
         }
         var completed = false
         try {
-            streamMessageInternal(controller, active, prompt, attachments, restoreBeforeSend = false) { event ->
+            streamMessageInternal(controller, active, prompt, attachments, restoreBeforeSend = false, prepared = true) { event ->
                 if (event == StreamEvent.Completed) completed = true else onEvent(event)
             }
         } finally {
@@ -1406,12 +1484,12 @@ class HermesApiClient(
         prompt: String,
         attachments: List<PendingAttachment>,
         onEvent: (StreamEvent) -> Unit,
-    ) = withTurnLease(session) { streamMessageInternal(controller, session, prompt, attachments, true, onEvent) }
+    ) = withTurnLease(session) { streamMessageInternal(controller, session, prompt, attachments, true, onEvent = onEvent) }
 
     private fun streamMessageInternal(controller: StreamController, session: HermesSession, prompt: String,
-        attachments: List<PendingAttachment>, restoreBeforeSend: Boolean, onEvent: (StreamEvent) -> Unit) {
+        attachments: List<PendingAttachment>, restoreBeforeSend: Boolean, prepared: Boolean = false, onEvent: (StreamEvent) -> Unit) {
         if (controller.isStopped()) return
-        val active = if (session.runtimeId.isNullOrBlank()) resumeSession(session).session else session
+        val active = if(prepared)session else sessionForNewTurn(session)
         if (restoreBeforeSend) restoreVoiceReasoning(active)
         val runtimeId = active.runtimeId ?: error(uiText(R.string.ui_0108, "无法恢复 Hermes 会话"))
         controller.runtimeSessionId = runtimeId
@@ -1439,6 +1517,7 @@ class HermesApiClient(
                 ))
             }
             if (controller.isStopped()) return
+            synchronized(socketLock){newSessionRuntimes.remove(session.scopedId)}
             controller.submissionAttempted = true
             controller.beforeSubmission?.invoke()
             if(controller.isStopped())return
@@ -1449,6 +1528,7 @@ class HermesApiClient(
             )}catch(e:RpcException){controller.submissionRejected=true;throw e}
             try {checkCommandAccepted(acknowledgement)}catch(e:ApiException){controller.submissionRejected=true;throw e}
             controller.submissionAccepted = true
+            onEvent(StreamEvent.PromptAccepted)
             // Stop can race the submit acknowledgement; interrupt again after submit returns.
             if (controller.isStopped()) stopRun(runtimeId, session.profile)
             if (!controller.awaitCompletion()) throw ApiException(408, uiText(R.string.ui_0109, "等待 Hermes 回复超时"))
@@ -1536,7 +1616,10 @@ class HermesApiClient(
     }
 
     fun close() {
+        synchronized(transportIssues){disposed=true}
+        http.dispatcher.cancelAll()
         closeSocket()
+        if(heartbeatExecutor.isInitialized())heartbeatExecutor.value.shutdownNow()
         http.dispatcher.executorService.shutdown()
         http.connectionPool.evictAll()
     }
@@ -1559,37 +1642,36 @@ class HermesApiClient(
     }
 
     private fun ensureGatewayConnected() {
+        check(!disposed){"连接已关闭"}
         if (socketOpen && socket != null) return
-        synchronized(socketLock) {
+        synchronized(connectionLock) {
             if (socketOpen && socket != null) return
-            closeSocketLocked()
-
+            val generation = synchronized(socketLock) { closeSocketLocked(); socketGeneration }
             val ticketResponse = JSONObject(request("POST", "/api/auth/ws-ticket", "{}"))
             val ticket = ticketResponse.optString("ticket").takeIf { it.isNotBlank() }
                 ?: error(uiText(R.string.ui_0112, "远程网关没有返回 WebSocket 票据"))
             val openFuture = CompletableFuture<Unit>()
             val readyFuture = CompletableFuture<Unit>()
-            socketOpenFuture = openFuture
-            gatewayReadyFuture = readyFuture
-
-            val httpUrl = endpoint("/api/ws").toHttpUrl()
-            val wsUrl = httpUrl.newBuilder()
-                .addQueryParameter("ticket", ticket)
-                .build()
-            val request = Request.Builder()
-                .url(toWebSocketUrl(wsUrl.toString()))
-                .header("User-Agent", USER_AGENT)
-                .build()
-            socket = http.newWebSocket(request, GatewayWebSocketListener())
+            val wsUrl = endpoint("/api/ws").toHttpUrl().newBuilder().addQueryParameter("ticket", ticket).build()
+            val request = Request.Builder().url(toWebSocketUrl(wsUrl.toString())).header("User-Agent", USER_AGENT).build()
+            synchronized(socketLock) {
+                // Logout/close can invalidate a ticket request while it is in flight.
+                if (generation != socketGeneration) throw ApiException(0, uiText(R.string.ui_0124, "Hermes 实时连接已关闭"))
+                socketOpenFuture = openFuture
+                gatewayReadyFuture = readyFuture
+                socket = http.newWebSocket(request, GatewayWebSocketListener(openFuture, readyFuture))
+            }
             try {
                 openFuture.get(20, TimeUnit.SECONDS)
                 readyFuture.get(20, TimeUnit.SECONDS)
             } catch (error: Exception) {
-                closeSocketLocked()
+                synchronized(socketLock) { if (generation == socketGeneration) closeSocketLocked() }
                 throw error.cause ?: error
             } finally {
-                socketOpenFuture = null
-                gatewayReadyFuture = null
+                synchronized(socketLock) {
+                    if (socketOpenFuture === openFuture) socketOpenFuture = null
+                    if (gatewayReadyFuture === readyFuture) gatewayReadyFuture = null
+                }
             }
         }
     }
@@ -1600,27 +1682,28 @@ class HermesApiClient(
         timeoutSeconds: Long = 60,
     ): JSONObject {
         ensureGatewayConnected()
-        val id = "android-${requestIds.incrementAndGet()}"
+        val id = "desktop-${requestIds.incrementAndGet()}"
         val future = CompletableFuture<Any?>()
-        pendingCalls[id] = future
         if (!params.has("profile")) params.put("profile", activeProfile)
-        val frame = JSONObject()
-            .put("jsonrpc", "2.0")
-            .put("id", id)
-            .put("method", method)
-            .put("params", params)
-        if (socket?.send(frame.toString()) != true) {
-            pendingCalls.remove(id)
-            socketOpen = false
-            throw ApiException(0, uiText(R.string.ui_0113, "Hermes 实时连接已断开"))
+        val frame = JSONObject().put("jsonrpc", "2.0").put("id", id).put("method", method).put("params", params)
+        synchronized(socketLock) {
+            if (!socketOpen || socket == null) throw ApiException(0, uiText(R.string.ui_0113, "Hermes 实时连接已断开"))
+            pendingCalls[id] = future
+            if (socket?.send(frame.toString()) != true) {
+                pendingCalls.remove(id)
+                handleSocketClosed(uiText(R.string.ui_0113, "Hermes 实时连接已断开"))
+                throw ApiException(0, uiText(R.string.ui_0113, "Hermes 实时连接已断开"))
+            }
         }
         val result = try {
             future.get(timeoutSeconds, TimeUnit.SECONDS)
-        } catch(error:java.util.concurrent.ExecutionException) {
-            throw error.cause ?: error
         } catch (error: TimeoutException) {
-            pendingCalls.remove(id)
+            recordTransportIssue("RPC $method", com.qingyu.hermescompanion.today.todayText("等待服务器回复超时", "Timed out waiting for server response"))
             throw ApiException(408, uiText(R.string.ui_0114, "Hermes 请求超时：%1\$s", method))
+        } catch (error: java.util.concurrent.ExecutionException) {
+            throw error.cause ?: error
+        } finally {
+            pendingCalls.remove(id, future)
         }
         return when (result) {
             is JSONObject -> result
@@ -1642,6 +1725,7 @@ class HermesApiClient(
         retryTransport: Boolean = true,
         timeoutMillis:Long?=null,
     ): String {
+        check(!disposed){"连接已关闭"}
         val resolvedPath = if (includeProfile) appendProfileQuery(path, activeProfile) else path
         val resolvedBody = if (includeProfile && body != null) {
             runCatching {
@@ -1659,14 +1743,27 @@ class HermesApiClient(
         } else {
             builder.method(method, null)
         }
-        val transport = if (retryTransport && method.uppercase() in setOf("GET","HEAD")) http else http.newBuilder().retryOnConnectionFailure(false).build()
-        val call=transport.newCall(builder.build())
-        timeoutMillis?.let {call.timeout().timeout(it,TimeUnit.MILLISECONDS)}
-        call.execute().use { response ->
-            val raw = response.body?.string().orEmpty()
-            if (!response.isSuccessful) throw ApiException(response.code, extractErrorMessage(raw))
-            return raw
+        val readOnly=method.uppercase() in setOf("GET","HEAD")
+        val attempts=if(readOnly && retryTransport)2 else 1
+        for(attempt in 1..attempts){
+            val transport=http.newBuilder().retryOnConnectionFailure(readOnly).apply {
+                if(attempt>1)connectionPool(okhttp3.ConnectionPool())
+            }.build()
+            val call=transport.newCall(builder.build())
+            timeoutMillis?.let {call.timeout().timeout(it,TimeUnit.MILLISECONDS)}
+            try {
+                call.execute().use {response->
+                    val raw=response.body?.string().orEmpty()
+                    if(!response.isSuccessful)throw ApiException(response.code,extractErrorMessage(raw))
+                    return raw
+                }
+            }catch(e:java.io.IOException){
+                val category=transportCategory(e)
+                recordTransportIssue(transportOperation(path),category,attempt)
+                if(attempt==attempts || !canRetryRead(e))throw GatewayTransportException(transportOperation(path),category,attempt,e,readOnly)
+            }
         }
+        error("Unreachable transport state")
     }
 
     private fun endpoint(path: String): String = config.baseUrl.trimEnd('/') + "/" + path.trimStart('/')
@@ -1694,7 +1791,7 @@ class HermesApiClient(
             .orEmpty()
         return HermesSession(
             id = id,
-            title = resolvedSessionTitle(firstString(item, "title", "name").orEmpty(), preview),
+            title = firstString(item,"title","name")?.trim()?.takeUnless {com.qingyu.hermescompanion.ui.format.isPlaceholderSessionTitle(it)} ?: resolvedSessionTitle("",preview),
             preview = preview,
             updatedAt = firstString(
                 item,
@@ -1857,6 +1954,11 @@ class HermesApiClient(
         return buildString {
             append(prompt)
             documents.forEach { attachment ->
+                if(attachment.name=="hermes-today-request.json" && attachment.textContent!=null){
+                    val context="附件：${attachment.name}\n${attachment.textContent}"
+                    append("\n\n<!-- hermes-mobile-context-v1:${context.length} -->\n").append(context).append("\n<!-- /hermes-mobile-context-v1 -->")
+                    return@forEach
+                }
                 append(uiText(R.string.ui_0117, "\n\n--- 附件："))
                 append(attachment.name)
                 append(" ---\n")
@@ -1914,22 +2016,30 @@ class HermesApiClient(
 
     private fun restorePendingAgentRequests(result:JSONObject,runtime:String,pendingBefore:Set<String>) {
         val open=result.optJSONArray("open_requests")
-        if(open!=null) {
-            val liveIds=if(open==null)emptySet()else (0 until open.length()).mapNotNull {open.optJSONObject(it)?.opt("id")?.toString()}.toSet()
-            pendingAgentRequests.values.filter {it.runtimeSessionId==runtime&&it.serverRpcId!=null&&it.requestId !in liveIds&&"$runtime:${it.requestId}" in pendingBefore}
-                .forEach {expireAgentRequest(runtime,it.requestId)}
-            if(open!=null)for(i in 0 until open.length())open.optJSONObject(i)?.let {handleServerRequest(it,runtime)}
-        }
-        listOf("pending_clarify" to AgentRequestType.CLARIFICATION,"pending_clarification" to AgentRequestType.CLARIFICATION,"pending_approval" to AgentRequestType.APPROVAL).forEach {(field,type)->
-            result.optJSONObject(field)?.let {payload->
-                // New gateways may include the same approval in both representations.
-                if(open==null||(0 until open.length()).none {open.optJSONObject(it)?.optString("method")=="approval"&&type==AgentRequestType.APPROVAL})
-                    publishAgentRequest(parseGatewayRequest(payload,runtime,type))
+        if(result.has("open_requests") && open==null)throw ApiException(502,"请求快照格式不完整，请重新核对")
+        if(open!=null){
+            val frames=(0 until open.length()).map {i->
+                val frame=open.optJSONObject(i)?:throw ApiException(502,"请求状态格式不完整，请重试核对")
+                val params=frame.optJSONObject("params")?:throw ApiException(502,"请求状态格式不完整，请重试核对")
+                val id=frame.opt("id")
+                require((id is String && id.isNotBlank() || id is Number) && frame.optString("method").isNotBlank() && params.optString("session_id",runtime)==runtime){"请求状态与当前会话不符"}
+                frame
             }
+            val liveIds=frames.map {it.get("id").toString()}.toSet()
+            pendingAgentRequests.values.filter {it.runtimeSessionId==runtime && it.requestId !in liveIds && "$runtime:${it.requestId}" in pendingBefore}
+                .forEach {expireAgentRequest(runtime,it.requestId)}
+            frames.forEach {handleServerRequest(it,runtime)}
+            return
         }
-        if(result.has("running")&&!result.optBoolean("running")&&result.optString("status")!="waiting") {
-            pendingAgentRequests.values.filter {it.runtimeSessionId==runtime&&it.serverRpcId==null&&"$runtime:${it.requestId}" in pendingBefore&&
-                !result.has("pending_approval")&&!result.has("pending_clarify")&&!result.has("pending_clarification")}.forEach {expireAgentRequest(runtime,it.requestId)}
+        listOf(listOf("pending_clarify","pending_clarification") to AgentRequestType.CLARIFICATION,listOf("pending_approval") to AgentRequestType.APPROVAL).forEach {(fields,type)->
+            val field=fields.firstOrNull {result.has(it)}?:return@forEach
+            val value=result.opt(field)
+            if(value==JSONObject.NULL || value==false){
+                pendingAgentRequests.values.filter {it.runtimeSessionId==runtime && it.type==type && "$runtime:${it.requestId}" in pendingBefore}.forEach {expireAgentRequest(runtime,it.requestId)}
+            }else {
+                val payload=value as? JSONObject?:throw ApiException(502,"待处理状态格式不完整，请重新核对")
+                publishAgentRequest(parseGatewayRequest(payload,runtime,type))
+            }
         }
     }
 
@@ -2038,6 +2148,9 @@ class HermesApiClient(
     }
 
     private fun handleSocketClosed(message: String) {
+        socketGeneration++
+        newSessionRuntimes.clear()
+        stopHeartbeatLocked()
         socketOpen = false
         socket = null
         answeredServerRequests.clear()
@@ -2061,6 +2174,9 @@ class HermesApiClient(
     }
 
     private fun closeSocketLocked() {
+        socketGeneration++
+        newSessionRuntimes.clear()
+        stopHeartbeatLocked()
         val current = socket
         socket = null
         socketOpen = false
@@ -2069,49 +2185,74 @@ class HermesApiClient(
         pendingCalls.clear()
     }
 
-    private inner class GatewayWebSocketListener : WebSocketListener() {
+    private inner class GatewayWebSocketListener(
+        private val opened: CompletableFuture<Unit>, private val ready: CompletableFuture<Unit>,
+    ) : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            socketOpen = true
-            socketOpenFuture?.complete(Unit)
+            synchronized(socketLock) {
+                if (socket !== webSocket) { webSocket.cancel(); return }
+                // The transport is open, but RPCs must wait for gateway.ready.
+                opened.complete(Unit)
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            if (socket !== webSocket) return
             val frame = runCatching { JSONObject(text) }.getOrNull() ?: return
-            if (frame.optString("method") == "event") {
-                frame.optJSONObject("params")?.let(::handleGatewayEvent)
-                return
-            }
-            if(frame.has("method")) {
+            synchronized(socketLock) {
+                if (socket !== webSocket) return
+                heartbeat.received()
+                if (frame.optString("method") == "event") {
+                    val params = frame.optJSONObject("params") ?: return
+                    if (params.optString("type") == "gateway.ready") {
+                        socketOpen = true
+                        // Advertise on EVERY connection before any session or prompt is sent.
+                        webSocket.send(JSONObject().put("jsonrpc", "2.0").put("id", "desktop-capabilities-$socketGeneration")
+                            .put("method", "client.capabilities").put("params", JSONObject().put("server_requests", true)).toString())
+                        recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText("实时连接已建立", "Live connection established"))
+                        if (params.optJSONObject("payload")?.optBoolean("heartbeat") == true) startHeartbeatLocked()
+                        ready.complete(Unit)
+                    } else handleGatewayEvent(params)
+                    return
+                }
                 if(frame.optString("method")=="request.cancel") {
-                    val p=frame.optJSONObject("params")?:JSONObject()
-                    handleGatewayEvent(JSONObject().put("type","request.cancel").put("payload",p))
-                }else if(frame.has("id"))handleServerRequest(frame)
-                return
-            }
-            val id = frame.opt("id")?.toString()?.takeIf { it.isNotBlank() } ?: return
-            val future = pendingCalls.remove(id) ?: return
-            val error = frame.optJSONObject("error")
-            if (error != null) {
-                future.completeExceptionally(
-                    RpcException(error.optInt("code"), error.optString("message", uiText(R.string.ui_0125, "Hermes RPC 失败"))),
-                )
-            } else {
-                future.complete(frame.opt("result"))
+                    handleGatewayEvent(JSONObject().put("type","request.cancel").put("payload",frame.optJSONObject("params")?:JSONObject()));return
+                }
+                if (frame.has("method") && frame.has("id")) { handleServerRequest(frame); return }
+                val id = frame.opt("id")?.toString()?.takeIf { it.isNotBlank() } ?: return
+                if (id.startsWith("desktop-capabilities-")) {
+                    val code = frame.optJSONObject("error")?.optInt("code")
+                    if (code != null && code != -32601) recordTransportIssue("client.capabilities", "Request support rejected ($code)")
+                    return // -32601 identifies older gateways; keep their *.request protocol.
+                }
+                if (id.startsWith("desktop-heartbeat-")) {
+                    if (frame.optJSONObject("error")?.optInt("code") == -32601) stopHeartbeatLocked()
+                    return
+                }
+                val future = pendingCalls.remove(id) ?: return
+                val error = frame.optJSONObject("error")
+                if (error != null) future.completeExceptionally(
+                    RpcException(error.optInt("code"), error.optString("message", uiText(R.string.ui_0125, "Hermes RPC 失败"))))
+                else future.complete(frame.opt("result"))
             }
         }
 
-        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            webSocket.close(code, reason)
-        }
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) { webSocket.close(code, reason) }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            if (socket === webSocket) handleSocketClosed(uiText(R.string.ui_0126, "网络连接发生波动，正在尝试恢复"))
+            synchronized(socketLock) {
+                if (socket === webSocket) {
+                    recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText("服务器关闭连接（$code）", "Server closed connection ($code)"))
+                    handleSocketClosed(uiText(R.string.ui_0126, "网络连接发生波动，正在尝试恢复"))
+                }
+            }
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            if (socket === webSocket) {
-                handleSocketClosed(webSocketFailureMessage(response?.code))
+            synchronized(socketLock) {
+                if (socket === webSocket) {
+                    recordTransportIssue("WebSocket", response?.code?.let { "HTTP $it" } ?: transportCategory(t))
+                    handleSocketClosed(webSocketFailureMessage(response?.code))
+                }
             }
         }
     }
