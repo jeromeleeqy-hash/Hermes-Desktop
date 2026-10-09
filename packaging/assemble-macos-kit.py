@@ -3,7 +3,7 @@
 import argparse, hashlib, json, shutil, struct, tarfile, tempfile, zipfile
 from pathlib import Path
 
-VERSION='1.8.4'
+VERSION='2.0.1'
 ROOT=Path(__file__).resolve().parent.parent
 
 def digest(path):
@@ -62,12 +62,12 @@ def main():
         assert VERSION.encode() in z.read('com/qingyu/hermescompanion/BuildConfig.class')
         for name in ('desktop/MacApplicationHooks','desktop/MacWindowChrome','desktop/MacStatusIcon','desktop/MacFloatingMenu','desktop/MacScreenAccess','desktop/AttachmentPreviewKt','model/AgentQuestion'):
             assert 'com/qingyu/hermescompanion/'+name+'.class' in z.namelist()
-    report={'revision':'Desktop capabilities 1.8.4','version':VERSION,'target':'macos-arm64','user_system':'macOS 27','jdk':origin,
+    report={'revision':'Desktop capabilities 2.0.1','version':VERSION,'target':'macos-arm64','user_system':'macOS 27','jdk':origin,
             'jars':len(jars),'verified_arm64_native_files':native_files,'unused_upstream_x64_resources':upstream_extra_files,
             'application_sha256':digest(args.app/'hermes-desktop.jar'),
             'macos_execution':False,'app_and_dmg_generated':False,
             'note':'The kit validates payload and architecture on Linux. Run Build-Mac-App.command on the target Mac to create and verify the actual app and DMG.'}
-    report_file=ROOT/'docs/validation/macos-1.8.4-package.json'
+    report_file=ROOT/'docs/validation/macos-2.0.1-package.json'
     report_file.parent.mkdir(parents=True,exist_ok=True);report_file.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='hermes-mac-kit-',dir=args.output.parent) as temp:
@@ -78,12 +78,12 @@ def main():
         (kit/'packaging').mkdir()
         for name in ('Hermes.icns','NativeSpeech.swift','SpeechInfo.plist'):shutil.copy2(ROOT/'packaging'/name,kit/'packaging'/name)
         shutil.copy2(ROOT/'packaging/macos/Build-Mac-App.command',kit/'Build-Mac-App.command')
-        shutil.copy2(ROOT/'docs/BUILD-1.8.4.md',kit/'先看这里.md')
+        shutil.copy2(ROOT/'docs/BUILD-2.0.1.md',kit/'先看这里.md')
         shutil.copy2(ROOT/'THIRD_PARTY_NOTICES.md',kit/'THIRD_PARTY_NOTICES.md')
-        shutil.copy2(ROOT/'docs/RELEASE-1.8.4.md',kit/'本次更新.md')
+        shutil.copy2(ROOT/'docs/RELEASE-2.0.1.md',kit/'本次更新.md')
         shutil.copytree(ROOT/'licenses',kit/'licenses')
         (kit/'validation').mkdir()
-        for name in ('macos-1.8.4-package.json','desktop-1.8.4-validation.json'):
+        for name in ('macos-2.0.1-package.json','desktop-2.0.1-validation.json'):
             if (ROOT/'docs/validation'/name).is_file():shutil.copy2(ROOT/'docs/validation'/name,kit/'validation'/name)
         inventory=[]
         for path in sorted(kit.rglob('*')):

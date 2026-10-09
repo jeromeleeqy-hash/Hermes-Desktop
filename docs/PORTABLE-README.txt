@@ -10,4 +10,4 @@ Hermes Windows 1.8.3
 关闭主窗口后程序继续在后台运行。右下角系统托盘右键 Hermes → 退出 Hermes，才完整退出。
 设置 → 桌面助手，可开关悬浮球。单击提问、双击框选截图、按住说话松开发送；拖入文件可添加附件。持续语音可从悬浮球右键菜单或语音按钮进入。
 
-改动见 docs/RELEASE-1.8.3.md，使用见 docs/WINDOWS-QUICKSTART.md，验证范围见 docs/WINDOWS-VALIDATION.md。
+改动见 docs/RELEASE-2.0.2.md，使用见 docs/WINDOWS-QUICKSTART.md，验证范围见 docs/ACCEPTANCE-2.0.2.md。

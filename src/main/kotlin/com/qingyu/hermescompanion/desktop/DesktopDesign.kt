@@ -155,21 +155,21 @@ private object HermesContextMenu:ContextMenuRepresentation {
     Image(painterResource("themes/$asset.png"),tr("${skinDisplayName(name)}界面预览"),modifier.clip(RoundedCornerShape(7.dp)),contentScale=ContentScale.Crop)
 }
 
-@Composable fun HermesDialog(onDismissRequest:()->Unit,confirmButton:@Composable ()->Unit,title:(@Composable ()->Unit)?=null,text:(@Composable ()->Unit)?=null,dismissButton:(@Composable ()->Unit)?=null,inlinePreview:Boolean=false,showFooter:Boolean=true) {
+@Composable fun HermesDialog(onDismissRequest:()->Unit,confirmButton:@Composable ()->Unit,title:(@Composable ()->Unit)?=null,text:(@Composable ()->Unit)?=null,dismissButton:(@Composable ()->Unit)?=null,inlinePreview:Boolean=false,showFooter:Boolean=true,maxWidth:Dp=600.dp,maxHeight:Dp=680.dp) {
     val owner=LocalWindowInfo.current.containerSize
     val density=LocalDensity.current
     val width=with(density){owner.width.toDp()};val height=with(density){owner.height.toDp()}
     val content:@Composable ()->Unit={
         Box(Modifier.widthIn(max=if(width>48.dp)width-40.dp else 600.dp).heightIn(max=if(height>48.dp)height-40.dp else 680.dp).arrive()) {
-            HermesDialogContent(title,text,confirmButton,dismissButton,onDismissRequest,showFooter)
+            HermesDialogContent(title,text,confirmButton,dismissButton,onDismissRequest,showFooter,maxWidth,maxHeight)
         }
     }
     if(inlinePreview)content()else Dialog(onDismissRequest,properties=DialogProperties(usePlatformDefaultWidth=false),content=content)
 }
 /** Shared by the real modal and the offscreen UI review renderer. */
-@Composable internal fun HermesDialogContent(title:(@Composable ()->Unit)?,text:(@Composable ()->Unit)?,confirmButton:@Composable ()->Unit,dismissButton:(@Composable ()->Unit)?=null,onDismiss:(()->Unit)?=null,showFooter:Boolean=true) {
+@Composable internal fun HermesDialogContent(title:(@Composable ()->Unit)?,text:(@Composable ()->Unit)?,confirmButton:@Composable ()->Unit,dismissButton:(@Composable ()->Unit)?=null,onDismiss:(()->Unit)?=null,showFooter:Boolean=true,maxWidth:Dp=600.dp,maxHeight:Dp=680.dp) {
     val d=LocalDesktopDesign.current;val colors=MaterialTheme.colorScheme
-    Surface(Modifier.widthIn(min=360.dp,max=600.dp).heightIn(max=680.dp),shape=RoundedCornerShape(12.dp),color=colors.surface,
+    Surface(Modifier.widthIn(min=360.dp,max=maxWidth).heightIn(max=maxHeight),shape=RoundedCornerShape(16.dp),color=colors.surface,
         border=BorderStroke(1.dp,colors.outline.copy(alpha=.55f)),shadowElevation=16.dp) {
         Column {
             Row(Modifier.fillMaxWidth().padding(start=24.dp,end=16.dp,top=18.dp,bottom=14.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {

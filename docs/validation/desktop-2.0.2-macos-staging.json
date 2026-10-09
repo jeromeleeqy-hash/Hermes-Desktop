@@ -1,0 +1,8 @@
+{
+  "platform": "macos-arm64",
+  "base": "Hermes-macOS-arm64-2.0.1.app.zip",
+  "base_sha256": "3d1e3f6c6663536e3e753ec40aea84f37af857c21da3d35be31edb6c562e5399",
+  "dependencies": "Verified against original release manifest; dependency declarations unchanged",
+  "application_sha256": "7efce696ed2ded45deaf2eccf066085f3fc30e1e9b063f8b1fef8d132fd01399",
+  "jars": 85
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ExperienceInteractionTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:04:05.718Z" hostname="5ae9c712f1d5" time="10.824">
+  <properties/>
+  <testcase name="sourceSelectionFormattingUndoSplitPreviewAndCloseKeepExactDraft" classname="com.qingyu.hermescompanion.desktop.ExperienceInteractionTest" time="3.468"/>
+  <testcase name="compactMarkdownOutlineRemainsAccessibleAndMenuKeyboardWorks" classname="com.qingyu.hermescompanion.desktop.ExperienceInteractionTest" time="2.014"/>
+  <testcase name="markdownSearchTakesFocusAndReplacingDoesNotRewriteTheServerVersion" classname="com.qingyu.hermescompanion.desktop.ExperienceInteractionTest" time="2.791"/>
+  <testcase name="wheelOverHomeComposerReachesBottomAt150PercentAndCanReturn" classname="com.qingyu.hermescompanion.desktop.ExperienceInteractionTest" time="2.551"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

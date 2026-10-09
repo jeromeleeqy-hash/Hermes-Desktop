@@ -1,0 +1,36 @@
+{
+  "version": "2.0.1",
+  "date": "2026-10-08",
+  "build_host": "Linux x86_64; Temurin JDK 21.0.8+9; Gradle 8.13",
+  "junit_latest_by_suite": {
+    "tests": 352,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 7
+  },
+  "initial_run": "352 tests; 2 missing-icon failures corrected, 7 native desktop tests skipped",
+  "targeted_rerun": "19 tests, 0 failures, 0 skipped; includes both affected suites",
+  "python": "17 tests passed",
+  "previews": [
+    "approval-small.png",
+    "approval.png",
+    "deep.png",
+    "detail.png",
+    "simple.png",
+    "voice.png"
+  ],
+  "local_voice_engine": {
+    "tts_wave_bytes": 157578,
+    "stt_transcript": "你好，这是桌面版的本地语音测试。",
+    "gateway_used": false
+  },
+  "native_execution": "macOS/Windows native execution was not available; microphone/speaker/system permissions need native validation",
+  "offline_controller": {
+    "gateway_configured": false,
+    "hardware_substituted": true,
+    "tts_output_bytes": 138182,
+    "stt_transcript": "你好，这是桌面版的本地语音测试。",
+    "voice_note_committed": true,
+    "status": "passed"
+  }
+}

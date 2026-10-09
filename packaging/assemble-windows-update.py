@@ -3,7 +3,7 @@
 import argparse, hashlib, json, tempfile, zipfile
 from windows_runtime import validate_runtime_image
 from pathlib import Path
-VERSION='1.8.4'
+VERSION='2.0.1'
 def sha(data):return hashlib.sha256(data).hexdigest()
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--app',required=True,type=Path);p.add_argument('--output',required=True,type=Path)

@@ -5,3 +5,10 @@ build/
 packaging/Hermes.iconset/
 *.log
 .idea/
+
+# Python tooling caches
+__pycache__/
+*.py[cod]
+
+# Local build cache may be linked from outside the source tree
+/build

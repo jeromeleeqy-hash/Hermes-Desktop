@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:37.913Z" hostname="5ae9c712f1d5" time="1.671">
+  <properties/>
+  <testcase name="wordPreservesChineseHeadingsEmphasisTableAndEmbeddedImage" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.513"/>
+  <testcase name="editorContinuesListsExitsEmptyItemsAndDoesNotInterfereWithCompositionOrCode" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.001"/>
+  <testcase name="replaceAndFormatRemainReversibleWithoutLosingOtherSource" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.0"/>
+  <testcase name="avatarCropIsTransparentPngAndImageScalingIsStableAtDifferentViewports" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.087"/>
+  <testcase name="maximizeUsesWorkAreaOnEveryTaskbarEdgeAndNegativeMonitor" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.002"/>
+  <testcase name="webpageBundlesRelativeAssetsAndRemovesActiveContent" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.009"/>
+  <testcase name="pdfAndBothPowerpointFormatsRenderFromOneOpenResource" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.721"/>
+  <testcase name="spreadsheetsSupportBothFormatsPaginationMergedCellsAndCachedFormulaValues" classname="com.qingyu.hermescompanion.desktop.ExperienceUpgradeTest" time="0.336"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

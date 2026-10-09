@@ -93,7 +93,7 @@ import kotlinx.coroutines.launch
                 var showDecision by remember(key){mutableStateOf(false)}
                 if(pending.isNotEmpty()) {
                     DeskTextButton(onClick={showDecision=true},modifier=Modifier.padding(horizontal=20.dp)){Glyph("inbox",Modifier.size(16.dp));Spacer(Modifier.width(6.dp));Text("待你确认 · "+pending.first().request.title,maxLines=2)}
-                    if(showDecision)HermesDialog(onDismissRequest={showDecision=false},title={Text("待你确认")},text={DecisionPanel(c,pending.first(),Modifier.width(552.dp).height(400.dp))},confirmButton={DeskTextButton(onClick={showDecision=false}){Text("稍后处理")}})
+                    if(showDecision)DecisionDialog(c,pending.first()){showDecision=false}
                 }else LaunchedEffect(Unit){showDecision=false}
                 ChatComposer(c,s)
             }

@@ -12,7 +12,8 @@ import okio.BufferedSink
 
 /** Stream base64 in aligned blocks; never hold the recording and its JSON copy in memory. */
 class AudioFileRequestBody(private val file: File) : RequestBody() {
-    private val prefix = "{\"mime_type\":\"audio/mp4\",\"data_url\":\"data:audio/mp4;base64,"
+    private val mime = if(file.extension.equals("wav",true)) "audio/wav" else "audio/mp4"
+    private val prefix = "{\"mime_type\":\"$mime\",\"data_url\":\"data:$mime;base64,"
     private val suffix = "\"}"
     private val size = file.length()
     init { require(size in 128..15L * 1024 * 1024) { uiText(R.string.ui_0055, "录音为空或超过 15 MB，请重新录制") } }

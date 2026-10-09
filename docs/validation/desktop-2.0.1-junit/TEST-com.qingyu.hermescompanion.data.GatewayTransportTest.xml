@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.GatewayTransportTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:07.343Z" hostname="5ae9c712f1d5" time="0.03">
+  <properties/>
+  <testcase name="authenticationFailureIsNotRetried" classname="com.qingyu.hermescompanion.data.GatewayTransportTest" time="0.005"/>
+  <testcase name="interruptedReadBodyIsRecoveredUsingOneFreshRead" classname="com.qingyu.hermescompanion.data.GatewayTransportTest" time="0.008"/>
+  <testcase name="retryIsBoundedAndDoesNotDiscardTheFailureCategory" classname="com.qingyu.hermescompanion.data.GatewayTransportTest" time="0.009"/>
+  <testcase name="tlsAndCancellationFailuresAreNotRetried" classname="com.qingyu.hermescompanion.data.GatewayTransportTest" time="0.002"/>
+  <testcase name="uncertainWriteIsNeverAutomaticallyReplayed" classname="com.qingyu.hermescompanion.data.GatewayTransportTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -20,7 +20,7 @@ import tempfile
 import zipfile
 from windows_runtime import validate_runtime_image
 
-VERSION = '1.8.4'
+VERSION = '2.0.2'
 
 
 def digest(path: Path) -> str:
@@ -66,6 +66,7 @@ def main() -> None:
     assert not any(n.startswith(('junit-', 'mockito-', 'mockwebserver-')) for n in names), 'Test dependency in app'
     for module in ('base', 'graphics', 'controls', 'media', 'web', 'swing'):
         assert f'javafx-{module}-21.0.8-win.jar' in names, f'Windows JavaFX {module} is missing'
+    assert 'sherpa-onnx-native-lib-win-x64-v1.13.5.jar' in names, 'Windows local speech runtime is missing'
     native = next((p for p in jars if p.name.startswith('skiko-awt-runtime-windows-x64-')), None)
     assert native, 'Windows Skiko runtime is missing'
     with zipfile.ZipFile(native) as z:
@@ -112,13 +113,8 @@ def main() -> None:
         shutil.copy2(project / 'THIRD_PARTY_NOTICES.md', root / 'THIRD_PARTY_NOTICES.md')
         shutil.copytree(project / 'licenses', root / 'licenses')
         (root / 'docs').mkdir()
-        for name in ('CHANGELOG.md', 'WINDOWS-QUICKSTART.md', 'WINDOWS-VALIDATION.md', 'RELEASE-1.8.3.md', 'RELEASE-1.8.3-UI3.md', 'STARTUP-FIX-1.8.0.md'):
+        for name in ('CHANGELOG.md', 'WINDOWS-QUICKSTART.md', 'RELEASE-2.0.2.md', 'BUILD-2.0.2.md', 'ACCEPTANCE-2.0.2.md'):
             shutil.copy2(project / 'docs' / name, root / 'docs' / name)
-        for preview in ('windows-1.8.0', 'windows-1.8.1-ui', 'windows-1.8.2', 'windows-1.8.3', 'desktop-1.8.3-ui3'):
-            if (project/'docs/previews'/preview).is_dir(): shutil.copytree(project/'docs/previews'/preview, root/'docs/previews'/preview)
-        (root / 'docs/validation').mkdir()
-        for file in (project/'docs/validation').glob('*1.8.3-*'):
-            if file.is_file() and file.name!='windows-1.8.3-package.json':shutil.copy2(file,root/'docs/validation'/file.name)
         # Preserve license documents as stored in upstream JARs, in addition to the JARs themselves.
         for jar in jars:
             with zipfile.ZipFile(jar) as z:
@@ -132,16 +128,16 @@ def main() -> None:
                     out.parent.mkdir(parents=True, exist_ok=True)
                     out.write_bytes(z.read(item))
         manifest = {
-            'application': 'Hermes', 'version': VERSION, 'edition': 'Desktop UI revision 3', 'platform': 'windows-x64',
+            'application': 'Hermes', 'version': VERSION, 'edition': 'Desktop 2.0.2 acceptance', 'platform': 'windows-x64',
             'launcher': 'Hermes.exe', 'launcher_sha256': digest(root / 'Hermes.exe'),
             'runtime_archive': origin['jdk_archive'] if origin else args.jre.name,
             'runtime_sha256': origin['jdk_sha256'] if origin else args.sha256.lower(),
             'runtime_source': origin['source'] if origin else 'https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.12.1%2B1',
             'runtime_build': origin,
-            'build': '1.8.3', 'runtime_modules_verified': runtime_modules,
+            'build': VERSION, 'runtime_modules_verified': runtime_modules,
             'runtime_files': [{'path':f.relative_to(root/'runtime').as_posix(),'bytes':f.stat().st_size,'sha256':digest(f)} for f in sorted((root/'runtime').rglob('*')) if f.is_file()],
             'jars': [{'name': p.name, 'bytes': p.stat().st_size, 'sha256': digest(p)} for p in jars],
-            'validation': 'See docs/WINDOWS-VALIDATION.md; Windows native execution not performed on the Linux build host.',
+            'validation': 'See docs/ACCEPTANCE-2.0.2.md; Windows native execution not performed on the Linux build host.',
         }
         (root / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
         staged_zip = Path(tmp) / 'portable.zip'

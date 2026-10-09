@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:30.174Z" hostname="5ae9c712f1d5" time="0.112">
+  <properties/>
+  <testcase name="bubbleStaysOnReachableWorkAreaAfterMonitorRemoval" classname="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" time="0.0"/>
+  <testcase name="aClickWaitsForDoubleClickAndDoubleClickNeverAlsoAsks" classname="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" time="0.001"/>
+  <testcase name="quickPanelUsesDailyAssistantAndKeepsAttachmentsAndVoiceInTheSelectedConversation" classname="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" time="0.007"/>
+  <testcase name="screenshotJoinsNegativeMonitorAndScaledMonitorWithoutLeakingOutsideSelection" classname="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" time="0.104"/>
+  <testcase name="holdingReleasesExactlyOnceAndCannotBecomeAClickOrDrag" classname="com.qingyu.hermescompanion.desktop.DesktopCompanionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

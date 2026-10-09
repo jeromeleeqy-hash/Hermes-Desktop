@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.DecisionLayout201Test" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:04:04.474Z" hostname="5ae9c712f1d5" time="1.239">
+  <properties/>
+  <testcase name="longCommandCannotPushActionsOutsideSmallWindow" classname="com.qingyu.hermescompanion.desktop.DecisionLayout201Test" time="1.239"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

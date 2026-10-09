@@ -37,6 +37,25 @@ object DesktopFiles {
         val picker=JFileChooser().apply { isMultiSelectionEnabled=true; dialogTitle=tr("添加文件") }
         return if(picker.showOpenDialog(pickerOwner(parent))==JFileChooser.APPROVE_OPTION) picker.selectedFiles.toList() else emptyList()
     }
+    fun chooseVoiceModel(model:String,parent:Component?=null):File? {
+        if(!EventQueue.isDispatchThread()){
+            val task=java.util.concurrent.FutureTask<File?> {chooseVoiceModel(model,parent)}
+            EventQueue.invokeAndWait(task);return task.get()
+        }
+        if(DesktopHost.isMac||DesktopHost.isWindows){
+            val picker=nativePicker(parent,"导入 "+model+" 模型包",FileDialog.LOAD)
+            return try{
+                picker.isMultipleMode=false
+                picker.filenameFilter=FilenameFilter {_,name->name.endsWith(".tar.bz2",ignoreCase=true)}
+                picker.isVisible=true;picker.file?.let {File(picker.directory,it)}
+            }finally{picker.dispose()}
+        }
+        val picker=JFileChooser().apply {
+            dialogTitle="导入 "+model+" 模型包";isMultiSelectionEnabled=false
+            fileFilter=javax.swing.filechooser.FileNameExtensionFilter("模型包 · .tar.bz2","bz2")
+        }
+        return if(picker.showOpenDialog(pickerOwner(parent))==JFileChooser.APPROVE_OPTION)picker.selectedFile else null
+    }
     fun chooseImage(parent:Component?=null):File? {
         if(!EventQueue.isDispatchThread()) {
             val task=java.util.concurrent.FutureTask<File?> {chooseImage(parent)}
@@ -193,8 +212,13 @@ object DesktopNotifications {
     private var tray:TrayIcon?=null
     private var menu:DesktopMenuHost?=null
     private var macFloatingItem:CheckboxMenuItem?=null
+    private var defaultTarget:(()->DesktopNotificationTarget)?=null
     val installed get()=tray!=null
     fun install(c:DesktopController,onOpen:()->Unit,onExit:()->Unit,onToggleFloating:(Boolean)->Unit) {
+        defaultTarget={c.notificationTarget()}
+        if(DesktopHost.isMac)runCatching {MacNativeNotifications.install {target->
+            javax.swing.SwingUtilities.invokeLater {onOpen();c.openNotification(target)}
+        }}.onFailure {java.util.logging.Logger.getLogger("Hermes.Notifications").log(java.util.logging.Level.WARNING,"Native notifications unavailable",it)}
         if((!DesktopHost.isWindows&&!DesktopHost.isMac) || !SystemTray.isSupported() || tray!=null)return
         runCatching {
             if(DesktopHost.isMac) {
@@ -234,17 +258,15 @@ object DesktopNotifications {
     }
     fun updateBadge(count:Int) { tray?.toolTip=if(count>0)"Hermes · $count ${tr("未读")}" else "Hermes" }
     fun syncFloating(enabled:Boolean){macFloatingItem?.state=enabled}
-    fun close() {menu?.close();menu=null;tray?.let {SystemTray.getSystemTray().remove(it)};tray=null;macFloatingItem=null}
-    fun show(title:String,message:String,sound:Boolean=true) {
+    fun close() {menu?.close();menu=null;tray?.let {SystemTray.getSystemTray().remove(it)};tray=null;macFloatingItem=null;defaultTarget=null;if(DesktopHost.isMac)runCatching {MacNativeNotifications.close()}}
+    fun show(title:String,message:String,sound:Boolean=true,target:DesktopNotificationTarget?=null) {
         if(DesktopHost.isWindows) {
             javax.swing.SwingUtilities.invokeLater {tray?.displayMessage(title,message,TrayIcon.MessageType.INFO)}
             return
         }
         if(!DesktopHost.isMac)return
-        Thread {
-            // Arguments are passed as process arguments, never interpolated into AppleScript source.
-            val script="on run argv\nif item 3 of argv is \"true\" then\ndisplay notification (item 2 of argv) with title (item 1 of argv) sound name \"Glass\"\nelse\ndisplay notification (item 2 of argv) with title (item 1 of argv)\nend if\nend run"
-            runCatching { ProcessBuilder("/usr/bin/osascript","-e",script,title,message,sound.toString()).redirectOutput(ProcessBuilder.Redirect.DISCARD).redirectError(ProcessBuilder.Redirect.DISCARD).start().waitFor(5,TimeUnit.SECONDS) }
-        }.apply { isDaemon=true; start() }
+        val destination=target?:defaultTarget?.invoke()?:return
+        runCatching {MacNativeNotifications.show(title,message,sound,destination)}
+            .onFailure {java.util.logging.Logger.getLogger("Hermes.Notifications").log(java.util.logging.Level.WARNING,"Native notification failed",it)}
     }
 }

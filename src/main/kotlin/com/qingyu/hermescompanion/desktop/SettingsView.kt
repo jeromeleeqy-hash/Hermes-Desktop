@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.*
 import com.qingyu.hermescompanion.model.*
 import com.qingyu.hermescompanion.BuildConfig
 import com.qingyu.hermescompanion.data.HermesApiClient
+import com.qingyu.hermescompanion.data.LocalVoiceModels
 
 private val settingsGroups=linkedMapOf("日常使用" to listOf("外观与账户","桌面助手","对话与记忆","语音","通知","提示词片段"),"AI 能力" to listOf("模型","模型供应商","Skills","工具集","MCP"),"连接与帮助" to listOf("网关","帮助"))
 private val settingsKeywords=mapOf("桌面助手" to "悬浮球 后台 托盘 截图 长按 置顶", "外观与账户" to "主题 皮肤 深色 语言 字号 密度 昵称 头像", "模型" to "服务商 默认模型 推理 辅助 备用 会审", "模型供应商" to "API Key 密钥 服务商 提供商 地址 端点 provider", "对话与记忆" to "人格 时区 记忆 审批 压缩 上下文 发送 换行", "语音" to "麦克风 识别 朗读 音色 转写 录音", "通知" to "消息 提醒 托盘", "提示词片段" to "模板 快捷输入", "Skills" to "技能 扩展", "工具集" to "浏览器 文件 搜索 终端", "MCP" to "服务 外部工具", "网关" to "登录 连接 诊断 更新", "帮助" to "快捷键 版本 使用")
@@ -163,6 +164,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
 }
 
 @Composable private fun HelpSettings(c:DesktopController) {
+    GettingStartedButton()
     DesktopUpdateSettings(c)
     SettingCard("Hermes ${DesktopHost.os.label} ${BuildConfig.VERSION_NAME}","对话、任务和文件，在一个工作空间里继续。") {
         listOf("新对话" to "Ctrl N","快速查找" to "Ctrl K","命令面板" to "Ctrl P","展开或收起导航" to "Ctrl B","专注模式" to "Ctrl Shift F","保存文档" to "Ctrl S","发送消息" to if(c.sendOnEnter)"Enter"else"Ctrl+Enter","打开设置" to "Ctrl ,").forEach {(label,keys)->SettingLine(label){Text(keys.replace("Ctrl",shortcutKey()),fontFamily=FontFamily.Monospace,fontSize=13.sp)}}
@@ -333,11 +335,15 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
 @Composable private fun VoiceSettings(c:DesktopController) {
     val pref=c.voicePreferences
     fun change(v:VoicePreferences)=c.saveVoicePreferences(v)
+    LocalVoiceModelsSettings(c)
     SettingCard("语音输入","本机偏好立即生效；普通录音和连续语音可以分别使用。") {
         Toggle("启用语音输入",pref.enabled){change(pref.copy(enabled=it))}
-        SettingLine("识别与朗读引擎"){Picker(pref.engine,listOf("automatic","server","system"),{when(it){"server"->"服务器";"system"->"${DesktopHost.os.label} 系统";else->"自动选择"}}){change(pref.copy(engine=it))}}
-        SubtleText(when(pref.engine){"server"->"使用服务器配置的识别与朗读能力。";"system"->"使用本机已安装的语音语言和音色。";else->"根据本机与服务器可用能力自动选择，测试结果会显示在下方。"},maxLines=3)
-        SettingLine("识别语言"){Picker(pref.language,listOf("zh-CN","zh-TW","en-US","ja-JP","ko-KR"),::optionLabel){change(pref.copy(language=it))}}
+        fun engineLabel(value:String)=when(value){"server"->"Hermes 服务器";"system"->"${DesktopHost.os.label} 系统";"local"->"电脑本地模型";else->"自动选择"}
+        SettingLine("语音识别"){Picker(engineLabel(pref.sttEngine),listOf("automatic","server","system","local"),::engineLabel){c.voice.models.selectEngine(LocalVoiceModels.recognition,it)}}
+        SettingLine("语音朗读"){Picker(engineLabel(pref.ttsEngine),listOf("automatic","server","system","local"),::engineLabel){c.voice.models.selectEngine(LocalVoiceModels.playback,it)}}
+        if(pref.ttsEngine=="local")SettingLine("Kokoro 音色"){Picker("音色 "+(pref.localSpeaker+1),(0..102).toList(),{"音色 "+(it+1)}){change(pref.copy(localSpeaker=it))}}
+        SubtleText("可以分别选择识别和朗读方式。本地模型需先下载对应语音包。",maxLines=3)
+        SettingLine("识别语言"){Picker(pref.language,listOf("zh-CN","zh-TW","yue-HK","en-US","ja-JP","ko-KR"),{if(it=="yue-HK")"粤语"else optionLabel(it)}){change(pref.copy(language=it))}}
         SettingLine("中文转写"){Picker(pref.transcriptScript,listOf("simplified","traditional","original"),::optionLabel){change(pref.copy(transcriptScript=it))}}
         Toggle("普通录音转写后自动发送",pref.autoSend){change(pref.copy(autoSend=it))}
         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {

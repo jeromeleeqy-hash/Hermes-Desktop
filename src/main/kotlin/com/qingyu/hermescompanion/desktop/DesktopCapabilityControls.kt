@@ -17,7 +17,7 @@ internal fun reasoningLabel(value:String?):String=when(value) {
 @Composable internal fun ComposerReasoningPicker(c:DesktopController,s:HermesSession) {
     var open by remember(s.scopedId,s.model,s.provider){mutableStateOf(false)}
     LaunchedEffect(s.profile,s.model,s.provider){c.loadModelCatalog()}
-    val options=c.modelCatalog.providers.firstOrNull {it.slug==s.provider}?.reasoningOptions?.get(s.model)
+    val options=c.modelCatalog.providerFor(s)?.reasoningOptions?.get(s.model.ifBlank {c.modelCatalog.currentModel})
     val busy=c.modelSwitching[s.scopedId]==true||c.runs.containsKey(s.scopedId)
     Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
         Box {

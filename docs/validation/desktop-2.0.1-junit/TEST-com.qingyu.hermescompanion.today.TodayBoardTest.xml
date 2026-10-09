@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.today.TodayBoardTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:50.625Z" hostname="5ae9c712f1d5" time="0.01">
+  <properties/>
+  <testcase name="earlierCheckDoesNotImplyTheCurrentContentWasCheckedAndOffsetsCompareByInstant" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.005"/>
+  <testcase name="focusExcludesClosedItemsAndPreservesEditorialOrder" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <testcase name="existingV1NeedsNoNewFields" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <testcase name="duplicateIdsAndBadCoreFieldsAreRejected" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.001"/>
+  <testcase name="structuredQuestionKeepsFactsAndBackgroundInDraftContext" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <testcase name="pathsRespectSegmentsAndWindowsRoots" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <testcase name="progressRequiresExplicitRecordedSteps" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.001"/>
+  <testcase name="optionalPresentationFailureFallsBackToOriginalSummary" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <testcase name="missingOrMalformedOptionalCheckTimeDoesNotHideAnOtherwiseValidOverview" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.001"/>
+  <testcase name="blockedReferencesDoNotHideCardsOrAuthorizeOpening" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.001"/>
+  <testcase name="checkingWithoutNewFactsAdvancesCheckTimeWhileKeepingContentTimeAndCards" classname="com.qingyu.hermescompanion.today.TodayBoardTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

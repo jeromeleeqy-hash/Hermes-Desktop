@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:05.193Z" hostname="5ae9c712f1d5" time="1.068">
+  <properties/>
+  <testcase name="invalidDirectoryFailsBeforeSubmittingAnyPrompt" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.059"/>
+  <testcase name="explicitSubmissionRejectionIsDifferentFromAnUnknownDisconnect" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.011"/>
+  <testcase name="checkpointFailurePreventsPromptFromReachingServer" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.01"/>
+  <testcase name="creatingInProjectSetsRuntimeDirectoryAndPreservesRoot" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.01"/>
+  <testcase name="approvalAndCancellationStayScopedToTheirRuntime" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.111"/>
+  <testcase name="voiceFastReplyIsSessionScopedAndRestoredBeforeCompletion" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.064"/>
+  <testcase name="rejectedInterruptDoesNotReportSuccess" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.011"/>
+  <testcase name="unsupportedVoiceReasoningStillSendsWithoutChangingConfig" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.052"/>
+  <testcase name="stoppedBeforeSubmissionDoesNotCreateRuntimeOrSendMessage" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.002"/>
+  <testcase name="interleavedRepliesStayInTheirOwnConversation" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.055"/>
+  <testcase name="newAssistantSessionUsesCapturedProfileEvenIfClientSelectionChanged" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.008"/>
+  <testcase name="reasoningChunksKeepWhitespaceAndSplitWordsExactly" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.052"/>
+  <testcase name="directCancellationPreventsSubmittingAnExpiredAnswer" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.07"/>
+  <testcase name="unfamiliarServerRequestIsVisibleAndOnlyRejectedOnUserAction" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.161"/>
+  <testcase name="legacyClarifyBeforeMessageStartIsVisibleAndKeepsLegacyResponse" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.102"/>
+  <testcase name="modernClarifyIsAnsweredWithMatchingJsonRpcResponse" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.063"/>
+  <testcase name="stoppingOneRuntimeDoesNotStopItsPeer" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.054"/>
+  <testcase name="disconnectNotifiesAllLiveConversations" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.058"/>
+  <testcase name="resumingWaitingSessionRestoresAllQuestionsAndTheirWireIds" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.011"/>
+  <testcase name="remotePdfIsSubmittedAsServerFileNotAsAnImage" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.051"/>
+  <testcase name="quickTextTurnKeepsAttachmentsAndRestoresReasoningWithoutChangingTheModel" classname="com.qingyu.hermescompanion.data.ConcurrentGatewayTest" time="0.052"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

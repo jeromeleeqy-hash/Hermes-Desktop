@@ -16,7 +16,7 @@ data class RunRecord(
     val attempted:Boolean=false, val stopping:Boolean=false,
 )
 data class EditedDocument(val profile:String,val path:String,val name:String,val mime:String,val baseline:String,val text:String,val source:HermesSession?=null)
-data class VoiceNote(val id:String=java.util.UUID.randomUUID().toString(),val profile:String,val session:HermesSession?,val blob:String,val transcript:String="",val committed:Boolean=false)
+data class VoiceNote(val id:String=java.util.UUID.randomUUID().toString(),val profile:String,val session:HermesSession?,val blob:String,val transcript:String="",val committed:Boolean=false,val engine:String="")
 data class WorkspaceState(
     val revision:Long=0, val drafts:Map<String,DraftRecord> = emptyMap(),
     val queues:Map<String,List<QueuedMessage>> = emptyMap(), val runs:List<RunRecord> = emptyList(),
@@ -26,6 +26,7 @@ data class WorkspaceState(
     val selectedSession:HermesSession?=null,
     val indexVersions:Map<String,String> = emptyMap(),
     val summaries:Map<String,String> = emptyMap(),
+    val readMessageCounts:Map<String,Int> = emptyMap(),
 )
 
 fun accountScope(server:String,user:String):String = MessageDigest.getInstance("SHA-256")
@@ -44,11 +45,12 @@ class WorkspaceRepository(private val store:SecureConfigStore, private val accou
         root.put("unread",JSONArray(state.unread.toList()))
         root.put("documents",JSONArray().apply { state.documents.forEach { d -> put(JSONObject().put("profile",d.profile).put("path",d.path).put("name",d.name).put("mime",d.mime).put("baseline",d.baseline).put("text",d.text).put("source",d.source?.let(::sessionJson))) } })
         root.put("artifacts",JSONArray().apply { state.artifacts.take(300).forEach { a -> put(JSONObject().put("profile",a.profile).put("session",a.sessionId).put("title",a.sessionTitle).put("message",a.messageId).put("path",a.path).put("name",a.name).put("kind",a.kind).put("cwd",a.workspacePath).put("at",a.seenAtMillis).put("sourcePath",a.sourcePath)) } })
-        root.put("voice",JSONArray().apply { state.voice.forEach { v -> put(JSONObject().put("id",v.id).put("profile",v.profile).put("session",v.session?.let(::sessionJson)).put("blob",v.blob).put("text",v.transcript).put("committed",v.committed)) } })
+        root.put("voice",JSONArray().apply { state.voice.forEach { v -> put(JSONObject().put("id",v.id).put("profile",v.profile).put("session",v.session?.let(::sessionJson)).put("blob",v.blob).put("text",v.transcript).put("committed",v.committed).put("engine",v.engine)) } })
         root.put("decisions",JSONArray(DecisionCodec.encode(state.decisions)))
         root.put("completions",JSONArray().apply { state.completions.take(100).forEach { c -> put(JSONObject().put("session",c.sessionId).put("title",c.title).put("summary",c.summary).put("at",c.completedAtMillis).put("artifacts",JSONArray().apply {c.artifacts.forEach {a->put(JSONObject().put("path",a.path).put("name",a.name).put("kind",a.kind))}})) } })
         root.put("selected",state.selectedSession?.let(::sessionJson))
         root.put("indexVersions",JSONObject(state.indexVersions));root.put("summaries",JSONObject(state.summaries))
+        root.put("readMessageCounts",JSONObject(state.readMessageCounts))
         store.put("$account:workspace-v2",root.toString())
         savedRevision=state.revision
     }
@@ -61,11 +63,12 @@ class WorkspaceRepository(private val store:SecureConfigStore, private val accou
         val runs=o.optJSONArray("runs").objects().map { r -> RunRecord(readSession(r.getJSONObject("session")),r.getString("prompt"),r.optString("original",r.getString("prompt")),r.optString("baseline"),r.optString("baselineUser"),r.getString("assistant"),r.optString("userMessage"),r.getLong("started"),r.optString("runtime").takeIf(String::isNotBlank),readFiles(r.optJSONArray("files")),r.optString("council","off"),r.optBoolean("voice"),r.optBoolean("attempted"),r.optBoolean("stopping")) }
         val documents=o.optJSONArray("documents").objects().map { d -> EditedDocument(d.getString("profile"),d.getString("path"),d.getString("name"),d.getString("mime"),d.getString("baseline"),d.getString("text"),d.optJSONObject("source")?.let(::readSession)) }
         val artifacts=o.optJSONArray("artifacts").objects().map { a -> RecentArtifact(a.getString("profile"),a.getString("session"),a.getString("title"),a.optString("message"),a.getString("path"),a.getString("name"),a.getString("kind"),a.optString("cwd"),a.optLong("at"),a.optString("sourcePath")) }
-        val voice=o.optJSONArray("voice").objects().map { v -> VoiceNote(v.getString("id"),v.getString("profile"),v.optJSONObject("session")?.let(::readSession),v.getString("blob"),v.optString("text"),v.optBoolean("committed")) }
+        val voice=o.optJSONArray("voice").objects().map { v -> VoiceNote(v.getString("id"),v.getString("profile"),v.optJSONObject("session")?.let(::readSession),v.getString("blob"),v.optString("text"),v.optBoolean("committed"),v.optString("engine")) }
         val done=o.optJSONArray("completions").objects().map { d -> RunCompletionSummary(d.getString("session"),d.getString("title"),d.getString("summary"),d.optJSONArray("artifacts").objects().map {a->ChatArtifact(a.getString("path"),a.getString("name"),a.optString("kind","document"))},completedAtMillis=d.getLong("at")) }
         val revision=o.getLong("revision");savedRevision=revision
         fun strings(key:String):Map<String,String> = o.optJSONObject(key)?.let {v->v.keys().asSequence().associateWith {v.getString(it)}}.orEmpty()
-        return WorkspaceState(revision,drafts,queues,runs,o.optJSONArray("unread").strings().toSet(),documents,artifacts,voice,DecisionCodec.decode(o.optJSONArray("decisions")?.toString()?:"[]"),done,o.optJSONObject("selected")?.let(::readSession),strings("indexVersions"),strings("summaries"))
+        return WorkspaceState(revision,drafts,queues,runs,o.optJSONArray("unread").strings().toSet(),documents,artifacts,voice,DecisionCodec.decode(o.optJSONArray("decisions")?.toString()?:"[]"),done,o.optJSONObject("selected")?.let(::readSession),strings("indexVersions"),strings("summaries"),
+            o.optJSONObject("readMessageCounts")?.let {counts->counts.keys().asSequence().associateWith {counts.optInt(it,0)}}?:emptyMap())
     }
     private fun files(values:List<PendingAttachment>)=JSONArray().apply { values.forEach { a -> put(attachmentRefs.getOrPut(a) {
         JSONObject().put("id",a.id).put("name",a.name).put("mime",a.mimeType).put("remote",a.remotePath)

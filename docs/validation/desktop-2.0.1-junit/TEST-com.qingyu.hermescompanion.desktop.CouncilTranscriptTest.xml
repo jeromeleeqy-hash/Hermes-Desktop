@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.CouncilTranscriptTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:30.137Z" hostname="5ae9c712f1d5" time="0.002">
+  <properties/>
+  <testcase name="parsesAsyncDelegationBatchIntoIndependentExperts" classname="com.qingyu.hermescompanion.desktop.CouncilTranscriptTest" time="0.002"/>
+  <testcase name="leavesNormalConversationMessagesUntouched" classname="com.qingyu.hermescompanion.desktop.CouncilTranscriptTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

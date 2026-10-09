@@ -17,7 +17,7 @@ if not exist "%HERMES_LOG_DIR%" goto log_failed
 set "HERMES_LOG=%HERMES_LOG_DIR%\startup-%RANDOM%-%RANDOM%.log"
 if exist "%HERMES_LOG%" goto new_log
 rem Test write access before launching Java. A JVM boot error can be on stdout, not stderr.
->"%HERMES_LOG%" echo Hermes Windows 1.8.4
+>"%HERMES_LOG%" echo Hermes Windows 2.0.1
 if errorlevel 1 goto log_failed
 call :run >>"%HERMES_LOG%" 2>&1
 set "HERMES_EXIT_CODE=%errorlevel%"
@@ -74,5 +74,5 @@ echo ERROR: 缺少 hermes.vmoptions，请重新安装完整版本。
 exit /b 12
 :missing_module
 echo ERROR: 运行环境缺少 jdk.unsupported.desktop，无法加载网页编辑组件。
-echo 请重新安装 Hermes 1.8.4 完整安装包；无需删除设置，也无需自行安装 Java。
+echo 请重新安装 Hermes 2.0.1 完整安装包；无需删除设置，也无需自行安装 Java。
 exit /b 13

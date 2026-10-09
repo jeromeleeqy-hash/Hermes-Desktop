@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.today.TodayChangesTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:50.636Z" hostname="5ae9c712f1d5" time="0.065">
+  <properties/>
+  <testcase name="missingArchivedRenamedAndReorderedCardsAreNeverReportedAsCompleted" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.001"/>
+  <testcase name="detectsOnlyNewActiveCardsAndConfirmedCompletionInOneSync" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.001"/>
+  <testcase name="readingOrderHoldsBackgroundAdditionsUntilRevealAndNeverResortsExistingCards" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.0"/>
+  <testcase name="acknowledgingAnEarlierSheetDoesNotClearChangesArrivingWhileItWasOpen" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.0"/>
+  <testcase name="recentlyAddedCardBecomesOneCompletionAndReopenedCardLosesOutdatedCompletion" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.0"/>
+  <testcase name="boundedHistoryRetainsCurrentCardsAndRecentChanges" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.061"/>
+  <testcase name="firstVisitDoesNotAnnounceExistingCardsOrPreviouslyCompletedWork" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.001"/>
+  <testcase name="completedRecordSurvivesServerCleanupButDeletedNewCardIsNotStillAdvertised" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.0"/>
+  <testcase name="repeatedReadsAndRestartDoNotDuplicateChangesOrForgetAcknowledgement" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.0"/>
+  <testcase name="scopesAndCorruptPayloadsCannotLeakAnotherAccountsReadingState" classname="com.qingyu.hermescompanion.today.TodayChangesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

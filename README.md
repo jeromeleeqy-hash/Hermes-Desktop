@@ -2,7 +2,7 @@
 
 Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。
 
-当前版本：**1.8.4**。安装包和完整源码见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
+当前开发版本：**2.0.2（同步与桌面导航修复版）**。已发布版本见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
 
 ## 核心功能
 
@@ -14,20 +14,29 @@ Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M �
 - AI 配置：模型供应商、默认与备用模型、思考强度、专家会审、Skills、工具集及 MCP。
 - 个性化：主题、字号、头像、回复风格、长期记忆和助理设定。
 
-使用需要连接已部署的 Hermes Agent，模型、工具与语音能力取决于服务器配置。
+对话和工具需要连接已部署的 Hermes Agent；本地语音模型安装后可离线识别和朗读。
 
-## 1.8.4 更新
+## 2.0.2 更新
 
-- 整合悬浮球鼠标移入移出闪烁修复。
-- 按服务器能力提供思考强度选择，并显示实际生效的模型状态。
-- 完善待处理请求及取消、过期状态展示。
-- 增加连接健康检查、断线恢复、登录过期恢复；保留草稿与附件，避免自动重复发送任务。
-- 展示 MCP 连接和授权状态，支持服务器提供的授权入口。
-- 改善 HEIC/HEIF/AVIF 预览，支持添加 PNG 副本；解码取决于系统能力。
+修复跨设备消息延迟、未读计数范围和 macOS 通知跳转。默认进入简洁工作台，“值得留意的事”改为可进入和返回的模块；侧栏最近会话增加到 8 个。详见 [更新说明](docs/RELEASE-2.0.2.md)、[构建说明](docs/BUILD-2.0.2.md)、[验收记录](docs/ACCEPTANCE-2.0.2.md)。
+
+## 2.0.1 更新
+
+重排待确认操作、固定授权按钮、取消每条消息的“已发送”弹窗；将首页设置与工具移到事项区域，完善卡片详情排版。补齐本地 STT／TTS 下载并启用、模型包导入和离线试录／试听。详见 [更新说明](docs/RELEASE-2.0.1.md)、[构建说明](docs/BUILD-2.0.1.md)、[验收记录](docs/ACCEPTANCE-2.0.1.md)。
+
+## 2.0.0 更新
+
+对齐 Android 4.0.0 的共享首页协议：简洁／深入首页、6 种卡片布局、20 类交互、事项聊天与增量同步、操作回执和显式恢复、早晚整理与 Cron 核对。
+
+修复网关就绪竞态、空会话首条消息、旧运行 ID、跨端授权过期、模型 lazy 回读和响应断流；保留草稿及发送确认，避免不确定写请求被自动重发。
+
+语音识别／朗读独立设置，可下载 SenseVoice／Kokoro 在本机运行；支持完整句子提前朗读、预取及打断。新增离线连接指南。OSS 按计划后续接入。
+
+详见 [更新说明](docs/RELEASE-2.0.0.md)、[构建说明](docs/BUILD-2.0.0.md) 和 [验收清单](docs/ACCEPTANCE-2.0.0.md)。
 
 ## 下载与构建
 
-Windows 优先选择 Setup.exe，另提供 MSI 和便携 ZIP；Mac M 系列使用 DMG。安装包内置 Java，无需另装 JDK。
+本次 Windows 验收包提供 Setup.exe 和便携 ZIP；Mac M 系列提供可解压安装的 .app.zip。原生构建仍可生成 MSI／DMG。安装包内置 Java，无需另装 JDK。
 
 本仓库已同步安装包使用的完整源码。开发构建需要 JDK 21：
 
@@ -44,8 +53,6 @@ bash gradlew test packageDmg -PheadlessTests=true
 
 ## 验证
 
-[成功构建记录](https://github.com/jeromeleeqy-hash/Hermes-Desktop/actions/runs/35096879478)：Windows 255 项测试，253 通过、0 失败、2 跳过；Mac 255 项，251 通过、0 失败、4 跳过。
+本次自动化结果与平台边界见 [验收记录](docs/ACCEPTANCE-2.0.2.md)。历史版本的 CI 结果不作为本次的验证结果。
 
-尚未完成用户 Windows/macOS 27 真机安装和真实网关联调。没有 Windows 商业代码签名或 Apple Developer ID 公证，首次安装可能出现系统验证提示。
-
-源码附件与实际构建输入完全一致；其内部构建前的待验证说明保留作为历史记录，最新构建结果以本页、Release 和验证报告为准。
+Windows/macOS 真机安装、系统麦克风／音色、休眠唤醒及真实网关联调需要实机验收。验收包无 Windows 商业代码签名或 Apple Developer ID 公证；Mac 应用使用 ad-hoc 签名。

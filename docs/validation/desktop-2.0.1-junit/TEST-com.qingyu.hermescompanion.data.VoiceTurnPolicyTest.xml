@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:11.741Z" hostname="5ae9c712f1d5" time="0.027">
+  <properties/>
+  <testcase name="speechStartedImmediatelyIsRetainedWhenTheFirstPauseSuppliesTheNoiseFloor" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.004"/>
+  <testcase name="isolatedTapAfterSpeechDoesNotRestartTheSilenceTimer" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.0"/>
+  <testcase name="constantBackgroundAndIsolatedClicksNeverSubmit" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.009"/>
+  <testcase name="invalidLevelsDoNotArmAndLongValidSpeechHasABoundedTurn" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.001"/>
+  <testcase name="chineseAndMixedNumbersSurviveMarkdownCleaning" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.009"/>
+  <testcase name="noisyModeFiltersMoreBackgroundButStillDetectsNearbySpeech" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.001"/>
+  <testcase name="speechEndsEvenWhenFanNoiseNeverReachesSilence" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.001"/>
+  <testcase name="quietModeCanRecognizeSoftSpeechWithoutArmingOnRoomNoise" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.0"/>
+  <testcase name="englishVoicesCannotSilentlyDropChinese" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.0"/>
+  <testcase name="shortPauseAndResumedSpeechKeepTheSameTurn" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.0"/>
+  <testcase name="longSpeechKeepsEveryCharacterAndUnicodePair" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.002"/>
+  <testcase name="animationGainCannotChangeTheEndpointLevel" classname="com.qingyu.hermescompanion.data.VoiceTurnPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Hermes-macOS-arm64-2.0.2.app.zip",
+    "bytes": 264089812,
+    "sha256": "87024aceb513856b8ab303fb56701174fe8d6f22a1611bbd05410c97d2624a57"
+  },
+  {
+    "name": "Hermes-Windows-x64-2.0.2-portable.zip",
+    "bytes": 241389866,
+    "sha256": "38e923fd58c81b3ffb21feb255d170059e81b95f804b3b31b5dbc32e65f6e743"
+  }
+]

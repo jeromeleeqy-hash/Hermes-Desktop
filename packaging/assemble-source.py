@@ -6,7 +6,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-VERSION = "1.8.4"
+VERSION = "2.0.2"
 ROOT_FILES = {
     ".gitignore", "Build-Windows.bat", "Build-macOS.command",
     "Installer-Windows.bat", "Package-Windows.bat", "Package-macOS.command",
@@ -15,7 +15,7 @@ ROOT_FILES = {
     "build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
     "settings.gradle.kts", "开始使用.txt",
 }
-ROOT_DIRS = {"src", "docs", "gradle", "licenses", "packaging", ".github"}
+ROOT_DIRS = {"src", "tests", "docs", "gradle", "licenses", "packaging", ".github"}
 EXCLUDED_DIRS = {".git", ".gradle", ".kotlin", "__pycache__", "build"}
 
 

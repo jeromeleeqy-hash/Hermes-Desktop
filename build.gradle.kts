@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
     id("org.jetbrains.compose") version "1.10.1"
 }
-repositories { mavenCentral(); google() }
+repositories { mavenCentral(); google(); maven("https://jitpack.io") { content { includeGroup("com.github.k2-fsa.sherpa-onnx") } } }
 kotlin { jvmToolchain(21) }
 val desktopTarget = providers.gradleProperty("desktopTarget").orNull
 val windowsTarget = desktopTarget == "windows-x64"
@@ -12,6 +12,15 @@ val macArmTarget = desktopTarget == "macos-arm64"
 dependencies {
     implementation(when {windowsTarget->"org.jetbrains.compose.desktop:desktop-jvm-windows-x64:1.10.1";macArmTarget->"org.jetbrains.compose.desktop:desktop-jvm-macos-arm64:1.10.1";else->compose.desktop.currentOs})
     implementation(compose.material3)
+    implementation("org.apache.commons:commons-compress:1.27.1")
+    implementation("com.github.k2-fsa.sherpa-onnx:sherpa-onnx-jvm:v1.13.5")
+    val speechPlatform=when {
+        windowsTarget || System.getProperty("os.name").startsWith("Windows")->"win-x64"
+        macArmTarget->"osx-aarch64"
+        System.getProperty("os.name").startsWith("Mac")->if(System.getProperty("os.arch")=="aarch64")"osx-aarch64" else "osx-x64"
+        else->"linux-x64"
+    }
+    implementation("com.github.k2-fsa.sherpa-onnx:sherpa-onnx-native-lib-$speechPlatform:v1.13.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.json:json:20240303")
@@ -48,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)
             packageName = "Hermes"
-            packageVersion = "1.9.0"
+            packageVersion = "2.0.2"
             vendor = "Jerome"
             description = "Hermes desktop companion"
             includeAllModules = true
@@ -68,7 +77,7 @@ compose.desktop {
                 minimumSystemVersion = "13.0"
                 dockName = "Hermes"
                 infoPlist {
-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>in-app-updater-1.9.0</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.2</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
                 }
             }
         }
@@ -176,4 +185,44 @@ tasks.register<Test>("systemImeTest") {
     systemProperty("java.awt.headless", "false")
     systemProperty("hermes.systemImeTest", "true")
     maxHeapSize = "1g"
+}
+
+// Acceptance previews and real offline inference use the same application classes.
+tasks.register<JavaExec>("render200Previews") {
+    dependsOn(tasks.testClasses)
+    classpath=sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.Render200Previews")
+    systemProperty("java.awt.headless","true")
+    systemProperty("skiko.renderApi","SOFTWARE")
+}
+tasks.register<JavaExec>("localVoiceSmoke") {
+    dependsOn(tasks.testClasses)
+    classpath=sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.data.LocalVoiceSmoke")
+}
+
+tasks.register<JavaExec>("render201Previews") {
+    dependsOn(tasks.testClasses)
+    classpath=sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.Render201Previews")
+    systemProperty("java.awt.headless","true")
+    systemProperty("skiko.renderApi","SOFTWARE")
+}
+
+tasks.register<JavaExec>("offlineVoiceCheck") {
+    dependsOn(tasks.testClasses)
+    classpath=sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.OfflineVoice201Check")
+    systemProperty("java.awt.headless","true")
+    maxHeapSize="1g"
+    doFirst {jvmArgs("-javaagent:${mockitoAgent.asPath}")}
+}
+
+// Real application screenshots for the desktop navigation repair.
+tasks.register<JavaExec>("render202Previews") {
+    dependsOn(tasks.testClasses)
+    classpath=sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.Render202Previews")
+    systemProperty("java.awt.headless","true")
+    systemProperty("skiko.renderApi","SOFTWARE")
 }

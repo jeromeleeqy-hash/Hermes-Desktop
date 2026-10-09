@@ -1,0 +1,24 @@
+{
+  "version": "2.0.1",
+  "application_jar_sha256": "1a07dbad688b0e83420f5522855e2c40f6b4d29b9421a43520e1ce18ffb46f46",
+  "macos_signed_macho_count": 47,
+  "macos_archive_root": "Hermes.app",
+  "macos_source": "user-confirmed-working 2.0.0 app.zip, all app JARs replaced",
+  "packages": [
+    {
+      "name": "Hermes-Windows-x64-2.0.1-Setup.exe",
+      "bytes": 236947377,
+      "sha256": "5ed0c07e95a3e921bef5b33e8a29f077adc7eb88babab5a0ff0b5a76b5eeabba"
+    },
+    {
+      "name": "Hermes-Windows-x64-2.0.1-portable.zip",
+      "bytes": 241360183,
+      "sha256": "65a80058c87029768a33bb4ccb1e7b3f8f41c48748d6b08d247bb5a657054334"
+    },
+    {
+      "name": "Hermes-macOS-arm64-2.0.1.app.zip",
+      "bytes": 264054578,
+      "sha256": "3d1e3f6c6663536e3e753ec40aea84f37af857c21da3d35be31edb6c562e5399"
+    }
+  ]
+}

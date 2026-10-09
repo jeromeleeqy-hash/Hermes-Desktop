@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.CocoaBlockAbiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-09T03:50:24.852Z" hostname="69622ecc2839" time="0.022">
+  <properties/>
+  <testcase name="authorizationBlockRoundTripsItsNativeArgumentsAndKeepsItsDescriptor" classname="com.qingyu.hermescompanion.desktop.CocoaBlockAbiTest" time="0.021"/>
+  <testcase name="systemCompletionBlockIsInvokedWithPresentationOptions" classname="com.qingyu.hermescompanion.desktop.CocoaBlockAbiTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

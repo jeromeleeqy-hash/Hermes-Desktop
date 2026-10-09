@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.AudioFileRequestBodyTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:04.365Z" hostname="5ae9c712f1d5" time="0.8">
+  <properties/>
+  <testcase name="streamedJsonHasExactLengthAndRoundTripsAtEveryBase64BlockBoundary" classname="com.qingyu.hermescompanion.data.AudioFileRequestBodyTest" time="0.057"/>
+  <testcase name="transcriptionPreservesRecordingOnBothFailureAndSuccessAndKeepsExplicitProfile" classname="com.qingyu.hermescompanion.data.AudioFileRequestBodyTest" time="0.738"/>
+  <testcase name="emptyOrChangedRecordingIsRejectedBeforeUpload" classname="com.qingyu.hermescompanion.data.AudioFileRequestBodyTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

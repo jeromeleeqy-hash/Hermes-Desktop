@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.HoldToTalkTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:39.621Z" hostname="5ae9c712f1d5" time="4.65">
+  <properties/>
+  <testcase name="modelSwitchPreservesTheRecognizedDraftInsteadOfLosingTheQuestion" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.278"/>
+  <testcase name="releaseDuringSessionPreparationNeverStartsALateMicrophone" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.054"/>
+  <testcase name="cancelledHoldPreservesTextWithoutSendingAndRegularRecordingStillWorks" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.052"/>
+  <testcase name="aBoundedRecordingStillWaitsForReleaseWhenRecognitionFinishesFirst" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.15"/>
+  <testcase name="autoReadingAHeldReplyDoesNotRestartTheMicrophone" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.091"/>
+  <testcase name="repeatedHoldDuringRecognitionDoesNotCancelOrDuplicateTheFirstTurn" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.109"/>
+  <testcase name="anOlderVoiceReplyCannotStopANewHoldAndBusySessionsQueueTheNextQuestion" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.254"/>
+  <testcase name="emptyRecognitionKeepsTheRecordingAndRetryOnlyRestoresTheDraft" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.15"/>
+  <testcase name="releaseStopsAndSendsExactlyOnceToTheChosenSessionWithoutRestarting" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="3.483"/>
+  <testcase name="changingConversationsCannotRedirectTheHeldRecording" classname="com.qingyu.hermescompanion.desktop.HoldToTalkTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
