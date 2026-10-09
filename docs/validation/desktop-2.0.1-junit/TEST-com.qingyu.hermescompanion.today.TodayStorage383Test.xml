@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.today.TodayStorage383Test" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:51.021Z" hostname="5ae9c712f1d5" time="0.009">
+  <properties/>
+  <testcase name="lostSessionIsNotInferredFromNetworkOrPermissionErrors" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="migratedPathForcesReadEvenWithIdenticalMetadata" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.002"/>
+  <testcase name="corruptModernFileDoesNotFallBackToOldFacts" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="confirmedMissingDirectoryUsesLegacy" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="evidenceCannotCrossProfileOrWorkspaceAndExcludesTools" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="permissionAndTransportFailuresNeverMasqueradeAsMissing" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="refreshReceiptMustMatchThisRequestAndStatus" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <testcase name="conflictingCopiesAreReportedWithoutClaimingLatest" classname="com.qingyu.hermescompanion.today.TodayStorage383Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

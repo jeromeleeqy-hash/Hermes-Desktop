@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.LocalVoice394Test" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:04:16.580Z" hostname="5ae9c712f1d5" time="0.302">
+  <properties/>
+  <testcase name="unsafeArchiveAndWrongResumePositionsAreRejected" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.048"/>
+  <testcase name="rewrittenRecoveryDoesNotSpeakOldAnswerAgain" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.001"/>
+  <testcase name="legacySettingsAndMixedRoutesStayIndependent" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.0"/>
+  <testcase name="silenceAndLongRecordingSlicesAreBoundedWithoutLosingSamples" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.005"/>
+  <testcase name="corruptChecksumNeverReplacesAnInstalledPack" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.211"/>
+  <testcase name="ownedWaveRoundTripsAndUploadsWithWaveMimeType" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.005"/>
+  <testcase name="importingVerifiedPackIsOfflineAndKeepsTheOriginalFile" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.01"/>
+  <testcase name="streamingSpeaksCompleteSentencesBeforeFinalAndNeverReplaysThem" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.001"/>
+  <testcase name="codeLinksAndIncompleteFormattingAreNotReadAsInstructions" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.001"/>
+  <testcase name="resumedPackIsVerifiedInstalledAndInterruptedDownloadDoesNotEnableIt" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.012"/>
+  <testcase name="cancelledImportNeverMarksPartialModelInstalled" classname="com.qingyu.hermescompanion.data.LocalVoice394Test" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

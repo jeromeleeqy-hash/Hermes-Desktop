@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.GatewayLoginTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:06.611Z" hostname="5ae9c712f1d5" time="0.73">
+  <properties/>
+  <testcase name="rateLimitDoesNotTriggerAnotherCredentialAttempt" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.109"/>
+  <testcase name="malformedProviderResponseDoesNotSubmitPassword" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.053"/>
+  <testcase name="passwordIsSentExactlyAndSessionSurvivesClientRestart" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.192"/>
+  <testcase name="serverErrorBodyCannotLeakSecretsIntoUserDiagnostic" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.093"/>
+  <testcase name="savedSessionFailureDoesNotClaimPasswordWasRejected" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.048"/>
+  <testcase name="storageFailureDoesNotBecomeInvalidCredentials" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.002"/>
+  <testcase name="successfulPasswordPostWithRejectedSessionHasDifferentFailure" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.141"/>
+  <testcase name="emptyInputIsRejectedBeforeAnyNetworkRequest" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.003"/>
+  <testcase name="rejectedCredentialsAreNotRetriedOrMisreportedAsCookieFailure" classname="com.qingyu.hermescompanion.data.GatewayLoginTest" time="0.089"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

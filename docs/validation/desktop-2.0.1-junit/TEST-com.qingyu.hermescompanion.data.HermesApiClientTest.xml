@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.HermesApiClientTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:07.375Z" hostname="5ae9c712f1d5" time="0.006">
+  <properties/>
+  <testcase name="appendsEncodedProfileToRestPath" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.001"/>
+  <testcase name="keepsExplicitProfileQuery" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="normalizesReasoningEffortForGatewayCompatibility" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="ignoresBooleanProfileDescription" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.001"/>
+  <testcase name="convertsHttpUrlToWebSocketUrl" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="parsesLegacySingleSelectClarification" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="hidesLowLevelSocketFailureFromUser" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="rejectsUnsupportedScheme" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.001"/>
+  <testcase name="supportsHostedRootThatIsHermesHome" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.001"/>
+  <testcase name="convertsHttpsUrlToSecureWebSocketUrl" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="resolvesNamedProfileMemoryAndSoulFilesFromUserHome" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="parsesProfileCatalog" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="resolvesDefaultProfileDirectlyUnderHermesHome" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="gatewayTurnRejectsCompletionBeforeItsStartEdge" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="parsesNestedRequestAndSnakeCaseMultiSelect" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.0"/>
+  <testcase name="parsesStructuredMultiSelectClarification" classname="com.qingyu.hermescompanion.data.HermesApiClientTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

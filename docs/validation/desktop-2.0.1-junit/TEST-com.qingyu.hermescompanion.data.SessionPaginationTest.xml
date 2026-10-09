@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.SessionPaginationTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:11.154Z" hostname="5ae9c712f1d5" time="0.585">
+  <properties/>
+  <testcase name="staleTotalsDoNotDiscardSuccessfullyReadConversations" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.051"/>
+  <testcase name="anExactFullPageCanBeFollowedByAnEmptyPage" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.048"/>
+  <testcase name="aRejectedFirstRequestDoesNotPublishAnEmptyList" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.004"/>
+  <testcase name="archivedConversationsAlsoReadBeyondTheFirstPage" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.048"/>
+  <testcase name="repeatedPagesFailRatherThanLoopForeverOrPretendTheListIsComplete" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.049"/>
+  <testcase name="aFullPageContinuesEvenWhenTheTotalIsUnderreported" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.047"/>
+  <testcase name="progressSnapshotsAreStableAndDeduplicated" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.048"/>
+  <testcase name="clampsTheRequestToTheGatewayLimit" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.003"/>
+  <testcase name="honorsAnExplicitTotalEvenWhenTheServerReturnsShortPages" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.044"/>
+  <testcase name="successfulPagesArePublishedBeforeALaterHttpFailureForBothLists" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.137"/>
+  <testcase name="overlappingPagesAreDeduplicatedWithoutSkippingOffsets" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.046"/>
+  <testcase name="emptyPageEndsTheListEvenWhenTheTotalIncludesOtherSessions" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.003"/>
+  <testcase name="readsBeyondOneHundredWhenTheGatewayOmitsTotals" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.048"/>
+  <testcase name="malformedResponsesAreNotEmptyWorkspaces" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.004"/>
+  <testcase name="validationArraysAreHumanReadable" classname="com.qingyu.hermescompanion.data.SessionPaginationTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

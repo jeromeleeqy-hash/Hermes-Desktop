@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.today.TodayRepositoryTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:51.007Z" hostname="5ae9c712f1d5" time="0.013">
+  <properties/>
+  <testcase name="homeReadOnlyListsRootAndReadsOverviewWithExplicitProfile" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.003"/>
+  <testcase name="unchangedMetadataSkipsBodyButManualAndPeriodicReadsRevalidate" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.006"/>
+  <testcase name="readFailureIsDifferentFromMissingFile" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.002"/>
+  <testcase name="pollingKeepsKnownFolderCountsButNewFoldersRequireRecounting" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.0"/>
+  <testcase name="failedFolderCountStaysUnknownAndNeverZero" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.001"/>
+  <testcase name="wrongReadResponseIsRejectedBeforeParsing" classname="com.qingyu.hermescompanion.today.TodayRepositoryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

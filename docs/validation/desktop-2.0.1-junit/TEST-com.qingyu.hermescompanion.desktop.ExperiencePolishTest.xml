@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:37.911Z" hostname="5ae9c712f1d5" time="0.001">
+  <properties/>
+  <testcase name="indentationAddsOnRepeatedTabAndNumberedListTogglesAsABlock" classname="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" time="0.0"/>
+  <testcase name="selectionChangesDoNotEraseRedoButNewTypingDoes" classname="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" time="0.0"/>
+  <testcase name="completedCaptionClicksToggleOnceAndDraggingBreaksTheSequence" classname="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" time="0.001"/>
+  <testcase name="chineseCompositionUndoesAsOneCommittedWordEvenWhenCommitOnlyChangesComposition" classname="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" time="0.0"/>
+  <testcase name="markdownFormattingPreservesFrontMatterHtmlCodeAndSelectedChinese" classname="com.qingyu.hermescompanion.desktop.ExperiencePolishTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

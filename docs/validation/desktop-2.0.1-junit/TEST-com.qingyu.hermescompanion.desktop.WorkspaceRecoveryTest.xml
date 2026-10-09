@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:50.540Z" hostname="5ae9c712f1d5" time="0.068">
+  <properties/>
+  <testcase name="restartPreservesAttachmentsQueuesRunsAndUnsavedFilesTogether" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.006"/>
+  <testcase name="sourceEditorEscapesHostileMarkupAndKeepsMarkdownCode" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.007"/>
+  <testcase name="completedTasksKeepTheirArtifactLinksAfterRestart" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="restoreLeavesRunsInRecoveryAndQueuesAwaitingUserAction" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.002"/>
+  <testcase name="toolWorkAndOtherUsersTurnsCannotReleaseSavedQueues" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="previousReplyCannotCompleteTheNextIdenticalPrompt" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="profilesWithIdenticalSessionIdsAndDifferentAccountsStayIsolated" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="reopeningDirtyProfileFileKeepsTheOriginalConflictBaseline" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="laterCheckpointWinsWhenBackgroundSaveArrivesOutOfOrder" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="authenticatedBlobsRejectTamperingAndPathTraversal" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.002"/>
+  <testcase name="sourceModeIsChosenForMarkdownThatRichTextWouldFlatten" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="completionDoesNotDuplicateAlreadyStreamedText" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="independentlyCroppedAvatarsStaySeparateAfterRestart" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.044"/>
+  <testcase name="voiceCommitAndDraftArePersistedAsOneState" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

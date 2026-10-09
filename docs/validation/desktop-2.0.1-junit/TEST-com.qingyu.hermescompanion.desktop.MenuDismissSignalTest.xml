@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.MenuDismissSignalTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:44.555Z" hostname="5ae9c712f1d5" time="0.002">
+  <properties/>
+  <testcase name="closeCancelsAnAlreadyQueuedPress" classname="com.qingyu.hermescompanion.desktop.MenuDismissSignalTest" time="0.001"/>
+  <testcase name="delayedPressFromOldMenuCannotCloseReopenedMenu" classname="com.qingyu.hermescompanion.desktop.MenuDismissSignalTest" time="0.0"/>
+  <testcase name="closedMonitorIgnoresFurtherPressesAndIsSafeToCloseTwice" classname="com.qingyu.hermescompanion.desktop.MenuDismissSignalTest" time="0.001"/>
+  <testcase name="mouseThreadQueuesOneDismissWithoutExecutingUiInline" classname="com.qingyu.hermescompanion.desktop.MenuDismissSignalTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

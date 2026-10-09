@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ReplyStyleTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:49.244Z" hostname="5ae9c712f1d5" time="0.144">
+  <properties/>
+  <testcase name="dropdownKeepsServerDefinitionsAndUnknownExistingSelections" classname="com.qingyu.hermescompanion.desktop.ReplyStyleTest" time="0.002"/>
+  <testcase name="explicitDefaultWinsOverAnOldAgentSelection" classname="com.qingyu.hermescompanion.desktop.ReplyStyleTest" time="0.051"/>
+  <testcase name="selectedStyleUsesCanonicalFieldAndPreservesUnrelatedServerConfig" classname="com.qingyu.hermescompanion.desktop.ReplyStyleTest" time="0.091"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

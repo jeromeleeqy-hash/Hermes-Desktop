@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ComposerSystemImeTest" tests="2" skipped="2" failures="0" errors="0" timestamp="2026-10-08T13:02:30.123Z" hostname="5ae9c712f1d5" time="0.013">
+  <properties/>
+  <testcase name="weChatPinyinDeletesOneLetterAndKeepsSurroundingText" classname="com.qingyu.hermescompanion.desktop.ComposerSystemImeTest" time="0.009">
+    <skipped/>
+  </testcase>
+  <testcase name="applePinyinDeletesOneLetterAndKeepsSurroundingText" classname="com.qingyu.hermescompanion.desktop.ComposerSystemImeTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

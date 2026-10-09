@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.ComposerFlowTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:12.069Z" hostname="5ae9c712f1d5" time="16.155">
+  <properties/>
+  <testcase name="queuedMessageWaitsForCompletionBeforeSubmitting" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.577"/>
+  <testcase name="openingTheActualModelPopupAndSelectingAModelCompletes" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.75"/>
+  <testcase name="failedStopNeverSubmitsReplacementAndKeepsTheDraft" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.812"/>
+  <testcase name="customCaptionButtonsDispatchIndependentActions" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.796"/>
+  <testcase name="modelSelectionUsesServerReportedModelInsteadOfRequestedModel" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.493"/>
+  <testcase name="malformedModelCatalogIsNeverAnEmptySuccess" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.552"/>
+  <testcase name="ctrlEnterModeKeepsEnterAsNewline" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.39"/>
+  <testcase name="unavailableHistoricalImageStaysInlineAndCanBeRetried" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.651"/>
+  <testcase name="sendSettingWorksWithoutServerSettingsAndSurvivesRestart" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.571"/>
+  <testcase name="modelRestartGuardIsNonBlockingAndRetryRestoresSelection" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.277"/>
+  <testcase name="imeConfirmationAndShiftModifiedShortcutsDoNotSubmit" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.474"/>
+  <testcase name="clickingTheSendIconSubmitsOnceAndRendersTheReply" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.177"/>
+  <testcase name="enterModeKeepsShiftEnterAsNewline" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.203"/>
+  <testcase name="rejectedSubmissionKeepsDraftAndAllowsRetry" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="1.304"/>
+  <testcase name="quickQuestionGoesToItsChosenSessionWhileMainWindowStaysElsewhere" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.518"/>
+  <testcase name="aDelayedModelChangeCannotNavigateBackToTheOldConversation" classname="com.qingyu.hermescompanion.desktop.ComposerFlowTest" time="0.608"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

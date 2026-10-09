@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.ModelCatalogParserTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:07.646Z" hostname="5ae9c712f1d5" time="0.003">
+  <properties/>
+  <testcase name="preservesRestartGuardFromAnErrorEnvelope" classname="com.qingyu.hermescompanion.data.ModelCatalogParserTest" time="0.001"/>
+  <testcase name="readsNestedCatalogAndMixedModelIdsWithoutDisplayingRawJson" classname="com.qingyu.hermescompanion.data.ModelCatalogParserTest" time="0.0"/>
+  <testcase name="recognizesAnExplicitlyEmptyCatalog" classname="com.qingyu.hermescompanion.data.ModelCatalogParserTest" time="0.0"/>
+  <testcase name="rejectsMissingProvidersRatherThanPretendingNoModelsExist" classname="com.qingyu.hermescompanion.data.ModelCatalogParserTest" time="0.001"/>
+  <testcase name="excludesExplicitlyUnauthenticatedProviders" classname="com.qingyu.hermescompanion.data.ModelCatalogParserTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

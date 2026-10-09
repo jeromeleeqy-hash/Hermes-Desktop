@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" tests="6" skipped="2" failures="0" errors="0" timestamp="2026-10-08T13:02:50.616Z" hostname="5ae9c712f1d5" time="0.007">
+  <properties/>
+  <testcase name="simultaneousFirstLaunchUsesOneProtectedKey" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.004"/>
+  <testcase name="missingKeyDoesNotOverwriteExistingEncryptedState" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.001"/>
+  <testcase name="corruptedKeyIsPreservedAndNotRegenerated" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.001"/>
+  <testcase name="nativeWindowsDpapiReopensCookiesDraftsAndAttachments" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <testcase name="nativeWindowsDpapiRejectsModifiedProtectedData" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.001">
+    <skipped/>
+  </testcase>
+  <testcase name="protectionFailureNeverFallsBackToPlaintext" classname="com.qingyu.hermescompanion.storage.WindowsMasterKeyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

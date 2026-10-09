@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.storage.DesktopStoreTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:50.609Z" hostname="5ae9c712f1d5" time="0.006">
+  <properties/>
+  <testcase name="restartPreservesCookieAndDraftWithoutPlaintext" classname="com.qingyu.hermescompanion.storage.DesktopStoreTest" time="0.002"/>
+  <testcase name="corruptCiphertextDoesNotSilentlyEraseConnection" classname="com.qingyu.hermescompanion.storage.DesktopStoreTest" time="0.001"/>
+  <testcase name="hostOnlyCookieCannotLeakToAnotherGateway" classname="com.qingyu.hermescompanion.storage.DesktopStoreTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

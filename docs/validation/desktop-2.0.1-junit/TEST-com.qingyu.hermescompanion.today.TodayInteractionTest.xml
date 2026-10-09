@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.today.TodayInteractionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-08T13:02:50.711Z" hostname="5ae9c712f1d5" time="0.276">
+  <properties/>
+  <testcase name="schedulesValidateWallTimesAndExplicitTimezone" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.003"/>
+  <testcase name="unsupportedOrMalformedOptionalLayoutKeepsLegacyContentAndContext" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.015"/>
+  <testcase name="allTwentyFixturesRoundTripIntoScopedActionsWithoutMutatingRecords" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.015"/>
+  <testcase name="requiredInputsClosedCardsAndUnrecognizedSelectionsAreRejected" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.01"/>
+  <testcase name="submissionRereadsConfiguredWorkspaceAndRejectsChangedSourceOrScope" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.228"/>
+  <testcase name="inputsCannotAddCommandsOrNewFieldTargetsAndReflectionDoesNotCarryCompletedWork" classname="com.qingyu.hermescompanion.today.TodayInteractionTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
