@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-09T08:39:47.269Z" hostname="69622ecc2839" time="15.706">
+  <properties/>
+  <testcase name="failedSyncRetainsMessagesAndNextSuccessfulReadRecovers" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.835"/>
+  <testcase name="aReadAlreadyInFlightCannotReplaceALocallyStreamingTurn" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.466"/>
+  <testcase name="notificationClickBeforeConnectionWaitsThenOpensItsConversation" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.638"/>
+  <testcase name="mobileTaskShowsRunningThenClearsWithoutReplayingSavedQueue" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.556"/>
+  <testcase name="visibleUnreadCursorWaitsForBodyAndFailedReadRemainsUnreadOnLeaving" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.583"/>
+  <testcase name="foregroundTimerReceivesMobileTurnWithoutReopeningTheConversation" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="5.06"/>
+  <testcase name="knownRemoteCompletionEventRefreshesTheBodyWithoutWaitingForTheTimer" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.702"/>
+  <testcase name="focusReturnSynchronizesAndKeepsLoadedHistoryDraftAndAttachment" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.518"/>
+  <testcase name="manualRefreshUpdatesOpenMessagesEvenWhenTheSessionListCountHasNotChanged" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.488"/>
+  <testcase name="restartDefaultsToWorkbenchAndKeepsThePreviousConversationAndDraft" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.626"/>
+  <testcase name="realtimeOutageDoesNotPauseHttpMessagesAndReconnectDoesNotResend" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="5.233"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

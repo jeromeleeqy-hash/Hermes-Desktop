@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.Desktop200GatewayTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-09T08:39:46.583Z" hostname="69622ecc2839" time="0.43">
+  <properties/>
+  <testcase name="onlyKnownExplicitForeignRuntimeEventsInvalidateTheConversation" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.05"/>
+  <testcase name="firstPromptOnLazySessionSkipsHistoryAndNextTurnResumesStoredId" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.096"/>
+  <testcase name="staleRuntimeIsNeverTrustedForNewTurn" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.052"/>
+  <testcase name="idleDoesNotMeanNoPendingRequestsAndExplicitFallbackDoes" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.011"/>
+  <testcase name="providerInferenceRejectsAmbiguousModel" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.003"/>
+  <testcase name="acknowledgedModelChoiceSurvivesLazyDefaultMetadata" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.008"/>
+  <testcase name="recurringForegroundChecksDoNotDisableHeartbeatExpiry" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.002"/>
+  <testcase name="concurrentCommandsWaitForGatewayReadyAndCapabilities" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.158"/>
+  <testcase name="reachabilityProbeNeverWaitsForSessionStatusOrClosesTheLiveStream" classname="com.qingyu.hermescompanion.data.Desktop200GatewayTest" time="0.05"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
