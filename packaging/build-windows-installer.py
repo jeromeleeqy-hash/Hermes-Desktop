@@ -6,7 +6,7 @@ import argparse, hashlib, json, os, struct, subprocess, tempfile, zipfile
 from pathlib import Path, PurePosixPath
 
 ROOT=Path(__file__).resolve().parent.parent
-VERSION='2.0.2'
+VERSION='2.0.3'
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def check_pe(path):

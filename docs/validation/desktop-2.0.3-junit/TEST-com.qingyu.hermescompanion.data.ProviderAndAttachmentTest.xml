@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-10-09T06:45:29.091Z" hostname="69622ecc2839" time="3.377">
+  <properties/>
+  <testcase name="binaryAttachmentUsesOriginalBytesAndExplicitSessionDirectory" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.01"/>
+  <testcase name="nativeEditOmitsBlankSecretAndStaysInSelectedProfile" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.006"/>
+  <testcase name="nativeSaveIncludesOnlyExplicitlyEnteredNewSecret" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.004"/>
+  <testcase name="legacyEditPreservesOtherProvidersCredentialsAndModelMetadata" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.051"/>
+  <testcase name="builtinCredentialUpdateIsScopedAndSecretIsRedactedOnError" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.004"/>
+  <testcase name="negativeAcknowledgementsDoNotReportSuccessfulWrites" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.093"/>
+  <testcase name="invalidProviderAddressIsRejectedBeforeNetwork" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.002"/>
+  <testcase name="differentExistingBytesFailAndKeepTheLocalAttachment" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.05"/>
+  <testcase name="retryReconcilesMatchingUploadWithoutOverwritingAnything" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.047"/>
+  <testcase name="slowHtmlAssetHasBoundedRequestTime" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="3.006"/>
+  <testcase name="unsupportedNativeCatalogFallsBackButAuthenticationFailureDoesNot" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.094"/>
+  <testcase name="credentialMetadataNeverRetainsValuesAndDoesNotIncludeMessagingKeys" classname="com.qingyu.hermescompanion.data.ProviderAndAttachmentTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

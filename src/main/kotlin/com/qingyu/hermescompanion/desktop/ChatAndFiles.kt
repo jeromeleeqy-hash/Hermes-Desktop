@@ -233,7 +233,7 @@ import javax.imageio.ImageIO
                             SelectionContainer {
                                 Box(Modifier.fillMaxSize(),contentAlignment=Alignment.TopCenter) {
                                     LazyColumn(state=reading,modifier=Modifier.widthIn(max=1100.dp).fillMaxSize().semantics {testTag="document-content"},contentPadding=PaddingValues(22.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
-                                        if(markdown)items(nodes) {node->MarkdownNode(node){target->if(target.startsWith("http://")||target.startsWith("https://"))DesktopFiles.openLink(target)else c.openDocument(target,tab.sourceSession,tab.profile)}}
+                                        if(markdown)items(nodes) {node->MarkdownNode(node){target->if(target.startsWith("http://")||target.startsWith("https://"))DesktopFiles.openLink(target)else c.openDocument(target,tab.sourceSession,tab.profile,markdownLink=true)}}
                                         else item {Text(c.documentText(),fontFamily=FontFamily.Monospace)}
                                     }
                                 }

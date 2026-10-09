@@ -19,7 +19,7 @@ import zipfile
 from macos_signature import verify_adhoc
 from macos_archive import write_app_archive
 
-VERSION = "2.0.2"
+VERSION = "2.0.3"
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -110,7 +110,7 @@ def main():
                 file.chmod(0o755)
         docs = contents / "Resources/Release"
         docs.mkdir(parents=True, exist_ok=True)
-        for name in ("RELEASE-2.0.2.md", "BUILD-2.0.2.md", "ACCEPTANCE-2.0.2.md"):
+        for name in ("RELEASE-2.0.3.md", "BUILD-2.0.3.md", "ACCEPTANCE-2.0.3.md"):
             shutil.copy2(ROOT / "docs" / name, docs / name)
         shutil.copy2(ROOT / "THIRD_PARTY_NOTICES.md", docs / "THIRD_PARTY_NOTICES.md")
         shutil.copytree(ROOT / "licenses", docs / "licenses", dirs_exist_ok=True)
@@ -129,7 +129,7 @@ def main():
         manifest = {
             "version": VERSION, "platform": "macos-arm64", "base_release": a.base.name,
             "base_release_sha256": a.base_sha256, "reused_native_files_before_resigning": native_source,
-            "application_dependencies": "Application rebuilt; unchanged platform dependencies verified against the 2.0.1 release manifest",
+            "application_dependencies": "Application rebuilt; unchanged platform dependencies verified against the supplied base release manifest",
             "jars": [{"name": j.name, "bytes": j.stat().st_size, "sha256": sha(j)} for j in jars],
             "validation": "Cross-host resource and architecture verification; native macOS execution not performed.",
             "signature": "ad-hoc; not Apple Developer ID or notarized",

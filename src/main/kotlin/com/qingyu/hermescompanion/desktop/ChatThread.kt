@@ -164,7 +164,7 @@ import kotlinx.coroutines.launch
                         if(m.isStreaming)Text(presented.body,Modifier.fillMaxWidth(),lineHeight=25.sp)
                         else Markdown(visibleAssistantText(presented.body)){target->
                             if(target.startsWith("https://")||target.startsWith("http://"))runCatching {DesktopFiles.openLink(target)}.onFailure {c.error=it.message}
-                            else c.openDocument(target,s,s.profile)
+                            else c.openDocument(target,s,s.profile,messageId=m.id,markdownLink=true)
                         }
                     }
                 }
@@ -179,7 +179,7 @@ import kotlinx.coroutines.launch
                     if(citations.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){citations.forEachIndexed {index,cite->DeskAttachChip(onClick={runCatching {DesktopFiles.openLink(cite.url)}.onFailure {c.error=it.message}},label={Text((index+1).toString()+" · "+cite.host)})}}
                     ChatInsightParser.artifactsFromText(m.content).forEach {a->
                         Row(Modifier.fillMaxWidth().background(colors.surface,RoundedCornerShape(10.dp)).border(1.dp,colors.outline,RoundedCornerShape(10.dp))
-                            .desktopClick {c.openDocument(a.path,s,s.profile)}.padding(12.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
+                            .desktopClick {c.openDocument(a.path,s,s.profile,messageId=m.id)}.padding(12.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {
                             Glyph("document",Modifier.size(22.dp),colors.primary)
                             Column(Modifier.weight(1f)) {Text(a.name,fontWeight=FontWeight.Medium,fontSize=13.sp,maxLines=1,overflow=TextOverflow.Ellipsis);SubtleText("预览、编辑或继续讨论")}
                             Glyph("chevron-right",Modifier.size(16.dp),colors.primary)

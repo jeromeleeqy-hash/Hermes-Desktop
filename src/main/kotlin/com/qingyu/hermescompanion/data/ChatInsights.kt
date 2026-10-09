@@ -17,9 +17,11 @@ data class ChatInsights(
 object ChatInsightParser {
     private const val extensions = "markdown|docx|xlsx|pptx|html|jpeg|md|txt|pdf|doc|xls|csv|ppt|htm|png|jpg|webp|gif|zip|apk"
     private val artifactPattern = Regex(
-        """(?:~/|\./|/)[^\"'`\n\r{}<>|()，；]+?\.(?:$extensions)(?![\p{L}\p{N}_.])""",
+        // Start at the beginning of a path, never at a slash inside a relative path.
+        """(?<![\p{L}\p{N}_./\\:%+~-])(?:file://|sandbox:|MEDIA:\s*|[A-Za-z]:[\\/]|\\\\|~/|\.{1,2}[\\/]|/|[\p{L}\p{N}_@%+~.-]+[\\/])[^\s\"'`{}<>|，；：。！？]+?\.(?:$extensions)(?![\p{L}\p{N}_.])""",
         RegexOption.IGNORE_CASE,
     )
+    private val quotedPathPattern = Regex("""`([^`\n\r]+)`|"([^"\n\r]+)"|'([^'\n\r]+)'""")
     private val markdownLinkPattern = Regex("""!?\[([^]]*)]\((<(?:[^>]+)>|(?:[^()\n]|\([^()\n]*\))+)\)""")
     private val urlPattern = Regex("""https?://[^\s<>\"'`]+""", RegexOption.IGNORE_CASE)
 
@@ -38,11 +40,20 @@ object ChatInsightParser {
     fun artifactsFromText(text: String): List<ChatArtifact> {
         if (text.isBlank()) return emptyList()
         val links = markdownLinkPattern.findAll(text).toList()
-        val protectedRanges = links.map { it.range } + urlPattern.findAll(text).map { it.range }.toList()
+        val quoted = quotedPathPattern.findAll(text).toList()
+        val linkRanges = links.map { it.range }
+        val protectedRanges = linkRanges + quoted.map { it.range } + urlPattern.findAll(text).map { it.range }.toList()
         val paths = buildList<Pair<Int, String>> {
             links.forEach { match ->
                 val target = normalizeArtifactTarget(match.groupValues[2], markdownLink = true)
-                if (!target.contains("://") && target.hasArtifactExtension()) add(match.range.first to target)
+                if (target.isArtifactPath()) add(match.range.first to target)
+            }
+            quoted.forEach { match ->
+                if (linkRanges.none { match.range.first in it }) {
+                    val literal = match.groupValues.drop(1).first(String::isNotEmpty)
+                    val target = normalizeArtifactTarget(literal)
+                    if (target.isArtifactPath()) add(match.range.first to target)
+                }
             }
             artifactPattern.findAll(text).forEach { match ->
                 if (protectedRanges.none { match.range.first in it }) {
@@ -51,9 +62,12 @@ object ChatInsightParser {
             }
         }
         return paths.sortedBy(Pair<Int, String>::first).map(Pair<Int, String>::second).distinct().map { path ->
-            ChatArtifact(path = path, name = path.substringAfterLast('/').ifBlank { path }, kind = artifactKind(path))
+            ChatArtifact(path = path, name = artifactFileName(path), kind = artifactKind(path))
         }
     }
+
+    private fun String.isArtifactPath(): Boolean = hasArtifactExtension() &&
+        !contains("://") && (isWindowsRemotePath(this) || !Regex("^[A-Za-z][A-Za-z0-9+.-]*:").containsMatchIn(this))
 
     fun parseTodos(text: String): List<ChatTodo> {
         if (text.isBlank() || !text.contains("todos", ignoreCase = true)) return emptyList()

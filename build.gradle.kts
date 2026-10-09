@@ -57,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)
             packageName = "Hermes"
-            packageVersion = "2.0.2"
+            packageVersion = "2.0.3"
             vendor = "Jerome"
             description = "Hermes desktop companion"
             includeAllModules = true
@@ -77,7 +77,7 @@ compose.desktop {
                 minimumSystemVersion = "13.0"
                 dockName = "Hermes"
                 infoPlist {
-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.2</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.3</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
                 }
             }
         }

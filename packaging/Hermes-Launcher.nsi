@@ -9,11 +9,11 @@ RequestExecutionLevel user
 SilentInstall silent
 AutoCloseWindow true
 ShowInstDetails nevershow
-VIProductVersion "2.0.2.0"
+VIProductVersion "2.0.3.0"
 VIAddVersionKey /LANG=1033 "ProductName" "Hermes"
 VIAddVersionKey /LANG=1033 "FileDescription" "Hermes Desktop"
-VIAddVersionKey /LANG=1033 "FileVersion" "2.0.2.0"
-VIAddVersionKey /LANG=1033 "ProductVersion" "2.0.2"
+VIAddVersionKey /LANG=1033 "FileVersion" "2.0.3.0"
+VIAddVersionKey /LANG=1033 "ProductVersion" "2.0.3"
 VIAddVersionKey /LANG=1033 "LegalCopyright" "Hermes Desktop contributors"
 Section
   IfFileExists "$EXEDIR\app\hermes-desktop.jar" +3

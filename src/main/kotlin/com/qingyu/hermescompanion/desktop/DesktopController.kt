@@ -910,13 +910,15 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             if(profile==p && token==browseToken) listing=it
         }
     }
-    fun openDocument(path:String, source:HermesSession?=currentSession, p:String=profile) {
-        
-        val token=++documentReadToken
+    fun openDocument(path:String, source:HermesSession?=currentSession, p:String=profile, messageId:String="", markdownLink:Boolean=false) {
         val origin=source?.takeIf { it.profile==p }
-        val raw=normalizeArtifactTarget(path, markdownLink=true)
+        val raw=normalizeArtifactTarget(path, markdownLink=markdownLink)
         val root=origin?.workspacePath ?: listing?.path ?: project?.primaryPath.orEmpty()
-        val recent=RecentArtifact(p,origin?.id.orEmpty(),origin?.title.orEmpty(),path=raw,name=raw.substringAfterLast('/'),kind="document",workspacePath=root)
+        val recent=RecentArtifact(p,origin?.id.orEmpty(),origin?.title.orEmpty(),messageId=messageId,path=raw,name=artifactFileName(raw),kind="document",workspacePath=root)
+        readArtifact(recent,origin)
+    }
+    private fun readArtifact(recent:RecentArtifact,origin:HermesSession?) {
+        val p=recent.profile;val token=++documentReadToken
         val cached=origin?.let { messages[it.scopedId] }.orEmpty()
         documentLoading=true
         request(p,{ ArtifactFileReader(it).read(recent,origin,cached) },finished={if(token==documentReadToken)documentLoading=false}) {
@@ -1084,6 +1086,8 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     fun indexArtifacts(s:HermesSession,values:List<ChatMessage>) {
         val found=values.filter { it.role==MessageRole.ASSISTANT }.flatMap { message -> ChatInsightParser.artifactsFromText(message.content).map { a->RecentArtifact(s.profile,s.id,s.title,message.id,a.path,a.name,a.kind,s.workspacePath,parseDesktopInstant(message.createdAt)?.toEpochMilli()?:parseDesktopInstant(s.updatedAt)?.toEpochMilli()?:0L) } }
         sessionSummaries[s.scopedId]=sessionSummary(values,s.preview)
+        val refreshedMessages=values.map {it.id}.toSet()
+        recentArtifacts.removeAll {it.profile==s.profile&&it.sessionId==s.id&&it.messageId in refreshedMessages}
         if(found.isNotEmpty()) {
             val merged=mergeRecentArtifacts(recentArtifacts.toList(),found)
             recentArtifacts.clear();recentArtifacts+=merged
@@ -1092,7 +1096,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     fun syncArtifactIndex(force:Boolean=false) {
         if(demo||!connected||artifactIndexJob?.isActive==true)return
         val p=profile;val token=epoch;val api=client(p)
-        val candidates=sessions.filter {force||indexedSessionVersions[it.scopedId]!="${it.updatedAt}:${it.messageCount}"}
+        val candidates=sessions.filter {force||indexedSessionVersions[it.scopedId]!="paths-v2:${it.updatedAt}:${it.messageCount}"}
         if(candidates.isEmpty())return
         artifactsIndexing=true;artifactsIndexError=null
         artifactIndexJob=scope.launch {
@@ -1108,7 +1112,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                         if(page.messages.isEmpty())break
                     }while(offset<total)
                     indexArtifacts(s,collected)
-                    indexedSessionVersions[s.scopedId]="${s.updatedAt}:${s.messageCount}"
+                    indexedSessionVersions[s.scopedId]="paths-v2:${s.updatedAt}:${s.messageCount}"
                 }catch(e:CancellationException){throw e}catch(_:Exception){failures++}
                 delay(60)
             }
@@ -1132,9 +1136,10 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         if(session!=null)attach(session)else newSession(onOpened=::attach)
     }
     fun openArtifact(value:RecentArtifact) {
-        val s=HermesSession(value.sessionId,value.sessionTitle,workspacePath=value.workspacePath,profile=value.profile)
+        val s=sessions.firstOrNull {it.profile==value.profile&&it.id==value.sessionId}
+            ?:HermesSession(value.sessionId,value.sessionTitle,workspacePath=value.workspacePath,profile=value.profile)
         if(profile!=value.profile)loadProfile(value.profile)
-        openDocument(value.sourcePath.ifBlank { value.path },s,value.profile)
+        readArtifact(value,s)
     }
     fun selectDocument(tab:DocumentTab) {
         val flush=flushEditor

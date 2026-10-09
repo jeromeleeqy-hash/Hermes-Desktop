@@ -10,6 +10,8 @@ import com.qingyu.hermescompanion.model.RecentArtifact
 import com.qingyu.hermescompanion.model.WorkspaceDocument
 import java.net.URLDecoder
 
+internal fun artifactFileName(path: String): String = path.substringAfterLast('/').substringAfterLast('\\').ifBlank { path }
+
 /** Decode link syntax once, without turning literal '+' characters into spaces. */
 internal fun normalizeArtifactTarget(raw: String, markdownLink: Boolean = false): String {
     var value = raw.trim().trim('`', '"', '\'', '<', '>').trim()
@@ -68,7 +70,7 @@ internal class ArtifactFileReader(private val client: HermesApiClient) {
         fun recover(messages: List<ChatMessage>): WorkspaceDocument? {
             val source = if (item.messageId.isBlank()) messages else messages.filter { it.id == item.messageId }
             val candidates = source.flatMap { ChatInsightParser.artifactsFromText(it.content) }
-                .filter { it.name == normalizeArtifactTarget(item.name, markdownLink = true) || truncatedExtensionMatch(item.name, it.name) }
+                .filter { it.name == item.name || truncatedExtensionMatch(item.name, it.name) }
                 .map { it.path }.distinct()
             // Two same-name files are ambiguous; leave the choice to the user.
             if (candidates.size != 1) return null
