@@ -35,9 +35,9 @@ internal fun reasoningLabel(value:String?):String=when(value) {
 }
 
 @Composable internal fun ConnectionRecoveryBanner(c:DesktopController) {
-    if(c.connectionHealth!="online")Surface(color=MaterialTheme.colorScheme.surfaceVariant) {
+    if(c.connectionHealth!="online"||!c.realtimeConnected)Surface(color=MaterialTheme.colorScheme.surfaceVariant) {
         Row(Modifier.fillMaxWidth().padding(horizontal=16.dp,vertical=6.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-            Text(if(c.connectionHealth=="auth")"登录已过期，草稿和附件已保留"else"连接暂时中断，正在尝试恢复 · 不会重复发送任务",Modifier.weight(1f),fontSize=12.sp)
+            Text(when(c.connectionHealth){"auth"->"登录已过期，草稿和附件已保留";"checking"->"正在核对服务器连接，消息同步会自动重试";"offline"->"暂时无法访问服务器，正在恢复连接 · 草稿已保留";else->"实时连接恢复中，消息仍会自动同步"},Modifier.weight(1f),fontSize=12.sp)
             SmallButton(if(c.connectionHealth=="auth")"重新登录"else if(c.connectionChecking)"检查中…"else"立即检查",{
                 if(c.connectionHealth=="auth")c.reauthenticationOpen=true else c.checkConnection()
             },enabled=!c.connectionChecking)
