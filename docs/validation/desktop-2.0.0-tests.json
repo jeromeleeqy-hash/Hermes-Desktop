@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "baseline": "50b71c5d3bb7c97c96e3f7cf547db6a0d83180c9",
+  "test_environment": "Linux x64 / JDK 21.0.12.1+1 / Gradle 8.13",
+  "jvm": {
+    "tests": 346,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 7
+  },
+  "writer_python": {
+    "tests": 10,
+    "passed": 10
+  },
+  "offscreen_scenarios": [
+    "deep",
+    "deep-dark",
+    "deep-glass",
+    "deep-narrow",
+    "deep-paper",
+    "interaction",
+    "settings",
+    "simple",
+    "voice"
+  ],
+  "local_voice": {
+    "models": "SenseVoice int8 + Kokoro 1.1 int8",
+    "wav_bytes": 157706,
+    "transcript": "你好，这是桌面版的本地语音测试。",
+    "platform": "Linux x64 CPU",
+    "passed": true
+  },
+  "native_windows_execution": false,
+  "native_macos_execution": false,
+  "real_gateway_integration": false,
+  "oss": "deferred",
+  "packaging": {
+    "windows_setup_nsis_integrity": "530 files; archive test passed",
+    "windows_native_libraries": 62,
+    "mac_arm64_native_libraries": 16,
+    "mac_adhoc_binaries": 47,
+    "signature_verifier_negative_checks": [
+      "modified code page rejected",
+      "modified Info.plist rejected",
+      "modified CodeResources rejected"
+    ],
+    "app_jar_sha256": "285bfbc43c6ae7aa33cbf41e8bb45a462c2563eb9a4fa8d7cce907c32038aec8"
+  }
+}

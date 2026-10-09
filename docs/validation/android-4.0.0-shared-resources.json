@@ -1,0 +1,25 @@
+{
+  "source": "Hermes-Android-4.0.0-github-source.zip",
+  "same_as_android": [
+    {
+      "name": "hermes-today-contract.md",
+      "sha256": "7fcb67d60c95503b6ec25a51d597259e93a8b0bb30b479035a600b3c238eced8"
+    },
+    {
+      "name": "hermes-today-cron-template.txt",
+      "sha256": "ac388ac482d211dd27b17aadff2f15cf6214dcbfcdeecd739d9a48060aac35b7"
+    },
+    {
+      "name": "hermes-today-examples.json",
+      "sha256": "e2ecdcdafa00c6785923aeac4183b3489e75ccd255d9f5296df8672c01089c98"
+    },
+    {
+      "name": "hermes-today-interactions.json",
+      "sha256": "c195b35f77ccb33fbac93f8c1201dc171fe9929892abb46a746ae063de973cf2"
+    },
+    {
+      "name": "hermes-today-writer.py",
+      "sha256": "d0c869196cf9360b472639ef524d21263e604b84f1ff38653253f1933c157afb"
+    }
+  ]
+}

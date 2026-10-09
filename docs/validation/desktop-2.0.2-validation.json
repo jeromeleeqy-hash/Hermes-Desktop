@@ -1,0 +1,82 @@
+{
+  "version": "2.0.2",
+  "jvm": {
+    "tests": 54,
+    "failed": 0,
+    "skipped": 0,
+    "classes": [
+      {
+        "class": "com.qingyu.hermescompanion.data.Desktop200GatewayTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.data.RecentMessagePageTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.data.SessionPaginationTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.CocoaBlockAbiTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.DecisionLayout201Test",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.DesktopNavigation202Test",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.SessionSyncControllerTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "python": {
+    "tests": 17,
+    "failed": 0
+  },
+  "native_platform_execution": {
+    "macOS": false,
+    "Windows": false
+  },
+  "screenshots": "real Compose desktop, Linux offscreen, demonstration content"
+}

@@ -1,0 +1,521 @@
+{
+  "Contents/MacOS/Hermes": [
+    {
+      "identifier": "com.qingyu.hermes.desktop",
+      "code_pages": 45,
+      "hash": "sha256",
+      "special_slots_verified": [
+        1,
+        2,
+        3
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/app/libskiko-macos-arm64.dylib": [
+    {
+      "identifier": "libskiko-macos-arm64",
+      "code_pages": 5137,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/MacOS/libjli.dylib": [
+    {
+      "identifier": "com.oracle.java.com.qingyu.hermes.desktop",
+      "code_pages": 32,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libinstrument.dylib": [
+    {
+      "identifier": "libinstrument",
+      "code_pages": 18,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libzip.dylib": [
+    {
+      "identifier": "libzip",
+      "code_pages": 35,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libmlib_image.dylib": [
+    {
+      "identifier": "libmlib_image",
+      "code_pages": 119,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libosxui.dylib": [
+    {
+      "identifier": "libosxui",
+      "code_pages": 20,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjdwp.dylib": [
+    {
+      "identifier": "libjdwp",
+      "code_pages": 67,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libsyslookup.dylib": [
+    {
+      "identifier": "libsyslookup",
+      "code_pages": 5,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libosxkrb5.dylib": [
+    {
+      "identifier": "libosxkrb5",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/lible.dylib": [
+    {
+      "identifier": "lible",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjimage.dylib": [
+    {
+      "identifier": "libjimage",
+      "code_pages": 15,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libextnet.dylib": [
+    {
+      "identifier": "libextnet",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjava.dylib": [
+    {
+      "identifier": "libjava",
+      "code_pages": 41,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libmanagement.dylib": [
+    {
+      "identifier": "libmanagement",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libattach.dylib": [
+    {
+      "identifier": "libattach",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libawt.dylib": [
+    {
+      "identifier": "libawt",
+      "code_pages": 129,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libawt_lwawt.dylib": [
+    {
+      "identifier": "libawt_lwawt",
+      "code_pages": 296,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjaas.dylib": [
+    {
+      "identifier": "libjaas",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libfreetype.dylib": [
+    {
+      "identifier": "libfreetype",
+      "code_pages": 152,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjli.dylib": [
+    {
+      "identifier": "libjli",
+      "code_pages": 32,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libmanagement_agent.dylib": [
+    {
+      "identifier": "libmanagement_agent",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libosxapp.dylib": [
+    {
+      "identifier": "libosxapp",
+      "code_pages": 42,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/librmi.dylib": [
+    {
+      "identifier": "librmi",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libverify.dylib": [
+    {
+      "identifier": "libverify",
+      "code_pages": 22,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/liblcms.dylib": [
+    {
+      "identifier": "liblcms",
+      "code_pages": 95,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjsound.dylib": [
+    {
+      "identifier": "libjsound",
+      "code_pages": 29,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjawt.dylib": [
+    {
+      "identifier": "libjawt",
+      "code_pages": 9,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libsaproc.dylib": [
+    {
+      "identifier": "libsaproc",
+      "code_pages": 23,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libsplashscreen.dylib": [
+    {
+      "identifier": "libsplashscreen",
+      "code_pages": 95,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libmanagement_ext.dylib": [
+    {
+      "identifier": "libmanagement_ext",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libfontmanager.dylib": [
+    {
+      "identifier": "libfontmanager",
+      "code_pages": 354,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libnio.dylib": [
+    {
+      "identifier": "libnio",
+      "code_pages": 26,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libj2pcsc.dylib": [
+    {
+      "identifier": "libj2pcsc",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libprefs.dylib": [
+    {
+      "identifier": "libprefs",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libnet.dylib": [
+    {
+      "identifier": "libnet",
+      "code_pages": 23,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libj2pkcs11.dylib": [
+    {
+      "identifier": "libj2pkcs11",
+      "code_pages": 28,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjavajpeg.dylib": [
+    {
+      "identifier": "libjavajpeg",
+      "code_pages": 60,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libj2gss.dylib": [
+    {
+      "identifier": "libj2gss",
+      "code_pages": 18,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libosxsecurity.dylib": [
+    {
+      "identifier": "libosxsecurity",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libjsig.dylib": [
+    {
+      "identifier": "libjsig",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libosx.dylib": [
+    {
+      "identifier": "libosx",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/jspawnhelper": [
+    {
+      "identifier": "jspawnhelper",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/libdt_socket.dylib": [
+    {
+      "identifier": "libdt_socket",
+      "code_pages": 14,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/server/libjvm.dylib": [
+    {
+      "identifier": "libjvm",
+      "code_pages": 4406,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/runtime/Contents/Home/lib/server/libjsig.dylib": [
+    {
+      "identifier": "libjsig",
+      "code_pages": 13,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ],
+  "Contents/app/resources/HermesSpeech": [
+    {
+      "identifier": "HermesSpeech",
+      "code_pages": 16,
+      "hash": "sha256",
+      "special_slots_verified": [
+        2
+      ],
+      "adhoc": true
+    }
+  ]
+}

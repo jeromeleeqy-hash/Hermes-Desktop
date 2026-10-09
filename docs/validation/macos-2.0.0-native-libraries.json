@@ -1,0 +1,24 @@
+{
+  "target": "macos-arm64",
+  "arm64_verified": [
+    "javafx-web-21.0.8-mac-aarch64.jar:libjfxwebkit.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libjavafx_iio.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libglass.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libjavafx_font.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_common.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_es2.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libdecora_sse.dylib",
+    "javafx-graphics-21.0.8-mac-aarch64.jar:libprism_sw.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libjfxmedia_avf.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libglib-lite.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libfxplugins.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libgstreamer-lite.dylib",
+    "javafx-media-21.0.8-mac-aarch64.jar:libjfxmedia.dylib",
+    "sherpa-onnx-native-lib-osx-aarch64-v1.13.5.jar:sherpa-onnx/native/osx-aarch64/libonnxruntime.dylib",
+    "sherpa-onnx-native-lib-osx-aarch64-v1.13.5.jar:sherpa-onnx/native/osx-aarch64/libsherpa-onnx-jni.dylib",
+    "skiko-awt-runtime-macos-arm64-0.9.37.4.jar:libskiko-macos-arm64.dylib"
+  ],
+  "unused_upstream_x64_sibling": [
+    "skiko-awt-runtime-macos-arm64-0.9.37.4.jar:libskiko-macos-x64.dylib"
+  ]
+}

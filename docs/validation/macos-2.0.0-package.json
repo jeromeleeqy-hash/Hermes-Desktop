@@ -1,0 +1,769 @@
+{
+  "version": "2.0.0",
+  "platform": "macos-arm64",
+  "base_release": "Hermes-macOS-arm64-1.9.0.dmg",
+  "base_release_sha256": "d8fa9bdbcea2a4d257315e68433bc8f8c20b8a78168a563b636c0fab1b80abe5",
+  "reused_native_files_before_resigning": {
+    "Contents/Info.plist": "112c39643ede8a8bd0839d3591480f7f200c0c1b79dd3709daf79d4cf7cec4c0",
+    "Contents/PkgInfo": "82502191c9484b04d685374f9879a0066069c49b8acae7a04b01d38d07e8eca0",
+    "Contents/MacOS/Hermes": "ef77bb5414d1f94d7b497dd64b9bba65fde1eb7a6439cf82567704df93ab15ae",
+    "Contents/Resources/Hermes.icns": "8660a479a872bdb9f8da79ba1ece1db3be1a5db6d8834ec8d4399b5c19ca16c0",
+    "Contents/app/.package": "66e0988d1198afe049f2a5fedbb6e89c20c12dc3bc01ab3f5c13576d624f6e9b",
+    "Contents/app/libskiko-macos-arm64.dylib.sha256": "81a4fb8890e2590d925e39d9f615db450d098a434c8053d5dec5f5581e4d8c55",
+    "Contents/app/libskiko-macos-arm64.dylib": "958386bee83dfa9d7e008e00bf48f00ac021f44ac234a2a124ab42617786c72f",
+    "Contents/app/Hermes.cfg": "c93ab43af9ceedcad6af076f7d87023a5a34607efdf1240f26b5cb5dcc618689",
+    "Contents/app/.jpackage.xml": "d6b83eeab7342fff877e9f8a16c20a4e2f47b07951549fe118dfaf3eab10112c",
+    "Contents/_CodeSignature/CodeResources": "f97b14a7de6e5299dfeba2169871ed8cdb098b9753c47199e900ba16994b1dc6",
+    "Contents/runtime/Contents/Info.plist": "e56fb88dcc3456df35c1c16c1faf6b9effccba6b6c68f860eef0377a38fcd292",
+    "Contents/runtime/Contents/MacOS/libjli.dylib": "946dffb483e794590c1ef86b5d4a68156a5416c60d3564422cfeb888b4aa2719",
+    "Contents/runtime/Contents/Home/release": "2d6b79bc1885eb9a5466dd27056428a25034cba0c1a1bac88cc719966e688335",
+    "Contents/runtime/Contents/_CodeSignature/CodeResources": "1d47a0acff3c9bb00514d656b58bb57718df3cb2655af4771e048e828ab0e734",
+    "Contents/runtime/Contents/Home/lib/libinstrument.dylib": "52f32fc8575da857d2a12e3dda29c17b75b5b9a20b0db0ddc026060e4f377833",
+    "Contents/runtime/Contents/Home/lib/psfontj2d.properties": "780c565d5af3ee6f68b887b75c041cdf46a0592f67012f12eeb691283e92630a",
+    "Contents/runtime/Contents/Home/lib/libzip.dylib": "b019e53e1bff9a625e8114f0ce7b75e2c3b09d68dd8e5cf9cc2bfbea94c4df7f",
+    "Contents/runtime/Contents/Home/lib/libmlib_image.dylib": "0a6b38cdf190fbb6b6d3d335aa456f479befdcdf75dda9b4e260dc64d01a6b30",
+    "Contents/runtime/Contents/Home/lib/libosxui.dylib": "2c2f868307ce67e00eca0e83b06c83057014b383c786c875f1a094dbefcb4a6f",
+    "Contents/runtime/Contents/Home/lib/libjdwp.dylib": "3124a7e390998e95cec7c986ddaef9254b4064c50090404f9f0d51216d8866fe",
+    "Contents/runtime/Contents/Home/lib/libsyslookup.dylib": "d6bdbd9abbe2ed60c874467501798bbb3c225176ab8782fe9b1d0af3e7b9f0e3",
+    "Contents/runtime/Contents/Home/lib/libosxkrb5.dylib": "79ea370eed968c60ecf80b3dc92cccad88ece9014fc06542b122859beefb4e8f",
+    "Contents/runtime/Contents/Home/lib/lible.dylib": "57683761d54374504ecb908895b8c365848583b15a411d5834c34683d426d294",
+    "Contents/runtime/Contents/Home/lib/classlist": "01b9c997aa616618b9cd713dda43b66fbcf5f25976cfe12240415d0641db801a",
+    "Contents/runtime/Contents/Home/lib/libjimage.dylib": "24509e93d8f04edd7dd448de9ff4089b9d8a55b072f003f2e024ae382409396c",
+    "Contents/runtime/Contents/Home/lib/libextnet.dylib": "5ff15dcf039ab705058018532e639a2bf59ac70dcb730c42e9878da866aa84c8",
+    "Contents/runtime/Contents/Home/lib/shaders.metallib": "5bba5cc7c25aa23f90ae7b0bf72d4835bfdfd9760b279f7a8f018670a5f77deb",
+    "Contents/runtime/Contents/Home/lib/libjava.dylib": "0854e63c0516f3fe154f064fe41053831516af10bf561d28d44ed2280f1c87c5",
+    "Contents/runtime/Contents/Home/lib/libmanagement.dylib": "9004391b14e1b273ded3f7912c83a16f72545db1b00145d25472f912c290dd2b",
+    "Contents/runtime/Contents/Home/lib/libattach.dylib": "5f49da06dbfb55f84a065b69a8256db8c74f3c0420f2fdbaf6a8daf62391fe65",
+    "Contents/runtime/Contents/Home/lib/libawt.dylib": "a92093e3b570659d0da56c18dd4910db6c7b028681f089307eeef9e2638676ba",
+    "Contents/runtime/Contents/Home/lib/libawt_lwawt.dylib": "97d83385eee8823c40abc30cc7f1048f5ba70fc4f423877aa0b1b137376a185e",
+    "Contents/runtime/Contents/Home/lib/libjaas.dylib": "4da332384728087ace127dfc65d8094cfce9011f6286e28223abce2f2aafb8a3",
+    "Contents/runtime/Contents/Home/lib/libfreetype.dylib": "eb6d61fc53b9fbc56b65ee9e4d5f0da5a7c51e18d573105360ac0da0db8b9744",
+    "Contents/runtime/Contents/Home/lib/libjli.dylib": "f9003843e8bc0b262caeced53e2d07c4de0ebfe4274f880d18312df7219b636f",
+    "Contents/runtime/Contents/Home/lib/libmanagement_agent.dylib": "a7356a81282c7ba152c46a04cb15b5a45bef803cddf398268a3a172e494f5fe8",
+    "Contents/runtime/Contents/Home/lib/libosxapp.dylib": "d5a05e057d7e5950219fbe2a1a0ef9963503b0a781107f904183facd6c5eae1e",
+    "Contents/runtime/Contents/Home/lib/librmi.dylib": "018ca31b0dc6b508434a7101d665a14a3ed6a8adf31992b213eff75f29aa7adc",
+    "Contents/runtime/Contents/Home/lib/fontconfig.bfc": "5409952a218126c5c11cf0e4963665711aeeab50f5648264d70866fca705a950",
+    "Contents/runtime/Contents/Home/lib/libverify.dylib": "310c571f166f97503b2b2d8e0f78814f13bb6c6714377bc28bbd559da6e61c5f",
+    "Contents/runtime/Contents/Home/lib/liblcms.dylib": "4aca30c7e13305cc864e3bc3483e8662d1fa4c97fb63c49d8cb6864a3d9fc367",
+    "Contents/runtime/Contents/Home/lib/ct.sym": "1f1ee0b8473cfa1593c935387b3a8dfc88c27a74c858fd5d3a808fb4f0cbf617",
+    "Contents/runtime/Contents/Home/lib/libjsound.dylib": "7c99c13684ac88e7713e22cd51403cc081b432dbc22243c1ca3ef8f60c4e1d27",
+    "Contents/runtime/Contents/Home/lib/libjawt.dylib": "ac30c1d9db0062cadbf96dba215e8e6d6fb505f80074b10cf79a6e6088ef7edb",
+    "Contents/runtime/Contents/Home/lib/libsaproc.dylib": "71860ca18bebdf38d42bbcceb1ec1675e31d8a1fd2255bdf92bd4259e546d574",
+    "Contents/runtime/Contents/Home/lib/modules": "58d7ef58dfdf9b7aa2631f9f7d15acc19a1a179ac39478657268ab2e6d5edec9",
+    "Contents/runtime/Contents/Home/lib/libsplashscreen.dylib": "9dcf8fb0a90702921f774fb6cac6e0ae8bd1edd56dc34f610b75ac70c5f09c87",
+    "Contents/runtime/Contents/Home/lib/libmanagement_ext.dylib": "89a533520d6d6b81d9b37a4b41f16468bd79c9c4bad21c91f6fd31116861294e",
+    "Contents/runtime/Contents/Home/lib/jvm.cfg": "aa9efb969444c1484e29adecab55a122458090616e766b2f1230ef05bc3867e0",
+    "Contents/runtime/Contents/Home/lib/libfontmanager.dylib": "e5e9447446ae49670a1f9b40b4d98c8b48eed4a601396f7d7e4616850ee43617",
+    "Contents/runtime/Contents/Home/lib/libnio.dylib": "8d05b35de7dd07937eb8214d7b5cfb37539b5b9295d82a85161c53f733788155",
+    "Contents/runtime/Contents/Home/lib/libj2pcsc.dylib": "973b333d70bcd5a0ed51de9ab2403ace09568a086183e7af9fd65056addab6b8",
+    "Contents/runtime/Contents/Home/lib/libprefs.dylib": "90893d5acce4aa80c2c3b9cdca992a38ec4b4d462c78b382c0d86357503af1ee",
+    "Contents/runtime/Contents/Home/lib/psfont.properties.ja": "5a4bd51b969bf187ff86d94f4a71fdfbfa602762975fa3c73d264b4575f7c78f",
+    "Contents/runtime/Contents/Home/lib/libnet.dylib": "15359e34262e383af677c3e6a8f522aceea080fd1f97323fe3148edc89e9c865",
+    "Contents/runtime/Contents/Home/lib/libj2pkcs11.dylib": "8db96c2eb89dd199ebac043173bdbb63e6de0e18f2036302ca7f7e89e04f06e2",
+    "Contents/runtime/Contents/Home/lib/libjavajpeg.dylib": "72b96357fbb142e7ebce0b14592214e401681279f73ecdbcf811c946036a0688",
+    "Contents/runtime/Contents/Home/lib/libj2gss.dylib": "60d75f0e4302f0b7641b237948093bdcb771447da6913ba3c9925d2756bed2eb",
+    "Contents/runtime/Contents/Home/lib/libosxsecurity.dylib": "8404275b4c5cf3e4cd8770443b05f9e8bf32672234c575abf603cccf337eef90",
+    "Contents/runtime/Contents/Home/lib/libjsig.dylib": "77a56c546b9bb020a9e99a6a099a55ccf253769392acbf471d1ad36e743f582c",
+    "Contents/runtime/Contents/Home/lib/tzdb.dat": "5906b44e25a8a730131d7ba1beb5d15af27043f6536f1a169ca8a5d8b8bed8f8",
+    "Contents/runtime/Contents/Home/lib/fontconfig.properties.src": "c8d20a4a39240665252306bdd3dbc8d71e1e246c8cd8c7985b32e4101658a148",
+    "Contents/runtime/Contents/Home/lib/libosx.dylib": "fe9e9245324174582ad2413d141d522710f893d38fcdd44e399756d087049720",
+    "Contents/runtime/Contents/Home/lib/jspawnhelper": "745f652bfb072fdfee1ba68bfdc771a67d7e60df59ac3999135b6d25fb2b4594",
+    "Contents/runtime/Contents/Home/lib/libdt_socket.dylib": "e771f8d3528e08573ce146efb9e304211828ddd5a1bc546911fbc3be64d7fcc0",
+    "Contents/runtime/Contents/Home/conf/jaxp.properties": "7d95c49465d0c836d608d02856d3b097934dfb5dc4bd2279affaf337d045b708",
+    "Contents/runtime/Contents/Home/conf/net.properties": "2e070ed1d97052f0ce8771ed2ef74a38d7c260a45fde7a3682c8844e5fdf58a4",
+    "Contents/runtime/Contents/Home/conf/logging.properties": "b62d2733ab99556b108a1951d894c5a8d76b1ac7a00c02c388f9eb9be046c56f",
+    "Contents/runtime/Contents/Home/conf/sound.properties": "299c2360b6155eb28990ec49cd21753f97e43442fe8fab03e04f3e213df43a66",
+    "Contents/runtime/Contents/Home/lib/server/libjvm.dylib": "c5b443184ddb583a12f23e98d8cdeb376b6c8131b16dcb6e90518d0d906c44e9",
+    "Contents/runtime/Contents/Home/lib/server/libjsig.dylib": "77a56c546b9bb020a9e99a6a099a55ccf253769392acbf471d1ad36e743f582c",
+    "Contents/runtime/Contents/Home/lib/jfr/profile.jfc": "485fb90dbecee9a950c45247464351162b1eb0c35387fbb929f002c600807251",
+    "Contents/runtime/Contents/Home/lib/jfr/default.jfc": "4fed4b508c5f1b69578293df84f94a63752f86b4259d97e12884e3b2ec56ef50",
+    "Contents/runtime/Contents/Home/lib/security/blocked.certs": "96572f243f31c2ef81a6e627542e596f6a9295cff3c7ae095c1b595cb1457ded",
+    "Contents/runtime/Contents/Home/lib/security/public_suffix_list.dat": "16b42002aa6f83a7763c4cdbd399ecf738460377d447e362884495545afd60a3",
+    "Contents/runtime/Contents/Home/lib/security/cacerts": "98d34a90fca2688ef5674862d2a484e09e5ca25d2f07c5d654aa28f1581f3419",
+    "Contents/runtime/Contents/Home/lib/security/default.policy": "2bd418aab30b091b136962f80be7ddf39dcba85f082a558a6993848ae65366ae",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler.management/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler.management/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler.management/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.httpserver/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.httpserver/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.httpserver/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.security.jgss/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.security.jgss/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.security.jgss/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jconsole/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jconsole/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jconsole/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.smartcardio/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.smartcardio/pcsclite.md": "b39ce363c281ed36e937f9e6c03311d7dbf0b20d3614dde084130c2a10909692",
+    "Contents/runtime/Contents/Home/legal/java.smartcardio/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.smartcardio/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.rmi/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.rmi/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.rmi/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.management/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.management/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.management/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.scripting/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.scripting/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.scripting/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.le/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.le/jline.md": "a6fb63a226b77b03cbd7559cce6cdc3e1ea8563af960b1dce2330c8e1dce1abf",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.le/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.le/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.sql.rowset/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.sql.rowset/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.sql.rowset/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.ed/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.ed/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.ed/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.jvmstat/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.jvmstat/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.jvmstat/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.xml/xalan.md": "c27eb875da4be683d4d7422be986e5e30f636ede31958ff1d39f9cd6109e7a00",
+    "Contents/runtime/Contents/Home/legal/java.xml/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.xml/jcup.md": "8d5dcfdf50455a3c34c753a98f21e953248af200415a9084e3f102cb6c43b8bf",
+    "Contents/runtime/Contents/Home/legal/java.xml/xerces.md": "4a6bf6b367193ee68681cb2d9fed30ffc5d62dd2d477bd62e0271707d71b3244",
+    "Contents/runtime/Contents/Home/legal/java.xml/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.xml/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.xml/bcel.md": "cd578186ad93de46cca29ec8ace2b11f9da751987f3f140e6095c528596cc8c1",
+    "Contents/runtime/Contents/Home/legal/java.xml/dom.md": "6686e8877667584a3a7c07344baadca1a03e29f677162d87c3c0811e990d1148",
+    "Contents/runtime/Contents/Home/legal/jdk.jstatd/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jstatd/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jstatd/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.ec/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.ec/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.ec/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.xml.dom/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.xml.dom/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.xml.dom/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jshell/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jshell/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jshell/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.transaction.xa/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.transaction.xa/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.transaction.xa/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.attach/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.attach/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.attach/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.sctp/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.sctp/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.sctp/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jsobject/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jsobject/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jsobject/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.localedata/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.localedata/thaidict.md": "c326144a2351c9608fa708b5d7d3c5a3da03e82b66479b128e9db4969539824a",
+    "Contents/runtime/Contents/Home/legal/jdk.localedata/cldr.md": "19515e14a240e022640e95b61b5095127fa9690755950b4a2b0a02e783e08163",
+    "Contents/runtime/Contents/Home/legal/jdk.localedata/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.localedata/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.xml.crypto/santuario.md": "d08690d25f660f145c73365d260ed522cd0aace8a0e1396706551b7a1ae8c9a3",
+    "Contents/runtime/Contents/Home/legal/java.xml.crypto/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.xml.crypto/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.xml.crypto/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.javadoc/jquery.md": "b68f454c2bd58959c862d94bf0f16c3f78a2d537388ca060d354344db80ee695",
+    "Contents/runtime/Contents/Home/legal/jdk.javadoc/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.javadoc/jqueryUI.md": "7854d2d568992ae25ff65867bd9021d655f70670142f0796b29a3b0621f19530",
+    "Contents/runtime/Contents/Home/legal/jdk.javadoc/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.javadoc/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.cryptoki/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.cryptoki/pkcs11cryptotoken.md": "1f36ff1342a581142c858f90064e20633d43529ac82adb85345bd902a14e18b2",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.cryptoki/pkcs11wrapper.md": "371974b1fca3744a3892c7ee1fcc593b8b4281fc218f4cafd2f709e9df5fd81d",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.cryptoki/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.crypto.cryptoki/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.datatransfer/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.datatransfer/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.datatransfer/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jlink/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jlink/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jlink/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.dynalink/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.dynalink/dynalink.md": "17312591cabee3ef6c34ed8897d92e4e361ba9cea41ec00dcd61a322a8fc2cdb",
+    "Contents/runtime/Contents/Home/legal/jdk.dynalink/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.dynalink/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.security.jgss/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.security.jgss/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.security.jgss/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.dns/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.dns/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.naming.dns/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.management.agent/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.management.agent/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.management.agent/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.desktop/lcms.md": "843f9f6fa9c3f8109fcf4d5fe74caf7f2ae8e9bcd92238e4aff2d428c932b24b",
+    "Contents/runtime/Contents/Home/legal/java.desktop/jpeg.md": "c1dfb9719a71ad9f861f8728550542d681e25c8ef40e6393606e6e2a0c1d653a",
+    "Contents/runtime/Contents/Home/legal/java.desktop/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.desktop/pipewire.md": "56a8fb1652c70ac204d13bb52ca4d678162e7d21a97d10209c2a633de8082de0",
+    "Contents/runtime/Contents/Home/legal/java.desktop/giflib.md": "206aab89ec75968e48a6a1ed6df7d8b9bfb7aea12cbe4c9345d93e5d97460a25",
+    "Contents/runtime/Contents/Home/legal/java.desktop/freetype.md": "553e804baecb7de7129d77c7259a6b70037d1893f1c600b41b35201695fb7758",
+    "Contents/runtime/Contents/Home/legal/java.desktop/harfbuzz.md": "5ec7cba7f8e7fc3a089213140aab6fa1b3bd5bf8a91bf8bddb3b8d315fc5f7d0",
+    "Contents/runtime/Contents/Home/legal/java.desktop/mesa3d.md": "63f4e6f75caebbccb95d903fb43e46ac7111b3624d0a34f146b276d7d9e7b152",
+    "Contents/runtime/Contents/Home/legal/java.desktop/xwd.md": "1d4ffa93c87f35084b02a7aa90a21084b4019db4fe1003c2e5ce775b4a384f59",
+    "Contents/runtime/Contents/Home/legal/java.desktop/colorimaging.md": "04d61e3e8e71dd452ebe52008af5378d9f6640d14578aeb515dc5375973b0189",
+    "Contents/runtime/Contents/Home/legal/java.desktop/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.desktop/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.desktop/libpng.md": "f73afb394792f3aeecd959e89487603677a430e56b44eba596d8b572accfd540",
+    "Contents/runtime/Contents/Home/legal/java.logging/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.logging/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.logging/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jcmd/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jcmd/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jcmd/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.compiler/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.se/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.se/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.se/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.nio.mapmode/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.nio.mapmode/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.nio.mapmode/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.ci/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.ci/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.vm.ci/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.security.auth/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.security.auth/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.security.auth/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.compiler/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.compiler/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.compiler/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jdi/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jdi/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jdi/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.net.http/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.net.http/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.net.http/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.management.jfr/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.management.jfr/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.management.jfr/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.net/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.net/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.net/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.sql/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.sql/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.sql/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.base/siphash.md": "5a792b5a74ad2a5f3d6a7ad8b7a841116e58a772c18bc6e392320a365b222c76",
+    "Contents/runtime/Contents/Home/legal/java.base/public_suffix.md": "861de1e4992a7d28f1de25c73cd50d26a94779ebd749c0643fecfa56442c3429",
+    "Contents/runtime/Contents/Home/legal/java.base/icu.md": "1bf28459c6e0af9f3429f4f8becd1668d6544055f8df240277456bc4b3d8a752",
+    "Contents/runtime/Contents/Home/legal/java.base/unicode.md": "6f72f10d166b2c2e8a395e03e734c5afc852b59aeca73ced124f6b9c96268d53",
+    "Contents/runtime/Contents/Home/legal/java.base/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.base/cldr.md": "19515e14a240e022640e95b61b5095127fa9690755950b4a2b0a02e783e08163",
+    "Contents/runtime/Contents/Home/legal/java.base/c-libutl.md": "bef40679922d6fdfb7e4ddb223ad6722300f6054ba737bbf6188d60fcec517f9",
+    "Contents/runtime/Contents/Home/legal/java.base/aes.md": "45c6d4da48325edfbff3dcf71c704e504c057904435ed23c6d57046d551eb69d",
+    "Contents/runtime/Contents/Home/legal/java.base/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.base/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.base/zlib.md": "c9c70c36a1f0325e8788771906202d42ba6ab4205caca44ec0f665707e83226b",
+    "Contents/runtime/Contents/Home/legal/java.base/asm.md": "683be15695bd248272d60f5b7fbe5e126a935ea6bf231a624a9aa164733e1d1d",
+    "Contents/runtime/Contents/Home/legal/java.compiler/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.compiler/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.compiler/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.prefs/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.prefs/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.prefs/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.naming/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.naming/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.naming/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jfr/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jfr/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jfr/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jpackage/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jpackage/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jpackage/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported.desktop/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported.desktop/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported.desktop/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.zipfs/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.zipfs/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.zipfs/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.charsets/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.charsets/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.charsets/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.rmi/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.rmi/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.rmi/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.incubator.vector/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.incubator.vector/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.incubator.vector/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.editpad/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.editpad/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.editpad/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.opt/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.opt/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.opt/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.internal.opt/jopt-simple.md": "99bc67f93cf57d6d20e6047731c93fbb267d70fbdd4115d119e0f85c6efe5c05",
+    "Contents/runtime/Contents/Home/legal/java.management/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.management/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.management/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jdeps/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jdeps/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jdeps/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.random/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.random/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.random/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.unsupported/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jdwp.agent/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jdwp.agent/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jdwp.agent/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.instrument/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.instrument/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.instrument/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.management.rmi/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.management.rmi/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.management.rmi/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.jartool/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.jartool/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.jartool/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.hotspot.agent/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.hotspot.agent/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.hotspot.agent/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/java.security.sasl/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/java.security.sasl/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/java.security.sasl/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/legal/jdk.accessibility/ADDITIONAL_LICENSE_INFO": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916",
+    "Contents/runtime/Contents/Home/legal/jdk.accessibility/LICENSE": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726",
+    "Contents/runtime/Contents/Home/legal/jdk.accessibility/ASSEMBLY_EXCEPTION": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33",
+    "Contents/runtime/Contents/Home/conf/security/java.security": "cf62c92ef0260bd0adca121fea4067aa7ac00675ab4ddccd75e62370165523d6",
+    "Contents/runtime/Contents/Home/conf/security/java.policy": "d51bcab7ed301caeff3779a5e777e6019864cecee5e2abc102ef991b0de77af2",
+    "Contents/runtime/Contents/Home/conf/management/jmxremote.access": "0c25d26ee212ca1e8c33f67c3c460d43fe849c3a1d23dbe341148517602b280c",
+    "Contents/runtime/Contents/Home/conf/management/jmxremote.password.template": "0273b6a6b9e20e6ce54c5aee70164028e0395063b2b7d39060a40b6495543dbf",
+    "Contents/runtime/Contents/Home/conf/management/management.properties": "07dffdd85b01c19bf46ca320a699aba48dd6b01043eb0bd6a9528c7993312bad",
+    "Contents/runtime/Contents/Home/conf/security/policy/README.txt": "6da0747334b0fea7592fd92614b2bbc8b126535e129b1fee483774d914e98eb5",
+    "Contents/runtime/Contents/Home/conf/security/policy/limited/exempt_local.policy": "8c3d7648abcd95a272ce12db870082937f4d7f6878d730d83cb7fbb31eb8b2c9",
+    "Contents/runtime/Contents/Home/conf/security/policy/limited/default_US_export.policy": "758b930a526fc670ab7537f8c26321527050a31f5f42149a2dda623c56a0a1a9",
+    "Contents/runtime/Contents/Home/conf/security/policy/limited/default_local.policy": "2b2627548e61316150d47ffc3e6cad465ca05b3cccd4785eb7d21aa7baa0f441",
+    "Contents/runtime/Contents/Home/conf/security/policy/unlimited/default_US_export.policy": "758b930a526fc670ab7537f8c26321527050a31f5f42149a2dda623c56a0a1a9",
+    "Contents/runtime/Contents/Home/conf/security/policy/unlimited/default_local.policy": "8d8a318e6d90dfd7e26612d2b6385aa704f686ca6134c551f8928418d92b851a",
+    "Contents/app/resources/HermesSpeech": "d9114270acd4c0afcbcc5419c7928e31d1dea162638335528a57ad46ead17e07"
+  },
+  "application_dependencies": "All replaced from Mac Gradle staging",
+  "jars": [
+    {
+      "name": "SparseBitSet-1.3.jar",
+      "bytes": 25843,
+      "sha256": "f76b85adb0c00721ae267b7cfde4da7f71d3121cc2160c9fc00c0c89f8c53c8a"
+    },
+    {
+      "name": "animation-core-desktop-1.10.1.jar",
+      "bytes": 383171,
+      "sha256": "41c0220ddbc55cb897feb0d5816b748f9c11162171f12743c04b50d0d84db628"
+    },
+    {
+      "name": "animation-desktop-1.10.1.jar",
+      "bytes": 374645,
+      "sha256": "3ec5254288b1e872263009221f677063ea728f90969598f399a5b02500ebc014"
+    },
+    {
+      "name": "annotation-jvm-1.9.1.jar",
+      "bytes": 60577,
+      "sha256": "1e343917ebf27ba96fe4dc52b1cad7fd32b738fbc6355bb6cd5b3b305d7212d0"
+    },
+    {
+      "name": "annotations-23.0.0.jar",
+      "bytes": 29371,
+      "sha256": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05"
+    },
+    {
+      "name": "atomicfu-jvm-0.23.2.jar",
+      "bytes": 36181,
+      "sha256": "101ff43ff563fca167af5ade98c3b69bf569010eab745013b84d8955034d3b3c"
+    },
+    {
+      "name": "collection-jvm-1.5.0.jar",
+      "bytes": 877998,
+      "sha256": "70b35924e4babcdffa37d0e575ee039c56a2d97123342624c48b603233704341"
+    },
+    {
+      "name": "commonmark-0.24.0.jar",
+      "bytes": 214528,
+      "sha256": "679338e0b7fc15c02d275d598654b01a149893bc28a87992e90123c8d06af25b"
+    },
+    {
+      "name": "commonmark-ext-gfm-strikethrough-0.24.0.jar",
+      "bytes": 13938,
+      "sha256": "7385cb637f04dc4cbda4ddca9c2fcd2af7ac536a50e4c8d2c77f4748bb14bf41"
+    },
+    {
+      "name": "commonmark-ext-gfm-tables-0.24.0.jar",
+      "bytes": 23462,
+      "sha256": "b54dc332f931e6d07c2766144c087b08f3693677e368151a67020b4e95bb4b99"
+    },
+    {
+      "name": "commons-codec-1.20.0.jar",
+      "bytes": 401021,
+      "sha256": "6af66595f9f6a7bb58ce66518d6888d40b547c366d2262f06676eee19528ff66"
+    },
+    {
+      "name": "commons-collections4-4.5.0.jar",
+      "bytes": 898652,
+      "sha256": "00f93263c267be201b8ae521b44a7137271b16688435340bf629db1bac0a5845"
+    },
+    {
+      "name": "commons-compress-1.28.0.jar",
+      "bytes": 1117221,
+      "sha256": "e1522945218456f3649a39bc4afd70ce4bd466221519dba7d378f2141a4642ca"
+    },
+    {
+      "name": "commons-io-2.21.0.jar",
+      "bytes": 585274,
+      "sha256": "7d643a2afea8b058b762aa6fb90e5b256f6c729739f8b3784c3370ddc609e88d"
+    },
+    {
+      "name": "commons-lang3-3.18.0.jar",
+      "bytes": 702952,
+      "sha256": "4eeeae8d20c078abb64b015ec158add383ac581571cddc45c68f0c9ae0230720"
+    },
+    {
+      "name": "commons-logging-1.4.0.jar",
+      "bytes": 75828,
+      "sha256": "d175dbd751dd782a63bde28c7a039520e971f25e84b79c19b8435edc3603e0dc"
+    },
+    {
+      "name": "commons-math3-3.6.1.jar",
+      "bytes": 2213560,
+      "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308"
+    },
+    {
+      "name": "core-common-2.2.0.jar",
+      "bytes": 11657,
+      "sha256": "65308a06b1c00ee186cb9e19321383f043b993813f1522c47f4a3e3303bdba41"
+    },
+    {
+      "name": "curvesapi-1.08.jar",
+      "bytes": 117159,
+      "sha256": "ad95b08b8bbf9d7d17e5e00814898fa23324f32bc5b62f1a37801e6a56ce0079"
+    },
+    {
+      "name": "desktop-jvm-1.10.1.jar",
+      "bytes": 4856,
+      "sha256": "fdb63de4c9bdc6570c5355eeb0f013d4635effda42907c2d084acc77e08d4f8a"
+    },
+    {
+      "name": "fontbox-3.0.8.jar",
+      "bytes": 1647000,
+      "sha256": "a1915c24e3edbe0ecec93896dfbf6d41427810b663ade97bd4e8bae86ec3fdab"
+    },
+    {
+      "name": "foundation-desktop-1.10.1.jar",
+      "bytes": 4314315,
+      "sha256": "3a9b7bfae72f1a92a8123d3290bb7d7f61d92e5cde877af5373c3e5c2caceb2b"
+    },
+    {
+      "name": "foundation-layout-desktop-1.10.1.jar",
+      "bytes": 558534,
+      "sha256": "bd086a9f5ce453967ea1124bb709612bca14a4fbb6522a6023092a8866ee4ef0"
+    },
+    {
+      "name": "hermes-desktop.jar",
+      "bytes": 62310351,
+      "sha256": "285bfbc43c6ae7aa33cbf41e8bb45a462c2563eb9a4fa8d7cce907c32038aec8"
+    },
+    {
+      "name": "icu4j-76.1.jar",
+      "bytes": 14621879,
+      "sha256": "732cdf18121b1642899da1f5e37e52cc7f48e3ec07fa737105d4603976781b33"
+    },
+    {
+      "name": "javafx-base-21.0.8-mac-aarch64.jar",
+      "bytes": 753865,
+      "sha256": "79314a670289b8a61303fff1de85b085b74bbd69ab1a4a2c1316ff280522633c"
+    },
+    {
+      "name": "javafx-controls-21.0.8-mac-aarch64.jar",
+      "bytes": 2585197,
+      "sha256": "a4f0c0fd4a2d0d19d30b568d0cda4e81a6a007d4ade69c00761075fe0a75c79d"
+    },
+    {
+      "name": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "bytes": 4840137,
+      "sha256": "08f5a193f885c4375ba33bf1a2f55b481726a87bf2a62c117b63c026ef3e2ef6"
+    },
+    {
+      "name": "javafx-media-21.0.8-mac-aarch64.jar",
+      "bytes": 1615456,
+      "sha256": "fa7da49d8c22059cab7f071297f787c782609aad53313074015cf3e6c1c7acc4"
+    },
+    {
+      "name": "javafx-swing-21.0.8-mac-aarch64.jar",
+      "bytes": 89705,
+      "sha256": "0eb28bfbb526566b46fb3496f238b7177dcec5216ce476fbff682f66b8f34c6b"
+    },
+    {
+      "name": "javafx-web-21.0.8-mac-aarch64.jar",
+      "bytes": 34134557,
+      "sha256": "de5d9a1252267e23b709e71df63742a324fbbc13fe28b1a6c883c1ac23ed18f7"
+    },
+    {
+      "name": "jbr-api-1.5.0.jar",
+      "bytes": 44469,
+      "sha256": "657ede7d7f8e175c909b23caa10fcd4d4a511304fd938aa9cc8457b4378950d5"
+    },
+    {
+      "name": "jna-5.17.0.jar",
+      "bytes": 2002589,
+      "sha256": "b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0"
+    },
+    {
+      "name": "jna-platform-5.17.0.jar",
+      "bytes": 1378617,
+      "sha256": "b7e3d46c87bad2eb409b0e704916bcd81206168e357312dfddd0e253679cd9e0"
+    },
+    {
+      "name": "json-20240303.jar",
+      "bytes": 78332,
+      "sha256": "3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed"
+    },
+    {
+      "name": "jsoup-1.23.2.jar",
+      "bytes": 537806,
+      "sha256": "e9d8c856856680427f096d156f02a414289985c930998fcb519ce5be39b42003"
+    },
+    {
+      "name": "jspecify-1.0.0.jar",
+      "bytes": 3819,
+      "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+    },
+    {
+      "name": "kotlin-stdlib-2.3.20.jar",
+      "bytes": 1804720,
+      "sha256": "0ae12504a5040ebaf37703908483420d1a5624dd1d93f357665f8c77c848a01e"
+    },
+    {
+      "name": "kotlin-stdlib-jdk7-2.2.20.jar",
+      "bytes": 945,
+      "sha256": "3bd26ecb6d12978c5c4e0b41f76c9ff551fac2a5e6268427a9d2a0cdf8a5ad91"
+    },
+    {
+      "name": "kotlin-stdlib-jdk8-2.2.20.jar",
+      "bytes": 951,
+      "sha256": "c314177935d8dc2eda879507117f25d6de56f6c57ede99416b14cd622bb9e09d"
+    },
+    {
+      "name": "kotlinx-coroutines-core-jvm-1.10.2.jar",
+      "bytes": 1479317,
+      "sha256": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd"
+    },
+    {
+      "name": "kotlinx-coroutines-swing-1.10.2.jar",
+      "bytes": 8890,
+      "sha256": "02bdb85f20ec08004429abf6887e8d0e40f3ab637d7462f817f0f8abbe7d1eb5"
+    },
+    {
+      "name": "kotlinx-datetime-jvm-0.7.1.jar",
+      "bytes": 694336,
+      "sha256": "3b8b98657c9aff3be7f6b4b575e9f3fb9a3a1f452a801da0f438901734acdade"
+    },
+    {
+      "name": "kotlinx-serialization-core-jvm-1.7.3.jar",
+      "bytes": 390987,
+      "sha256": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb"
+    },
+    {
+      "name": "lifecycle-common-jvm-2.9.4.jar",
+      "bytes": 60804,
+      "sha256": "37d89b2101f074ac6c260917dabb185607645ee200aa3018c7c5bde70edcf184"
+    },
+    {
+      "name": "lifecycle-runtime-compose-desktop-2.9.4.jar",
+      "bytes": 43088,
+      "sha256": "d25c083df93da718a1876a3293bd15f7dc7a811e998735943bce590683a57835"
+    },
+    {
+      "name": "lifecycle-runtime-compose-desktop-2.9.6.jar",
+      "bytes": 452,
+      "sha256": "31c3c4b6dea38f078c46829dee2c43abba2bf8757b7ee8a0f660f31217364898"
+    },
+    {
+      "name": "lifecycle-runtime-desktop-2.9.4.jar",
+      "bytes": 47399,
+      "sha256": "2fb49f76d1021792fb359e0a9246c1509f2f5b555f0a46591d24d58deb68bd5c"
+    },
+    {
+      "name": "lifecycle-viewmodel-desktop-2.9.4.jar",
+      "bytes": 56060,
+      "sha256": "98f816be6869407c87d46058756f97780fa6c6cf61acdba97216f413731af15d"
+    },
+    {
+      "name": "lifecycle-viewmodel-savedstate-desktop-2.9.4.jar",
+      "bytes": 36160,
+      "sha256": "3e0b44e2514eafdd6938d5457d9f46e4785077c45d3b4364b5c23c4dcb93efd3"
+    },
+    {
+      "name": "log4j-api-2.24.3.jar",
+      "bytes": 348513,
+      "sha256": "5b4a0a0cd0e751ded431c162442bdbdd53328d1f8bb2bae5fc1bbeee0f66d80f"
+    },
+    {
+      "name": "material-desktop-1.10.1.jar",
+      "bytes": 1473852,
+      "sha256": "ee4afa33a2411e06cf1bec689667767ffb991ff02269e040a4ef64e76e392119"
+    },
+    {
+      "name": "material-ripple-desktop-1.10.1.jar",
+      "bytes": 73535,
+      "sha256": "3257697a1a58188ec3dc31f31867f1c38209900b87df1261ebac9e6a1387db83"
+    },
+    {
+      "name": "material3-desktop-1.9.0.jar",
+      "bytes": 4436970,
+      "sha256": "78f0787a1c6d20f9b2460a387f51ecf554e211d3c874b22d66530a540390b811"
+    },
+    {
+      "name": "navigationevent-desktop-1.0.2.jar",
+      "bytes": 41775,
+      "sha256": "43deeb5774fd737fa945e09a47f93b6f1a508d17fac8f3b65f1c863e7f7d0660"
+    },
+    {
+      "name": "okhttp-4.12.0.jar",
+      "bytes": 789531,
+      "sha256": "b1050081b14bb7a3a7e55a4d3ef01b5dcfabc453b4573a4fc019767191d5f4e0"
+    },
+    {
+      "name": "okio-jvm-3.6.0.jar",
+      "bytes": 359580,
+      "sha256": "67543f0736fc422ae927ed0e504b98bc5e269fda0d3500579337cb713da28412"
+    },
+    {
+      "name": "pdfbox-3.0.8.jar",
+      "bytes": 2070583,
+      "sha256": "97647cfbde61ebcfc06b4cf8c9b0ffcaaee073396eceb4a7f6836a9b9128903c"
+    },
+    {
+      "name": "pdfbox-io-3.0.8.jar",
+      "bytes": 51906,
+      "sha256": "36a0e04001010b4c764857817412b96339930b19755e728959805cc0352061b2"
+    },
+    {
+      "name": "poi-5.5.1.jar",
+      "bytes": 3006527,
+      "sha256": "6c52e876ca75775a11b56e4b36a7541f682827f56406725fcd87560b792ee3d8"
+    },
+    {
+      "name": "poi-ooxml-5.5.1.jar",
+      "bytes": 2052603,
+      "sha256": "bd7be2fdfe3fd2c1684fa813351c2798fd636b44f6236e0674500d4f8ff1c2f9"
+    },
+    {
+      "name": "poi-ooxml-lite-5.5.1.jar",
+      "bytes": 5995475,
+      "sha256": "e6e37adeb6d6ee8b40ec491ad955d934d8f99827ab050f105b18286e59b1d9e7"
+    },
+    {
+      "name": "poi-scratchpad-5.5.1.jar",
+      "bytes": 1913107,
+      "sha256": "24c3f407eff517432d5cfd5628b6b8a091f94c1dbb7481384599b5a0fbeedeb9"
+    },
+    {
+      "name": "runtime-annotation-jvm-1.10.2.jar",
+      "bytes": 9387,
+      "sha256": "f89dda8bcd73876d0fc16568844b2bd79443ee7ca62810874d25c7dcaa394bd6"
+    },
+    {
+      "name": "runtime-desktop-1.10.1.jar",
+      "bytes": 416,
+      "sha256": "05f5570c0a7ea8addd6fe9507a70f293efa7f1450d8b9b16dc3c8fee21cc6127"
+    },
+    {
+      "name": "runtime-desktop-1.10.2.jar",
+      "bytes": 1470711,
+      "sha256": "b195860542f612de0512b54a75353e0f6d58815f0c9530a03bc5b0e734474829"
+    },
+    {
+      "name": "runtime-retain-desktop-1.10.2.jar",
+      "bytes": 52893,
+      "sha256": "463ee9c1e93d1b913458bfecc96d128a3574a802f41c8c9781d7320c3b55ed8b"
+    },
+    {
+      "name": "runtime-saveable-desktop-1.10.1.jar",
+      "bytes": 434,
+      "sha256": "eb7132b55de2b0913736fdff4705022803e455810f018efecc9eb3230936520a"
+    },
+    {
+      "name": "runtime-saveable-desktop-1.10.2.jar",
+      "bytes": 53379,
+      "sha256": "ef24e24cc8c9c3b9871007fbdf589ed9aaaecf95979a66b7484806f9f0e24d91"
+    },
+    {
+      "name": "savedstate-compose-desktop-1.3.3.jar",
+      "bytes": 15498,
+      "sha256": "4a94787a6e5bcfe143390a4f2737d4425d2ea867f2b34a847de6cda3c6ccc58a"
+    },
+    {
+      "name": "savedstate-compose-desktop-1.3.6.jar",
+      "bytes": 438,
+      "sha256": "0f3d045c5fd7e1301ab6c38cd0778067b0484cf39acac1233be71a723a6a8075"
+    },
+    {
+      "name": "savedstate-desktop-1.3.3.jar",
+      "bytes": 80175,
+      "sha256": "c5c89062ba8402b8f8657efd54db1ff192f91ca95fae59c3b418fbc477c3e3ea"
+    },
+    {
+      "name": "sherpa-onnx-jvm-v1.13.5.jar",
+      "bytes": 187121,
+      "sha256": "8e6c693054c04906e78f18fa62edf0cd4138fe21846c5f16d50756fc737c9e49"
+    },
+    {
+      "name": "sherpa-onnx-native-lib-osx-aarch64-v1.13.5.jar",
+      "bytes": 9191040,
+      "sha256": "c07becf23a88edcdb82934e4521317bbeaf607aa66c4dd391a37cfa84ee1ebe9"
+    },
+    {
+      "name": "skiko-awt-0.9.37.4.jar",
+      "bytes": 1214259,
+      "sha256": "9e859aeb982623fab156ba6671c78255f7f5e1b73334f3de7932440fed6455df"
+    },
+    {
+      "name": "skiko-awt-runtime-macos-arm64-0.9.37.4.jar",
+      "bytes": 18206173,
+      "sha256": "5d4d47555313d387d742e5225b3f9daffcffd61cb9c3f1db56fc10963cf4280b"
+    },
+    {
+      "name": "ui-backhandler-desktop-1.10.1.jar",
+      "bytes": 21557,
+      "sha256": "1babf68f5a05cbe1ba8cf934f0e575bb0d0b184444514e6aa7ec1f8004c9ce33"
+    },
+    {
+      "name": "ui-desktop-1.10.1.jar",
+      "bytes": 3396265,
+      "sha256": "ec8887c03a333fa374d0b4c46bb9fb700937857f4088eaea4c4cc0ec835f7498"
+    },
+    {
+      "name": "ui-geometry-desktop-1.10.1.jar",
+      "bytes": 57759,
+      "sha256": "cdbfdabccac8abef2d9bc0420ec0c4be7a880f6d26b2d1cc4e2317c0d252ee27"
+    },
+    {
+      "name": "ui-graphics-desktop-1.10.1.jar",
+      "bytes": 628617,
+      "sha256": "d1710a4a15b115fc4c37878b32b10a476a0ec3b8399fa1fb588181dba83dbdd2"
+    },
+    {
+      "name": "ui-text-desktop-1.10.1.jar",
+      "bytes": 718171,
+      "sha256": "fbca4db945be286b84f75c0c9c784218470bebefa831f73f08edfb3294b6c8e8"
+    },
+    {
+      "name": "ui-tooling-preview-desktop-1.10.1.jar",
+      "bytes": 21697,
+      "sha256": "b5fa6fbbeea5f896ad2a8e7703bd7eb574d3a1b5ab6d44dbe0a07536bd6af6c4"
+    },
+    {
+      "name": "ui-unit-desktop-1.10.1.jar",
+      "bytes": 85587,
+      "sha256": "f0f3439928b3d9132f07cb2d7a86091696372ebc8354d16b48830b6ce15e8161"
+    },
+    {
+      "name": "ui-util-desktop-1.10.1.jar",
+      "bytes": 18548,
+      "sha256": "7bfc93a8cad2974cdfd5a2c817e3083e0e3c48ef99e4dbba51eb98a14c92ed2d"
+    },
+    {
+      "name": "xmlbeans-5.3.0.jar",
+      "bytes": 2211661,
+      "sha256": "6cc69da3b4d35b83c5e477cd4daba204e44109833e34af2b9a8a2c8788289917"
+    }
+  ],
+  "validation": "Cross-host resource and architecture verification; native macOS execution not performed.",
+  "signature": "ad-hoc; not Apple Developer ID or notarized"
+}

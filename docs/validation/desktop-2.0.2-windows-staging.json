@@ -1,0 +1,8 @@
+{
+  "platform": "windows-x64",
+  "base": "Hermes-Windows-x64-2.0.1-portable.zip",
+  "base_sha256": "65a80058c87029768a33bb4ccb1e7b3f8f41c48748d6b08d247bb5a657054334",
+  "dependencies": "Verified against original release manifest; dependency declarations unchanged",
+  "application_sha256": "7efce696ed2ded45deaf2eccf066085f3fc30e1e9b063f8b1fef8d132fd01399",
+  "jars": 85
+}

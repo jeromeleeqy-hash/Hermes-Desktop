@@ -1,0 +1,27 @@
+{
+  "sealed_resources_verified": 530,
+  "macho_signatures_verified": 47,
+  "classpath_entries": 85,
+  "version": "2.0.0",
+  "native_macos_execution": false,
+  "native_codesign_gatekeeper_check": false,
+  "packaging_revision": "r2",
+  "archive_layout": {
+    "root": "Hermes.app",
+    "entries": 759,
+    "executable": "Hermes.app/Contents/MacOS/Hermes",
+    "version": "2.0.0"
+  },
+  "application_entries_unchanged": 534,
+  "regression_tests": {
+    "tests": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "original_archive_rejected": true,
+  "application_logic_changed": false,
+  "signature_replaced": false,
+  "original_zip_sha256": "eeae66743d280cad26fd62745767eaa463a0b2fc412ffefec2e9468a5a8e5bf0",
+  "repaired_zip_sha256": "348dc7714adcd91f01f997b3ca94eb6694a4d311f602a115ea737f6779958314",
+  "repaired_zip_bytes": 264002565
+}

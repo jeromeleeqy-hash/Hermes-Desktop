@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-08",
+  "version": "2.0.0",
+  "recovered_application_commit": "3e1b8955132e9031e8b017317a3e8fb323bc33f5",
+  "jvm_replay": {
+    "tests": 346,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 7,
+    "passed": 339,
+    "test_classes": 57,
+    "environment": "Linux x64 / JDK 21.0.12.1+1 / Gradle 8.13"
+  },
+  "python_writer_replay": {
+    "tests": 10,
+    "passed": 10
+  },
+  "source_archive_before_recovery": {
+    "crc": "passed",
+    "tracked_files_missing": 0,
+    "tracked_files_different": 0
+  },
+  "original_deliverable_sha256": {
+    "matched": 6,
+    "mismatched": 0
+  },
+  "platform_application_jar_sha256": "285bfbc43c6ae7aa33cbf41e8bb45a462c2563eb9a4fa8d7cce907c32038aec8",
+  "recompiled_jar_comparison": {
+    "application_classes_and_declared_resources": "identical",
+    "entry_count": 1091,
+    "generated_python_cache_differences": 1,
+    "explanation": "The only differing entry is a generated Python .pyc cache with an embedded build path. It is not used by the desktop application; all application classes and source resources match."
+  },
+  "package_manifest_checks": {
+    "windows_files": 401,
+    "macos_jars": 85,
+    "mismatches": 0,
+    "macos_launcher_mode": "0755"
+  },
+  "source_permissions_fixed": [
+    "gradlew",
+    "Build-macOS.command",
+    "Package-macOS.command",
+    "Preview-Layout.command",
+    "Run-Hermes.command",
+    "packaging/prepare-native.sh",
+    "packaging/macos/Build-Mac-App.command"
+  ],
+  "native_windows_execution": false,
+  "native_macos_execution": false,
+  "real_gateway_integration": false,
+  "github_release": "not_published",
+  "oss": "deferred",
+  "skipped_tests": [
+    "com.qingyu.hermescompanion.desktop.ComposerNativeImeTest.awtPreeditUpdatesAndForwardedBackspacePreserveComposition",
+    "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest.titleDragUsesScreenCoordinatesAndDoubleClickTogglesOnce",
+    "com.qingyu.hermescompanion.desktop.DesktopNativeInteractionTest.imagePickerHasTheActiveAvatarDialogAsOwnerAndReturnsSelectedFile",
+    "com.qingyu.hermescompanion.desktop.ComposerSystemImeTest.weChatPinyinDeletesOneLetterAndKeepsSurroundingText",
+    "com.qingyu.hermescompanion.desktop.ComposerSystemImeTest.applePinyinDeletesOneLetterAndKeepsSurroundingText",
+    "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest.nativeWindowsDpapiReopensCookiesDraftsAndAttachments",
+    "com.qingyu.hermescompanion.storage.WindowsMasterKeyTest.nativeWindowsDpapiRejectsModifiedProtectedData"
+  ]
+}

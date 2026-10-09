@@ -1,0 +1,480 @@
+{
+  "macos": [
+    {
+      "jar": "javafx-web-21.0.8-mac-aarch64.jar",
+      "entry": "libjfxwebkit.dylib",
+      "architecture": "arm64",
+      "bytes": 90887696
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libjavafx_iio.dylib",
+      "architecture": "arm64",
+      "bytes": 294128
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libglass.dylib",
+      "architecture": "arm64",
+      "bytes": 387168
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libjavafx_font.dylib",
+      "architecture": "arm64",
+      "bytes": 101056
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libprism_common.dylib",
+      "architecture": "arm64",
+      "bytes": 35360
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libprism_es2.dylib",
+      "architecture": "arm64",
+      "bytes": 97328
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libdecora_sse.dylib",
+      "architecture": "arm64",
+      "bytes": 106224
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-mac-aarch64.jar",
+      "entry": "libprism_sw.dylib",
+      "architecture": "arm64",
+      "bytes": 106816
+    },
+    {
+      "jar": "javafx-media-21.0.8-mac-aarch64.jar",
+      "entry": "libjfxmedia_avf.dylib",
+      "architecture": "arm64",
+      "bytes": 122160
+    },
+    {
+      "jar": "javafx-media-21.0.8-mac-aarch64.jar",
+      "entry": "libglib-lite.dylib",
+      "architecture": "arm64",
+      "bytes": 1335072
+    },
+    {
+      "jar": "javafx-media-21.0.8-mac-aarch64.jar",
+      "entry": "libfxplugins.dylib",
+      "architecture": "arm64",
+      "bytes": 94928
+    },
+    {
+      "jar": "javafx-media-21.0.8-mac-aarch64.jar",
+      "entry": "libgstreamer-lite.dylib",
+      "architecture": "arm64",
+      "bytes": 1697920
+    },
+    {
+      "jar": "javafx-media-21.0.8-mac-aarch64.jar",
+      "entry": "libjfxmedia.dylib",
+      "architecture": "arm64",
+      "bytes": 238928
+    },
+    {
+      "jar": "sherpa-onnx-native-lib-osx-aarch64-v1.13.5.jar",
+      "entry": "sherpa-onnx/native/osx-aarch64/libonnxruntime.dylib",
+      "architecture": "arm64",
+      "bytes": 28308848
+    },
+    {
+      "jar": "sherpa-onnx-native-lib-osx-aarch64-v1.13.5.jar",
+      "entry": "sherpa-onnx/native/osx-aarch64/libsherpa-onnx-jni.dylib",
+      "architecture": "arm64",
+      "bytes": 4198616
+    },
+    {
+      "jar": "skiko-awt-runtime-macos-arm64-0.9.37.4.jar",
+      "entry": "libskiko-macos-arm64.dylib",
+      "architecture": "arm64",
+      "bytes": 21223168
+    },
+    {
+      "jar": "skiko-awt-runtime-macos-arm64-0.9.37.4.jar",
+      "entry": "libskiko-macos-x64.dylib",
+      "architecture": "x64 (unused upstream Skiko companion)",
+      "bytes": 22090704
+    }
+  ],
+  "windows": [
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-console-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-console-l1-2-0.dll",
+      "architecture": "x64",
+      "bytes": 21024
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-datetime-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20512
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-debug-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20544
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-errorhandling-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-file-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 24104
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-file-l1-2-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-file-l2-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-handle-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-heap-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-interlocked-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-libraryloader-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21568
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-localization-l1-2-0.dll",
+      "architecture": "x64",
+      "bytes": 23080
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-memory-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-namedpipe-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-processenvironment-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21544
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-processthreads-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 22560
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-processthreads-l1-1-1.dll",
+      "architecture": "x64",
+      "bytes": 21056
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-profile-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20008
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-rtlsupport-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21056
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-string-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-synch-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 22568
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-synch-l1-2-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-sysinfo-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21544
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-timezone-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-core-util-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 20520
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-conio-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21544
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-convert-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 24616
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-environment-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-filesystem-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 22568
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-heap-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21544
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-locale-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-math-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 29528
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-multibyte-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 28736
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-private-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 73048
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-process-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21568
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-runtime-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 25128
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-stdio-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 26664
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-string-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 26664
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-time-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 23080
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "api-ms-win-crt-utility-l1-1-0.dll",
+      "architecture": "x64",
+      "bytes": 21032
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "decora_sse.dll",
+      "architecture": "x64",
+      "bytes": 81408
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "glass.dll",
+      "architecture": "x64",
+      "bytes": 254464
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "javafx_font.dll",
+      "architecture": "x64",
+      "bytes": 68096
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "javafx_iio.dll",
+      "architecture": "x64",
+      "bytes": 161792
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "msvcp140.dll",
+      "architecture": "x64",
+      "bytes": 578384
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "msvcp140_1.dll",
+      "architecture": "x64",
+      "bytes": 35704
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "msvcp140_2.dll",
+      "architecture": "x64",
+      "bytes": 267160
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "prism_common.dll",
+      "architecture": "x64",
+      "bytes": 10752
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "prism_d3d.dll",
+      "architecture": "x64",
+      "bytes": 179712
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "prism_sw.dll",
+      "architecture": "x64",
+      "bytes": 57856
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "ucrtbase.dll",
+      "architecture": "x64",
+      "bytes": 1026088
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "vcruntime140.dll",
+      "architecture": "x64",
+      "bytes": 109440
+    },
+    {
+      "jar": "javafx-graphics-21.0.8-win.jar",
+      "entry": "vcruntime140_1.dll",
+      "architecture": "x64",
+      "bytes": 49560
+    },
+    {
+      "jar": "skiko-awt-runtime-windows-x64-0.9.37.4.jar",
+      "entry": "skiko-windows-x64.dll",
+      "architecture": "x64",
+      "bytes": 13903872
+    },
+    {
+      "jar": "sherpa-onnx-native-lib-win-x64-v1.13.5.jar",
+      "entry": "sherpa-onnx/native/win-x64/onnxruntime.dll",
+      "architecture": "x64",
+      "bytes": 17378304
+    },
+    {
+      "jar": "sherpa-onnx-native-lib-win-x64-v1.13.5.jar",
+      "entry": "sherpa-onnx/native/win-x64/sherpa-onnx-jni.dll",
+      "architecture": "x64",
+      "bytes": 4606976
+    },
+    {
+      "jar": "javafx-media-21.0.8-win.jar",
+      "entry": "fxplugins.dll",
+      "architecture": "x64",
+      "bytes": 128000
+    },
+    {
+      "jar": "javafx-media-21.0.8-win.jar",
+      "entry": "glib-lite.dll",
+      "architecture": "x64",
+      "bytes": 642560
+    },
+    {
+      "jar": "javafx-media-21.0.8-win.jar",
+      "entry": "gstreamer-lite.dll",
+      "architecture": "x64",
+      "bytes": 1005568
+    },
+    {
+      "jar": "javafx-media-21.0.8-win.jar",
+      "entry": "jfxmedia.dll",
+      "architecture": "x64",
+      "bytes": 131072
+    },
+    {
+      "jar": "javafx-web-21.0.8-win.jar",
+      "entry": "jfxwebkit.dll",
+      "architecture": "x64",
+      "bytes": 89851904
+    }
+  ]
+}
