@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-09T03:50:12.106Z" hostname="69622ecc2839" time="8.784">
+  <properties/>
+  <testcase name="failedSyncRetainsMessagesAndNextSuccessfulReadRecovers" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.961"/>
+  <testcase name="aReadAlreadyInFlightCannotReplaceALocallyStreamingTurn" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.522"/>
+  <testcase name="notificationClickBeforeConnectionWaitsThenOpensItsConversation" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.597"/>
+  <testcase name="foregroundTimerReceivesMobileTurnWithoutReopeningTheConversation" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="5.101"/>
+  <testcase name="focusReturnSynchronizesAndKeepsLoadedHistoryDraftAndAttachment" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.555"/>
+  <testcase name="manualRefreshUpdatesOpenMessagesEvenWhenTheSessionListCountHasNotChanged" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.421"/>
+  <testcase name="restartDefaultsToWorkbenchAndKeepsThePreviousConversationAndDraft" classname="com.qingyu.hermescompanion.desktop.CrossDeviceMessageSyncTest" time="0.626"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

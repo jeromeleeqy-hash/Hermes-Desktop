@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.SessionSyncControllerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-09T03:50:24.956Z" hostname="69622ecc2839" time="1.112">
+  <properties/>
+  <testcase name="emptyFinalPageWithStaleTotalCompletesWithoutShowingASyncError" classname="com.qingyu.hermescompanion.desktop.SessionSyncControllerTest" time="0.305"/>
+  <testcase name="showsTheFirstPageWhileLoadingAndKeepsItOnFailureThenRetries" classname="com.qingyu.hermescompanion.desktop.SessionSyncControllerTest" time="0.309"/>
+  <testcase name="offlineAndExpiredLoginKeepWorkspaceDraftsAndAttachments" classname="com.qingyu.hermescompanion.desktop.SessionSyncControllerTest" time="0.498"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
