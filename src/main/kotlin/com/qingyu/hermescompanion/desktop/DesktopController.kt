@@ -46,6 +46,8 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     private val dailySessionLock=Any()
     private val polling=mutableSetOf<String>()
     private val agentSyncing=mutableSetOf<String>()
+    private val nextAgentSyncAt=mutableMapOf<String,Long>()
+    private val conversationRefreshJobs=mutableMapOf<String,Job>()
     val unread=mutableStateListOf<String>()
     val readMessageCounts=mutableStateMapOf<String,Int>()
     val conversationUnread:Set<String> get()=sessions.filter {
@@ -154,6 +156,11 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     var connected by mutableStateOf(false)
     var connectionHealth by mutableStateOf("online")
     var connectionChecking by mutableStateOf(false)
+    var realtimeConnected by mutableStateOf(true)
+        private set
+    private var realtimeChecking=false
+    private var nextRealtimeProbe=0L
+    private var realtimeFailures=0
     var reauthenticationOpen by mutableStateOf(false)
     private var connectionFailures=0
     private var nextConnectionProbe=0L
@@ -234,7 +241,8 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 if(System.currentTimeMillis()>=nextConnectionProbe)checkConnection()
                 clients.values.forEach {it.setAppForeground(appFocused)}
                 today.tick()
-                if(connectionHealth=="online") {
+                if(connectionHealth!="auth") {
+                    if(connectionHealth=="online")ensureRealtimeConnection()
                     reconcileRuns()
                     syncVisibleConversations()
                     if(appFocused&&!sessionsLoading&&System.currentTimeMillis()>=nextSessionSyncAt)refreshSessionList()
@@ -257,6 +265,27 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     }
     private fun bindAgentEvents(api:HermesApiClient) {
         val token=epoch
+        api.onRealtimeConnectionChanged={live->scope.launch {
+            if(token==epoch&&!closed&&api.currentProfile()==profile) {
+                realtimeConnected=live
+                if(live) {realtimeFailures=0;syncVisibleConversations();nextSessionSyncAt=0}
+                else {nextRealtimeProbe=0;syncVisibleConversations()}
+            }
+        }}
+        api.onConversationChanged={session->scope.launch {
+            if(token==epoch&&!closed&&session.profile==profile) {
+                // Coalesce lifecycle notifications without overwriting a local stream.
+                conversationRefreshJobs.remove(session.scopedId)?.cancel()
+                conversationRefreshJobs[session.scopedId]=scope.launch {
+                    delay(250)
+                    conversationRefreshJobs.remove(session.scopedId)
+                    if(token!=epoch||session.profile!=profile)return@launch
+                    nextAgentSyncAt.remove(session.scopedId)
+                    syncVisibleConversations();reconcileRuns()
+                    if(!sessionsLoading)refreshSessionList()else nextSessionSyncAt=0
+                }
+            }
+        }}
         api.onUnboundAgentEvent={session,event->scope.launch {
             if(token==epoch&&!closed)receiveAgentControl(session,event)
         }}
@@ -270,7 +299,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 decisions[id]=PendingDecision(session.profile,session,event.request.copy(isResponding=previous?.request?.isResponding==true))
                 if(runs[key]==null) {
                     val stream=StreamController().also {it.runtimeSessionId=event.request.runtimeSessionId}
-                    val record=RunRecord(session,"",runtimeId=event.request.runtimeSessionId)
+                    val record=RunRecord(session,"",runtimeId=event.request.runtimeSessionId,observed=true)
                     runs[key]=DesktopRun(session,stream,record.assistantId,record=record,recovering=true,status="等待你的处理")
                 }else runs[key]?.let {runs[key]=it.copy(status="等待你的处理",candidate="")}
                 if(sendErrors[key]?.startsWith("服务器中的上一个任务仍在运行")==true)sendErrors.remove(key)
@@ -290,19 +319,20 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     }
     private fun refreshAgentState(session:HermesSession) {
         val key=session.scopedId
-        if(demo||!connected||!agentSyncing.add(key))return
+        if(demo||!connected||connectionHealth=="auth"||!agentSyncing.add(key))return
+        nextAgentSyncAt[key]=System.currentTimeMillis()+10_000
         val generation=modelGenerations[key]?:0L
-        request(session.profile,{it.resumeSession(session,inspectRequests=true)},finished={agentSyncing.remove(key)},failed={ /* the next recovery tick can retry */ }) {result->
+        request(session.profile,{it.resumeSession(session,inspectRequests=true,timeoutSeconds=12)},finished={agentSyncing.remove(key)},failed={ /* the next recovery tick can retry */ }) {result->
             if(generation==(modelGenerations[key]?:0L)&&modelSwitching[key]!=true) {
-                sessions=sessions.map {if(it.scopedId==key)result.session else it}
-                if(currentSession?.scopedId==key)currentSession=result.session
+                sessions=sessions.map {if(it.scopedId==key)result.session.copy(messageCount=it.messageCount) else it}
+                if(currentSession?.scopedId==key)currentSession=result.session.copy(messageCount=currentSession!!.messageCount)
             }
             synchronizeDecisions(result)
             result.pendingRequests.forEach {receiveAgentControl(result.session,StreamEvent.AgentRequestPending(it))}
             if(result.running==true&&runs[key]==null) {
                 val stream=StreamController().also {it.runtimeSessionId=result.session.runtimeId}
-                val record=RunRecord(result.session,"",baseline=messages[key].orEmpty().lastOrNull {it.role==MessageRole.ASSISTANT}?.recoverySignature().orEmpty(),runtimeId=result.session.runtimeId)
-                runs[key]=DesktopRun(result.session,stream,record.assistantId,record=record,recovering=true,status="正在恢复服务器任务")
+                val record=RunRecord(result.session,"",baseline=messages[key].orEmpty().lastOrNull {it.role==MessageRole.ASSISTANT}?.recoverySignature().orEmpty(),runtimeId=result.session.runtimeId,observed=true)
+                runs[key]=DesktopRun(result.session,stream,record.assistantId,record=record,recovering=true,status="服务器正在处理")
             }
         }
     }
@@ -318,22 +348,47 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             finally { if (token == epoch) finished() }
         }
     }
+    private fun httpReadSucceeded() {
+        if(connectionHealth=="auth")return
+        connectionHealth="online";connectionFailures=0
+    }
+    private fun ensureRealtimeConnection(force:Boolean=false) {
+        if(demo||!connected||connectionHealth!="online"||realtimeChecking)return
+        val api=client()
+        realtimeConnected=api.realtimeConnected
+        if(realtimeConnected||(!force&&System.currentTimeMillis()<nextRealtimeProbe))return
+        realtimeChecking=true
+        val token=epoch;val p=profile
+        scope.launch {
+            try {
+                withContext(Dispatchers.IO){api.ensureConnected()}
+                if(token==epoch&&p==profile){realtimeConnected=true;realtimeFailures=0}
+            }catch(e:CancellationException){throw e}
+            catch(e:Exception){if(token==epoch&&p==profile){
+                realtimeConnected=false
+                if(e is ApiException&&e.statusCode==401)connectionHealth="auth"
+                realtimeFailures=(realtimeFailures+1).coerceAtMost(3)
+                nextRealtimeProbe=System.currentTimeMillis()+minOf(30_000L,5_000L*(1L shl realtimeFailures))
+            }}finally{if(token==epoch)realtimeChecking=false}
+        }
+    }
     fun checkConnection() {
         if(demo||!connected||connectionChecking||connectionHealth=="auth")return
         connectionChecking=true
-        val token=epoch;val api=client();val runtime=currentSession?.runtimeId
+        val token=epoch;val api=client()
         scope.launch {
             try {
-                withContext(Dispatchers.IO){api.probeConnection(runtime)}
-                if(token!=epoch)return@launch
+                withContext(Dispatchers.IO){api.probeConnection()}
+                if(token!=epoch||connectionHealth=="auth")return@launch
                 val recovering=connectionHealth!="online"
-                connectionHealth="online";connectionFailures=0;nextConnectionProbe=System.currentTimeMillis()+15_000
-                if(recovering){reconcileRuns(force=true);currentSession?.let {refreshAgentState(it)};syncVisibleConversations()}
+                httpReadSucceeded();nextConnectionProbe=System.currentTimeMillis()+15_000
+                ensureRealtimeConnection(force=true)
+                if(recovering){syncVisibleConversations();if(!sessionsLoading)refreshSessionList()}
             }catch(e:CancellationException){throw e}
             catch(e:Exception){if(token==epoch){
-                connectionHealth=if(e is ApiException&&e.statusCode==401)"auth"else"offline"
                 connectionFailures=(connectionFailures+1).coerceAtMost(4)
-                nextConnectionProbe=System.currentTimeMillis()+minOf(60_000L,5_000L*(1L shl connectionFailures))
+                connectionHealth=when {e is ApiException&&e.statusCode==401->"auth";connectionFailures==1->"checking";else->"offline"}
+                nextConnectionProbe=System.currentTimeMillis()+minOf(30_000L,5_000L*(1L shl (connectionFailures-1)))
             }}finally{if(token==epoch)connectionChecking=false}
         }
     }
@@ -344,7 +399,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             try {
                 withContext(Dispatchers.IO){api.login(username,password)}
                 if(token!=epoch)return@launch
-                connectionHealth="online";connectionFailures=0;reauthenticationOpen=false
+                connectionHealth="online";connectionFailures=0;reauthenticationOpen=false;ensureRealtimeConnection(force=true)
                 // Keep the workspace and pending drafts intact. Never resubmit messages here.
                 reconcileRuns(force=true);currentSession?.let {refreshAgentState(it)};syncVisibleConversations()
             }catch(e:CancellationException){throw e}
@@ -381,6 +436,9 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         creatingSession=false;attachmentLoads.clear();attachmentErrors.clear();messageLoading.clear();messageErrors.clear()
         busy = true; connected = false; error = null
         connectionChecking=false;reauthenticationOpen=false;connectionHealth="online";connectionFailures=0;nextConnectionProbe=0
+        realtimeConnected=true;realtimeChecking=false;realtimeFailures=0;nextRealtimeProbe=0
+        nextAgentSyncAt.clear();agentSyncing.clear();polling.clear()
+        conversationRefreshJobs.values.forEach {it.cancel()};conversationRefreshJobs.clear()
         clients.values.forEach { it.close() }; clients.clear()
         val candidateConfig = ConnectionConfig(clean, account.trim())
         config = candidateConfig
@@ -471,7 +529,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 }
             }
         } },finished={if(profile==p&&token==refreshToken)sessionsLoading=false},failed={if(profile==p&&token==refreshToken)sessionsLoadError=it}) {
-            if (profile == p&&token==refreshToken) {sessions=it.filter {s->s.source!="cron"};cronSessions=it.filter {s->s.source=="cron"};reconcileUnreadSessions(it,previous);sessionsSyncedAt=System.currentTimeMillis();today.discoverTasks(sessions);if(sessionQuery.isNotBlank()&&!showArchived)search(sessionQuery);syncArtifactIndex()}
+            if (profile == p&&token==refreshToken) {httpReadSucceeded();sessions=it.filter {s->s.source!="cron"};cronSessions=it.filter {s->s.source=="cron"};reconcileUnreadSessions(it,previous);sessionsSyncedAt=System.currentTimeMillis();today.discoverTasks(sessions);if(sessionQuery.isNotBlank()&&!showArchived)search(sessionQuery);syncArtifactIndex()}
         }
         return token
     }
@@ -482,7 +540,15 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             val baseline=readMessageCounts[s.scopedId]?:previous[s.scopedId]?.messageCount
                 ?:indexedSessionVersions[s.scopedId]?.substringAfterLast(':')?.toIntOrNull()?:s.messageCount
             readMessageCounts.putIfAbsent(s.scopedId,baseline)
-            if(s.messageCount>baseline&&s.scopedId !in unread)unread+=s.scopedId
+            if(s.messageCount>baseline) {
+                if(isConversationVisible(s.scopedId)) {
+                    // The sidebar must not call an open conversation unread while its
+                    // body request is in flight. Only that completed read advances the cursor.
+                    unread.removeAll {it==s.scopedId}
+                    if(!demo&&messageLoading[s.scopedId]!=true&&runs[s.scopedId]?.recovering!=false)
+                        refreshMessagePage(s,background=true)
+                }else if(s.scopedId !in unread)unread+=s.scopedId
+            }
         }
     }
     fun chooseProject(value:HermesProject?,navigate:Boolean=true) { project=value;selectedProjects[profile]=value?.id.orEmpty();savePreference(storageKey("project:$profile"),value?.id.orEmpty());if(navigate)page=Page.SESSIONS;listing=null;filesLoadError=null }
@@ -559,22 +625,29 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         refreshMessagePage(s,messageId)
         request(s.profile, { it.slashCommands() }) { if (currentSession?.scopedId == s.scopedId) commands = it }
     }
+    private fun isConversationVisible(key:String)=
+        (appFocused&&page==Page.CHAT&&currentSession?.scopedId==key)||
+            (companion.panelOpen&&companion.session?.scopedId==key)
     /** Read-only cross-device sync, shared by the timer, focus return and manual refresh. */
     internal fun syncVisibleConversations() {
-        if(demo||!connected||connectionHealth!="online")return
+        if(demo||!connected||connectionHealth=="auth")return
         val visible=listOfNotNull(
             currentSession?.takeIf {appFocused&&page==Page.CHAT},
             companion.session?.takeIf {companion.panelOpen},
         ).filter {it.profile==profile}.distinctBy {it.scopedId}
         visible.forEach {s->
-            if(messageLoading[s.scopedId]!=true && !runs.containsKey(s.scopedId))refreshMessagePage(s,background=true)
+            if(messageLoading[s.scopedId]!=true && runs[s.scopedId]?.recovering!=false)refreshMessagePage(s,background=true)
+            if(!runs.containsKey(s.scopedId)&&System.currentTimeMillis()>=(nextAgentSyncAt[s.scopedId]?:0))refreshAgentState(s)
         }
     }
     fun onWindowFocusChanged(focused:Boolean) {
         val returning=focused&&!appFocused
         appFocused=focused
         if(focused) {
-            if(connectionHealth=="online")syncVisibleConversations()else checkConnection()
+            clients.values.forEach {it.setAppForeground(true)}
+            syncVisibleConversations()
+            if(connectionHealth!="auth")checkConnection()
+            ensureRealtimeConnection(force=true)
             if(returning&&connected&&!demo&&!sessionsLoading)refreshSessionList()
         }
     }
@@ -582,6 +655,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         val key=s.scopedId;val readToken=(messageReadTokens[key]?:0)+1;messageReadTokens[key]=readToken
         messageLoading[key]=true;if(!background)messageErrors.remove(key)
         request(s.profile, { if(messageId==null)it.loadRecentMessagePage(s) else it.loadRecentMessagePage(s,200) },finished={if(messageReadTokens[key]==readToken)messageLoading[key]=false},failed={if(messageReadTokens[key]==readToken)messageErrors[key]=it}) { result ->
+            httpReadSucceeded()
             if (messageReadTokens[key]==readToken&&runs[key]?.recovering!=false) {
                 val cached=messages[key].orEmpty()
                 val overlap=result.messages.firstOrNull()?.id?.let {id->cached.indexOfFirst {it.id==id}} ?: -1
@@ -592,10 +666,12 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 messageErrors.remove(key)
                 sessions=sessions.map {if(it.scopedId==key)it.copy(messageCount=result.totalCount)else it}
                 currentSession?.takeIf {it.scopedId==key}?.let {currentSession=it.copy(messageCount=result.totalCount)}
-                if((appFocused&&page==Page.CHAT&&currentSession?.scopedId==key)||(companion.panelOpen&&companion.session?.scopedId==key)) {
+                if(isConversationVisible(key)) {
                     readMessageCounts[key]=result.totalCount;unread.removeAll {it==key}
                 }
                 indexArtifacts(s,messages[key].orEmpty())
+                if(runs[key]==null&&result.messages.lastOrNull {it.role==MessageRole.USER}?.id!=cached.lastOrNull {it.role==MessageRole.USER}?.id)
+                    refreshAgentState(s)
             }
         }
     }
@@ -818,15 +894,23 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             val key=run.session.scopedId
             if(key in polling || key in agentSyncing || run.stopping)return@forEach
             polling+=key
-            request(run.session.profile,{ it.resumeSession(run.session,inspectRequests=true) },finished={polling.remove(key)},failed={ /* retain state and retry on next tick */ }) { snapshot->
+            request(run.session.profile,{ it.resumeSession(run.session,inspectRequests=true,timeoutSeconds=12) },finished={polling.remove(key)},failed={ /* retain state and retry on next tick */ }) { snapshot->
                 val latest=snapshot.messages
                 val current=runs[key] ?: return@request
                 if(current.assistantId!=run.assistantId)return@request
                 synchronizeDecisions(snapshot)
+                // Foreign-device runs have no locally submitted prompt to match. Explicit
+                // idle is enough to end their indicator; never release saved send queues.
+                if(current.record.observed&&snapshot.running==false&&snapshot.pendingRequests.isEmpty()) {
+                    runs.remove(key);current.controller.finish()
+                    if(messageLoading[key]!=true)refreshMessagePage(snapshot.session,background=true)
+                    nextSessionSyncAt=0
+                    return@request
+                }
                 snapshot.pendingRequests.forEach {receiveAgentControl(snapshot.session,StreamEvent.AgentRequestPending(it))}
                 if(snapshot.running==true||snapshot.pendingRequests.isNotEmpty()) {
                     current.controller.runtimeSessionId=snapshot.session.runtimeId
-                    if(current.recovering&&latest.isNotEmpty())messages[key]=latest
+                    if(current.recovering&&!current.record.observed&&latest.isNotEmpty())messages[key]=latest
                     runs[key]=current.copy(record=current.record.copy(runtimeId=snapshot.session.runtimeId),candidate="",
                         status=if(snapshot.pendingRequests.isNotEmpty())"等待你的处理"else"服务器正在处理")
                     return@request
@@ -838,7 +922,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                         messages[key]=latest;runs[key]=current.copy(recovering=true);finishRun(key)
                     } else runs[key]=current.copy(candidate=signature,candidateAt=System.currentTimeMillis(),status="正在核对服务器回复")
                 } else if(System.currentTimeMillis()-current.started>15*60_000) runs[key]=current.copy(recovering=true,status="暂未取回完整结果，可继续等待或停止")
-                else if(current.recovering) { messages[key]=latest;runs[key]=current.copy(candidate="",status="正在恢复上次的任务") }
+                else if(current.recovering&&!current.record.observed) { messages[key]=latest;runs[key]=current.copy(candidate="",status="正在恢复上次的任务") }
             }
         }
     }

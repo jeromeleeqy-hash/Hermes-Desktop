@@ -41,9 +41,9 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
         RecentSessionShortcuts(c,expanded,Modifier.weight(1f))
         NavigationItem("settings","设置",c.page==Page.PROFILE,expanded,shortcut=shortcutKey()+" ,"){c.loadSettings()}
         if(expanded)Row(Modifier.fillMaxWidth().desktopClick {c.settingsSection="网关";c.loadSettings()}.padding(horizontal=10.dp,vertical=10.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(7.dp)) {
-            val okay=c.sessionsLoadError==null
+            val okay=c.sessionsLoadError==null&&c.connectionHealth=="online"
             Box(Modifier.size(6.dp).background(if(okay)Color(0xFF23A17B)else colors.error,CircleShape))
-            SubtleText(if(c.demo)"演示工作空间"else if(c.sessionsLoading)"同步中…"else if(okay)"已连接"else"同步需要重试",Modifier.weight(1f))
+            SubtleText(if(c.demo)"演示工作空间"else if(c.connectionHealth=="auth")"需要重新登录"else if(c.connectionHealth=="offline")"连接恢复中"else if(c.sessionsLoading)"同步中…"else if(okay&&!c.realtimeConnected)"实时连接恢复中"else if(okay)"已连接"else"同步需要重试",Modifier.weight(1f))
             Hint("收起导航"){DeskIconButton(onClick={c.toggleSidebar()}){Glyph("sidebar",Modifier.size(15.dp),colors.onSurfaceVariant)}}
         }else Box(Modifier.fillMaxWidth(),contentAlignment=Alignment.Center) {
             Hint("展开导航"){DeskIconButton(modifier=Modifier.semantics {testTag="sidebar-expand"},onClick={c.toggleSidebar()}){Glyph("sidebar",Modifier.size(18.dp),colors.onSurfaceVariant)}}

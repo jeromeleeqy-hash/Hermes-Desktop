@@ -207,6 +207,9 @@ class HermesApiClient(
     private val pendingAgentRequests = ConcurrentHashMap<String, AgentRequest>()
     private val answeredServerRequests = ConcurrentHashMap<String,Long>()
     @Volatile var onUnboundAgentEvent: ((HermesSession, StreamEvent) -> Unit)? = null
+    @Volatile var onConversationChanged: ((HermesSession) -> Unit)? = null
+    @Volatile var onRealtimeConnectionChanged: ((Boolean) -> Unit)? = null
+    val realtimeConnected: Boolean get() = socketOpen && socket != null
     private val voiceRestores = ConcurrentHashMap<String, String>()
     private val turnLeases = ConcurrentHashMap<String, Any>()
 
@@ -603,7 +606,7 @@ class HermesApiClient(
         return if (workspacePath.isNullOrBlank()) created else setSessionDirectory(created, workspacePath)
     }
 
-    fun resumeSession(session: HermesSession, inspectRequests:Boolean=false): ResumedSession {
+    fun resumeSession(session: HermesSession, inspectRequests:Boolean=false, timeoutSeconds:Long=120): ResumedSession {
         val pendingBefore=pendingAgentRequests.keys.toSet()
         val result = rpcObject(
             "session.resume",
@@ -612,14 +615,14 @@ class HermesApiClient(
                 .put("profile", session.profile)
                 .put("cols", 72)
                 .put("source", "desktop"),
-            timeoutSeconds = 120,
+            timeoutSeconds = timeoutSeconds,
         )
         val runtimeId = result.optString("session_id").takeIf { it.isNotBlank() }
             ?: error(uiText(R.string.ui_0078, "远程网关没有返回运行会话 ID"))
         val info = result.optJSONObject("info") ?: JSONObject()
         val messages = parseMessages(result.optJSONArray("messages") ?: JSONArray())
         if(inspectRequests && result.optJSONArray("open_requests")==null) {
-            val snapshot=try {rpcObject("session.events.since",JSONObject().put("session_id",runtimeId).put("profile",session.profile).put("last_seen",0),timeoutSeconds=15)}
+            val snapshot=try {rpcObject("session.events.since",JSONObject().put("session_id",runtimeId).put("profile",session.profile).put("last_seen",0),timeoutSeconds=minOf(15,timeoutSeconds))}
                 catch(e:RpcException){if(e.rpcCode == -32601)JSONObject() else throw e}
             snapshot.optJSONArray("open_requests")?.let {result.put("open_requests",it)}
         }
@@ -644,21 +647,10 @@ class HermesApiClient(
         )
     }
 
-    fun probeConnection(runtime:String?=null) {
-        // Read-only and bounded. Never retry an uncertain message or tool execution here.
+    fun probeConnection() {
+        // HTTP reachability is independent of a slow session RPC. Never tear down an
+        // active stream because a read-only status request did not finish in time.
         request("GET", "/api/auth/me", includeProfile=false, retryTransport=false, timeoutMillis=8_000)
-        if(runtime!=null)try {
-            rpcObject("session.status",JSONObject().put("session_id",runtime),timeoutSeconds=8)
-        }catch(e:RpcException){
-            // A deleted runtime or old method is not a disconnected gateway.
-        }catch(e:Exception){
-            synchronized(socketLock){
-                val stale=socket
-                handleSocketClosed("实时连接需要恢复，正在核对服务器任务")
-                stale?.cancel()
-            }
-            throw e
-        }
     }
 
     fun changeSessionReasoning(session:HermesSession,effort:String):HermesSession {
@@ -2063,7 +2055,14 @@ class HermesApiClient(
             return
         }
         // Unlabelled events are safe only when exactly one runtime is registered.
-        val stream = routeSessionEvent(activeStreams, sessionId) ?: return
+        val stream = routeSessionEvent(activeStreams, sessionId)
+        if (stream == null) {
+            // Only use explicitly identified, already known runtimes. The HTTP snapshot
+            // remains authoritative; another device's deltas are not our local stream.
+            if (type in setOf("message.start", "message.interim", "message.complete"))
+                sessionId?.let { knownSessions[it] }?.let { onConversationChanged?.invoke(it) }
+            return
+        }
         if (stream.controller.isStopped() || stream.controller.wasDisconnected()) return
         if (type == "message.start") {
             if (stream.turn.markStarted()) stream.onEvent(StreamEvent.RunStarted(stream.sessionId))
@@ -2148,11 +2147,14 @@ class HermesApiClient(
     }
 
     private fun handleSocketClosed(message: String) {
+        val stale=socket
         socketGeneration++
         newSessionRuntimes.clear()
         stopHeartbeatLocked()
         socketOpen = false
         socket = null
+        onRealtimeConnectionChanged?.invoke(false)
+        stale?.cancel()
         answeredServerRequests.clear()
         socketOpenFuture?.completeExceptionally(ApiException(0, message))
         gatewayReadyFuture?.completeExceptionally(ApiException(0, message))
@@ -2211,6 +2213,7 @@ class HermesApiClient(
                         recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText("实时连接已建立", "Live connection established"))
                         if (params.optJSONObject("payload")?.optBoolean("heartbeat") == true) startHeartbeatLocked()
                         ready.complete(Unit)
+                        onRealtimeConnectionChanged?.invoke(true)
                     } else handleGatewayEvent(params)
                     return
                 }

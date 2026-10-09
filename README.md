@@ -2,7 +2,7 @@
 
 Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。
 
-当前开发版本：**2.0.3（对话文件路径修复版）**。已发布版本见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
+当前开发版本：**2.0.4（跨端同步修复版）**。已发布版本见 [Releases](https://github.com/jeromeleeqy-hash/Hermes-Desktop/releases)。
 
 ## 核心功能
 
@@ -15,6 +15,10 @@ Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M �
 - 个性化：主题、字号、头像、回复风格、长期记忆和助理设定。
 
 对话和工具需要连接已部署的 Hermes Agent；本地语音模型安装后可离线识别和朗读。
+
+## 2.0.4 更新
+
+区分普通接口与实时通道故障，实时通道重连期间继续同步消息；统一隐藏移动端内部回复偏好；补上手机任务状态、事件触发刷新和当前会话未读处理。详见 [更新说明](docs/RELEASE-2.0.4.md)、[构建说明](docs/BUILD-2.0.4.md)、[验收记录](docs/ACCEPTANCE-2.0.4.md)。
 
 ## 2.0.3 更新
 
@@ -57,6 +61,6 @@ bash gradlew test packageDmg -PheadlessTests=true
 
 ## 验证
 
-本次自动化结果与平台边界见 [验收记录](docs/ACCEPTANCE-2.0.3.md)。历史版本的 CI 结果不作为本次的验证结果。
+本次自动化结果与平台边界见 [验收记录](docs/ACCEPTANCE-2.0.4.md)。历史版本的 CI 结果不作为本次的验证结果。
 
 Windows/macOS 真机安装、系统麦克风／音色、休眠唤醒及真实网关联调需要实机验收。验收包无 Windows 商业代码签名或 Apple Developer ID 公证；Mac 应用使用 ad-hoc 签名。

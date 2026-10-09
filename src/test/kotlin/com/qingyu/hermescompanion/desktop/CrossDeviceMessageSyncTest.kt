@@ -6,6 +6,9 @@ import com.qingyu.hermescompanion.storage.SecureConfigStore
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
 import okhttp3.mockwebserver.*
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okhttp3.Response
 import org.json.*
 import org.junit.*
 import org.junit.Assert.*
@@ -20,6 +23,10 @@ class CrossDeviceMessageSyncTest {
     private lateinit var server:MockWebServer
     private lateinit var c:DesktopController
     private lateinit var root:Path
+    @Volatile private var agentRunning=false
+    @Volatile private var ticketStatus=200
+    @Volatile private var socket:WebSocket?=null
+    private val promptSubmits=AtomicInteger()
     private val key="default::daily"
     @Volatile private var total=70
     @Volatile private var messageStatus=200
@@ -38,6 +45,19 @@ class CrossDeviceMessageSyncTest {
                 "/api/status"->json("""{"auth_required":true,"auth_providers":["basic"]}""")
                 "/api/auth/providers"->json("""{"providers":[{"name":"basic","supports_password":true}]}""")
                 "/auth/password-login"->json("""{"ok":true}""").addHeader("Set-Cookie","hermes_session=test-only; Path=/; HttpOnly")
+                "/api/auth/ws-ticket"->json("""{"ticket":"test-ticket"}""",ticketStatus)
+                "/api/ws"->MockResponse().withWebSocketUpgrade(object:WebSocketListener(){
+                    override fun onOpen(ws:WebSocket,response:Response){socket=ws;ws.send("""{"method":"event","params":{"type":"gateway.ready","payload":{}}}""")}
+                    override fun onClosing(ws:WebSocket,code:Int,reason:String){ws.close(code,reason)}
+                    override fun onMessage(ws:WebSocket,text:String){
+                        val frame=JSONObject(text)
+                        if(frame.optString("method")=="prompt.submit")promptSubmits.incrementAndGet()
+                        val result=if(frame.optString("method")=="session.resume")JSONObject()
+                            .put("session_id","runtime-daily").put("running",agentRunning).put("open_requests",JSONArray()).put("messages",JSONArray())
+                            else JSONObject().put("ok",true)
+                        ws.send(JSONObject().put("jsonrpc","2.0").put("id",frame.get("id")).put("result",result).toString())
+                    }
+                })
                 "/api/auth/me"->json("""{"user_id":"test"}""")
                 "/api/profiles"->json("""{"profiles":[{"name":"default"}]}""")
                 "/api/projects"->json("""{"projects":[]}""")
@@ -68,6 +88,51 @@ class CrossDeviceMessageSyncTest {
         if(::c.isInitialized){withContext(Dispatchers.Swing){c.close()};withTimeout(12_000){c.scope.coroutineContext[Job]?.join()}}
         if(::server.isInitialized)server.shutdown()
         if(::root.isInitialized)Files.walk(root).use {it.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)}
+    }
+    @Test fun realtimeOutageDoesNotPauseHttpMessagesAndReconnectDoesNotResend()=runBlocking<Unit>{
+        awaitState {socket!=null}
+        ticketStatus=503
+        socket!!.close(1012,"test restart")
+        awaitState {!c.realtimeConnected}
+        withContext(Dispatchers.Swing){total=72;c.syncVisibleConversations()}
+        awaitState {c.messages[key]?.lastOrNull()?.id=="m71"}
+        withContext(Dispatchers.Swing){assertEquals("online",c.connectionHealth);ticketStatus=200;c.checkConnection()}
+        awaitState {c.realtimeConnected&&!c.connectionChecking}
+        assertEquals(0,promptSubmits.get())
+    }
+    @Test fun mobileTaskShowsRunningThenClearsWithoutReplayingSavedQueue()=runBlocking<Unit>{
+        withContext(Dispatchers.Swing){total=71;agentRunning=true;c.syncVisibleConversations()}
+        awaitState {c.runs[key]?.record?.observed==true}
+        withContext(Dispatchers.Swing){
+            assertTrue(c.runs[key]!!.status.contains("处理"))
+            c.queued[key]=listOf(QueuedMessage(session=c.currentSession!!,prompt="需要手动继续"))
+            agentRunning=false;total=72;c.reconcileRuns(force=true)
+        }
+        awaitState {c.runs[key]==null&&c.messages[key]?.lastOrNull()?.id=="m71"}
+        withContext(Dispatchers.Swing){assertEquals(1,c.queued[key]!!.size);assertFalse(key in c.unread);assertEquals(72,c.readMessageCounts[key])}
+        assertEquals(0,promptSubmits.get())
+    }
+    @Test fun visibleUnreadCursorWaitsForBodyAndFailedReadRemainsUnreadOnLeaving()=runBlocking<Unit>{
+        withContext(Dispatchers.Swing){
+            blockMessages=true;messageStatus=503;total=72
+            c.reconcileUnreadSessions(listOf(c.currentSession!!.copy(messageCount=72)),emptyMap())
+            assertEquals(70,c.readMessageCounts[key]);assertFalse(key in c.unread)
+        }
+        assertTrue(withContext(Dispatchers.IO){reading.await(5,TimeUnit.SECONDS)})
+        release.countDown();awaitState {c.messageLoading[key]!=true&&c.messageErrors[key]!=null}
+        withContext(Dispatchers.Swing){
+            assertEquals(70,c.readMessageCounts[key]);c.onWindowFocusChanged(false)
+            c.reconcileUnreadSessions(listOf(c.currentSession!!.copy(messageCount=72)),emptyMap())
+            assertTrue(key in c.unread);messageStatus=200;c.onWindowFocusChanged(true)
+        }
+        awaitState {c.readMessageCounts[key]==72&&key !in c.unread}
+    }
+    @Test fun knownRemoteCompletionEventRefreshesTheBodyWithoutWaitingForTheTimer()=runBlocking<Unit>{
+        awaitState {c.currentSession?.runtimeId=="runtime-daily"}
+        total=72
+        socket!!.send("""{"method":"event","params":{"type":"message.complete","session_id":"runtime-daily","payload":{"text":"已记录。"}}}""")
+        withTimeout(2500){while(!withContext(Dispatchers.Swing){c.messages[key]?.lastOrNull()?.id=="m71"})delay(10)}
+        assertEquals(0,promptSubmits.get())
     }
     @Test fun foregroundTimerReceivesMobileTurnWithoutReopeningTheConversation()=runBlocking<Unit>{
         total=72

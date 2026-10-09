@@ -24,6 +24,7 @@ class Desktop200GatewayTest {
     @Volatile private var lazyInfo=true
     @Before fun setup(){
         server.dispatcher=object:okhttp3.mockwebserver.Dispatcher(){override fun dispatch(request:RecordedRequest):MockResponse{
+            if(request.path!!.startsWith("/api/auth/me"))return MockResponse().setBody("{\"user_id\":\"test\"}")
             if(request.path!!.startsWith("/api/auth/ws-ticket"))return MockResponse().setBody("{\"ticket\":\"ticket\"}")
             if(request.path!!.startsWith("/api/sessions"))return MockResponse().setResponseCode(404)
             return MockResponse().withWebSocketUpgrade(object:WebSocketListener(){
@@ -50,6 +51,26 @@ class Desktop200GatewayTest {
     }
     private fun ready(){socket.send("{\"method\":\"event\",\"params\":{\"type\":\"gateway.ready\",\"payload\":{}}}")}
     @After fun close(){client.close();pool.shutdownNow();server.shutdown()}
+    @Test(timeout=20000) fun reachabilityProbeNeverWaitsForSessionStatusOrClosesTheLiveStream(){
+        client.ensureConnected()
+        client.probeConnection()
+        assertTrue(client.realtimeConnected)
+        assertFalse(calls.any {it.optString("method")=="session.status"})
+        client.createSession(null)
+        assertEquals(1,server.requestCount.let {calls.count {frame->frame.optString("method")=="client.capabilities"}})
+    }
+    @Test(timeout=20000) fun onlyKnownExplicitForeignRuntimeEventsInvalidateTheConversation(){
+        val changed=CopyOnWriteArrayList<HermesSession>()
+        val latch=CountDownLatch(1)
+        client.onConversationChanged={changed+=it;latch.countDown()}
+        client.resumeSession(HermesSession("stored","Title"))
+        listOf("unknown", "", "resumed-1").forEach {id->
+            val params=JSONObject().put("type","message.complete").put("payload",JSONObject())
+            if(id.isNotBlank())params.put("session_id",id)
+            socket.send(JSONObject().put("method","event").put("params",params).toString())
+        }
+        assertTrue(latch.await(2,TimeUnit.SECONDS));assertEquals(listOf("stored"),changed.map {it.id})
+    }
     @Test(timeout=20000) fun concurrentCommandsWaitForGatewayReadyAndCapabilities(){
         autoReady=false
         val a=pool.submit<HermesSession>{client.createSession(null)}

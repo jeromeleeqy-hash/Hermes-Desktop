@@ -13,7 +13,7 @@ private val modelNotice = Regex("""^\[System: The active model for this chat has
 private val interruptedNotice = Regex("""^Operation interrupted: waiting for model response \(([0-9.]+)s elapsed\)\.$""")
 
 internal fun presentUserText(raw:String,imageSources:List<String> = emptyList()):PresentedText {
-    var body=raw
+    var body=com.qingyu.hermescompanion.ui.format.visibleAppMessage(raw)
     val notices=mutableListOf<MessageNotice>()
     while(true) {
         val match=modelNotice.find(body)?:break

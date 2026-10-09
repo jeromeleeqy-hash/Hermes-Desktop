@@ -19,7 +19,7 @@ import zipfile
 from macos_signature import verify_adhoc
 from macos_archive import write_app_archive
 
-VERSION = "2.0.3"
+VERSION = "2.0.4"
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -110,7 +110,7 @@ def main():
                 file.chmod(0o755)
         docs = contents / "Resources/Release"
         docs.mkdir(parents=True, exist_ok=True)
-        for name in ("RELEASE-2.0.3.md", "BUILD-2.0.3.md", "ACCEPTANCE-2.0.3.md"):
+        for name in ("RELEASE-2.0.4.md", "BUILD-2.0.4.md", "ACCEPTANCE-2.0.4.md"):
             shutil.copy2(ROOT / "docs" / name, docs / name)
         shutil.copy2(ROOT / "THIRD_PARTY_NOTICES.md", docs / "THIRD_PARTY_NOTICES.md")
         shutil.copytree(ROOT / "licenses", docs / "licenses", dirs_exist_ok=True)
