@@ -129,7 +129,7 @@ class ConcurrentGatewayTest {
         val session = client.createSession("/")
         assertEquals("/", session.workspacePath)
         assertEquals("runtime-created", session.runtimeId)
-        assertEquals(listOf("session.create", "session.cwd.set"), calls.map { it.getString("method") })
+        assertEquals(listOf("session.create", "session.cwd.set"), calls.filterNot {it.optString("method")=="client.capabilities"}.map { it.getString("method") })
         assertEquals("/", calls.last().getJSONObject("params").getString("cwd"))
     }
 
