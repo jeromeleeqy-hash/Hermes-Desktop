@@ -6,7 +6,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-VERSION = "2.0.4"
+VERSION = "2.0.5"
 ROOT_FILES = {
     ".gitignore", "Build-Windows.bat", "Build-macOS.command",
     "Installer-Windows.bat", "Package-Windows.bat", "Package-macOS.command",
