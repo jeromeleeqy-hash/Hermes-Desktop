@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-10-09T09:45:27.779Z" hostname="69622ecc2839" time="1.11">
+  <properties/>
+  <testcase name="directoryPathsOutsideTheSourceWorkspaceAreNeverRequested" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.296"/>
+  <testcase name="invalidDirectoryResponsesDoNotBecomeAFalseMissingFileResult" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.054"/>
+  <testcase name="aFullySearchedWorkspaceExplainsTheScopeWithoutClaimingDeletion" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.052"/>
+  <testcase name="filenameOnlyReplyOpensTheUniqueFileThreeDirectoriesBelowTheSourceWorkspace" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.229"/>
+  <testcase name="limitsPreservePartialMatchesButNeverLabelThemComplete" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.002"/>
+  <testcase name="explicitPathsAndEncodedLiteralFilenameCharactersDoNotTriggerDiscovery" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.004"/>
+  <testcase name="duplicateNamesReturnChoicesInsteadOfReadingAnArbitraryFile" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.137"/>
+  <testcase name="aMissingConfirmedLocationCanBeFoundAgainUnderTheOriginalScope" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.18"/>
+  <testcase name="aFullPathInTheSameReplyTakesPrecedenceOverItsBareFilenameLabel" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.006"/>
+  <testcase name="confirmedLocationIsReadBeforeTheOriginalFilename" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.006"/>
+  <testcase name="oneMatchAndAnUnreadableDirectoryDoNotCountAsAUniqueMatch" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.14"/>
+  <testcase name="filesystemRootsAndRelativeRootsAreNotRecursivelySearched" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.002"/>
+  <testcase name="timeBudgetStopsBeforeIssuingAnotherRequest" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.0"/>
+  <testcase name="windowsServerPathsStayInTheirOriginalWorkspace" classname="com.qingyu.hermescompanion.data.ArtifactDiscovery205Test" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

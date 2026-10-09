@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-09T09:45:29.700Z" hostname="69622ecc2839" time="0.162">
+  <properties/>
+  <testcase name="restartPreservesAttachmentsQueuesRunsAndUnsavedFilesTogether" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.017"/>
+  <testcase name="sourceEditorEscapesHostileMarkupAndKeepsMarkdownCode" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.008"/>
+  <testcase name="completedTasksKeepTheirArtifactLinksAfterRestart" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.003"/>
+  <testcase name="restoreLeavesRunsInRecoveryAndQueuesAwaitingUserAction" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.003"/>
+  <testcase name="toolWorkAndOtherUsersTurnsCannotReleaseSavedQueues" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="previousReplyCannotCompleteTheNextIdenticalPrompt" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="profilesWithIdenticalSessionIdsAndDifferentAccountsStayIsolated" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.003"/>
+  <testcase name="reopeningDirtyProfileFileKeepsTheOriginalConflictBaseline" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.003"/>
+  <testcase name="laterCheckpointWinsWhenBackgroundSaveArrivesOutOfOrder" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.001"/>
+  <testcase name="authenticatedBlobsRejectTamperingAndPathTraversal" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.003"/>
+  <testcase name="sourceModeIsChosenForMarkdownThatRichTextWouldFlatten" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="completionDoesNotDuplicateAlreadyStreamedText" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.0"/>
+  <testcase name="foreignDeviceRunKeepsItsObservationIdentityAcrossRestart" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.002"/>
+  <testcase name="independentlyCroppedAvatarsStaySeparateAfterRestart" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.114"/>
+  <testcase name="voiceCommitAndDraftArePersistedAsOneState" classname="com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

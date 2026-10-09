@@ -797,5 +797,18 @@
   "热情鼓励": "Hype",
   "充满能量的鼓励式表达。": "High-energy, enthusiastic encouragement.",
   "服务器自定义风格": "Custom server style",
-  "当前自定义风格": "Current custom style"
+  "当前自定义风格": "Current custom style",
+  "文件暂时打不开": "Unable to open this file yet",
+  "确认文件位置": "Confirm file location",
+  "粘贴服务器完整路径": "Paste the full server path",
+  "打开路径": "Open path",
+  "复制排查信息": "Copy diagnostic details",
+  "也可以到右侧文件目录中选择；这里的路径属于 Hermes 服务器。": "You can also select a file in the sidebar. Paths here refer to your Hermes server.",
+  "找到多个同名文件，请根据所在目录选择要打开的文件。": "Several files have this name. Choose one by its folder path.",
+  "有目录无权读取，尚未完成查找。": "A folder could not be accessed. The search is incomplete.",
+  "有目录未能读取，尚未完成查找。": "A folder could not be read. The search is incomplete.",
+  "目录较多或响应较慢，尚未查完，不能确认是否有同名文件。": "The search limit was reached. Other files with the same name may exist.",
+  "网络请求未完成，尚未查完，请稍后重试或提供完整路径。": "The network request did not finish. Retry or provide the full path.",
+  "在这段会话的工作目录及子目录中未找到同名文件。请核对实际保存位置，或粘贴完整路径打开。": "No matching file was found in this conversation’s workspace or its subfolders. Check the saved location or paste the full path.",
+  "找到了文件位置，但读取时文件已不可用，请刷新目录后重试。": "The file was located but could no longer be read. Refresh the directory and retry."
 }

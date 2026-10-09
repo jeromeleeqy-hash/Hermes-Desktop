@@ -1,0 +1,66 @@
+{
+  "version": "2.0.5",
+  "tests": 62,
+  "failures": 0,
+  "suites": [
+    {
+      "name": "com.qingyu.hermescompanion.data.ArtifactDiscovery205Test",
+      "tests": "14",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "1.11"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.ArtifactPaths203Test",
+      "tests": "14",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.204"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.data.RemotePaths361Test",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.157"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ArtifactIndex203Test",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.082"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.ComposerFilesAndMarkdownTest",
+      "tests": "7",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.137"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.desktop.WorkspaceRecoveryTest",
+      "tests": "15",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.162"
+    },
+    {
+      "name": "com.qingyu.hermescompanion.today.TodayRepositoryTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "time": "0.697"
+    }
+  ],
+  "native_execution": "Not performed on macOS or Windows",
+  "user_gateway": "Not accessed; simulated HTTP file gateway and offscreen Compose used",
+  "command": "Gradle test -PheadlessTests=true with the seven listed suites"
+}

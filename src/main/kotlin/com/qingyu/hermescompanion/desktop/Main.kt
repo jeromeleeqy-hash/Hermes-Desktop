@@ -166,6 +166,7 @@ fun main(args:Array<String>) {
                 }
             }
             controller.error?.let { message -> HermesDialog(onDismissRequest={controller.error=null},title={Text(tr("需要留意"))},text={Text(tr(message),Modifier.heightIn(max=440.dp).verticalScroll(rememberScrollState()))},confirmButton={DeskTextButton(onClick={controller.error=null}) { Text(tr("知道了")) }}) }
+            ArtifactLookupDialog(controller)
             controller.detailsText?.let { message -> HermesDialog(onDismissRequest={controller.detailsText=null},title={Text(tr(controller.detailsTitle))},text={androidx.compose.foundation.text.selection.SelectionContainer {Text(message,Modifier.width(540.dp).heightIn(max=440.dp).verticalScroll(rememberScrollState()))}},confirmButton={DeskTextButton(onClick={controller.detailsText=null}) { Text(tr("关闭")) }},dismissButton={DeskTextButton(onClick={DesktopFiles.copy("Hermes ${com.qingyu.hermescompanion.BuildConfig.VERSION_NAME}\n${controller.detailsTitle}\n$message");controller.notice="详情已复制"}) {Text(tr("复制详情"))}}) }
             if(controller.voice.active&&!controller.voice.fromCompanion)VoiceDialog(controller)
             if(controller.commandsOpen)CommandsDialog(controller)

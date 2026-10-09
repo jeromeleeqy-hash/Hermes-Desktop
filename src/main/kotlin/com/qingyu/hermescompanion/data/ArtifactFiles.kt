@@ -44,7 +44,7 @@ internal fun resolveRemoteArtifactPath(path: String, workspace: String): String?
     return joinServerPath(root, clean.removePrefix("./").removePrefix(".\\"))
 }
 
-/** Recover a stale index only from the original conversation, never another project. */
+/** Recover source links first, then locate bare names only inside the recorded workspace. */
 internal class ArtifactFileReader(private val client: HermesApiClient) {
     fun read(item: RecentArtifact, sourceSession: HermesSession?, cachedMessages: List<ChatMessage>): WorkspaceDocument {
         require(sourceSession == null || sourceSession.profile == item.profile) { uiText(R.string.ui_0049, "文件与来源档案不一致") }
@@ -64,14 +64,14 @@ internal class ArtifactFileReader(private val client: HermesApiClient) {
                 null
             }
         }
-        readPath(item.sourcePath.ifBlank { item.path })?.let { return it }
-        if (item.sourcePath.isNotBlank()) readPath(item.path)?.let { return it }
-
         fun recover(messages: List<ChatMessage>): WorkspaceDocument? {
             val source = if (item.messageId.isBlank()) messages else messages.filter { it.id == item.messageId }
             val candidates = source.flatMap { ChatInsightParser.artifactsFromText(it.content) }
                 .filter { it.name == item.name || truncatedExtensionMatch(item.name, it.name) }
-                .map { it.path }.distinct()
+                .map { it.path }.distinct().let { paths ->
+                    // A reply can contain both a filename label and its full location.
+                    paths.filterNot(::isBareArtifactName).ifEmpty { paths }
+                }
             // Two same-name files are ambiguous; leave the choice to the user.
             if (candidates.size != 1) return null
             val raw = candidates.single()
@@ -84,8 +84,13 @@ internal class ArtifactFileReader(private val client: HermesApiClient) {
             }
             return null
         }
+        if (isBareArtifactName(item.path)) recover(cachedMessages)?.let { return it }
+        // A previously verified location is faster and more precise than its original filename-only link.
+        readPath(item.path)?.let { return it }
+        if (item.sourcePath.isNotBlank()) readPath(item.sourcePath)?.let { return it }
         recover(cachedMessages)?.let { return it }
-        if (item.sessionId.isNotBlank()) {
+        val hasSource = item.messageId.isNotBlank() && cachedMessages.any { it.id == item.messageId }
+        if (item.sessionId.isNotBlank() && !hasSource) {
             val messages = try {
                 client.loadArtifactSourceMessages(item.sessionId, item.profile, item.messageId)
             } catch (error: ApiException) {
@@ -93,6 +98,36 @@ internal class ArtifactFileReader(private val client: HermesApiClient) {
                 emptyList()
             }
             recover(messages)?.let { return it }
+        }
+        val original = item.sourcePath.ifBlank { item.path }
+        if (isBareArtifactName(original)) {
+            val name = artifactFileName(normalizeArtifactTarget(original))
+            val search = ArtifactDiscovery({ path, timeout -> client.listWorkspaceForProfile(path, item.profile, timeout) })
+                .find(workspace, name)
+            if (search.complete && search.candidates.size == 1) readPath(search.candidates.single().path)?.let { return it }
+            val message = when {
+                search.candidates.size > 1 -> "找到多个同名文件，请根据所在目录选择要打开的文件。"
+                !search.complete -> search.reason
+                search.candidates.isNotEmpty() -> "找到了文件位置，但读取时文件已不可用，请刷新目录后重试。"
+                else -> "在这段会话的工作目录及子目录中未找到同名文件。请核对实际保存位置，或粘贴完整路径打开。"
+            }
+            val details = buildString {
+                appendLine("文件：${item.name}")
+                appendLine("Profile：${item.profile}")
+                appendLine("来源会话：${item.sessionTitle} (${item.sessionId})")
+                appendLine("原始链接：$original")
+                appendLine("查找范围：$workspace")
+                appendLine("查找完成：${search.complete}")
+                appendLine(message)
+                if (!search.complete && search.reason.isNotBlank() && search.reason != message) appendLine(search.reason)
+                appendLine("已尝试读取：")
+                tried.forEach { appendLine(it) }
+                if (search.candidates.isNotEmpty()) {
+                    appendLine("找到的位置：")
+                    search.candidates.forEach { appendLine(it.path) }
+                }
+            }
+            throw ArtifactLookupException(message, search.candidates, details)
         }
         throw ApiException(404, uiText(R.string.ui_0050, "找不到「%1\$s」。文件可能已移动或删除，请在项目文件中重新选择，或回到来源对话确认位置。", item.name))
     }

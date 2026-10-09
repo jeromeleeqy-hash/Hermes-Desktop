@@ -1186,12 +1186,15 @@ class HermesApiClient(
 
     fun listWorkspace(path: String?): WorkspaceListing = listWorkspaceForProfile(path, currentProfile())
 
-    fun listWorkspaceForProfile(path: String?, profile: String): WorkspaceListing {
+    fun listWorkspaceForProfile(path: String?, profile: String): WorkspaceListing = listWorkspaceForProfile(path, profile, null)
+
+    internal fun listWorkspaceForProfile(path: String?, profile: String, timeoutMillis: Long?): WorkspaceListing {
         val suffix = path?.takeIf { it.isNotBlank() }
             ?.let { "?path=${queryValue(it)}" }
             .orEmpty()
-        val root = JSONObject(request("GET", appendProfileQuery("/api/files$suffix", profile)))
-        val entries = root.optJSONArray("entries") ?: JSONArray()
+        val root = JSONObject(request("GET", appendProfileQuery("/api/files$suffix", profile),
+            retryTransport = timeoutMillis == null, timeoutMillis = timeoutMillis))
+        val entries = root.optJSONArray("entries") ?: throw ApiException(502, "服务器未返回可识别的文件目录。")
         return WorkspaceListing(
             path = root.optString("path"),
             parent = firstString(root, "parent"),

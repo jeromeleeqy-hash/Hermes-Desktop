@@ -57,7 +57,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Msi)
             packageName = "Hermes"
-            packageVersion = "2.0.4"
+            packageVersion = "2.0.5"
             vendor = "Jerome"
             description = "Hermes desktop companion"
             includeAllModules = true
@@ -77,7 +77,7 @@ compose.desktop {
                 minimumSystemVersion = "13.0"
                 dockName = "Hermes"
                 infoPlist {
-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.4</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.5</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
                 }
             }
         }
@@ -129,6 +129,14 @@ tasks.register<JavaExec>("renderPreviews") {
     dependsOn(tasks.testClasses)
     classpath = sourceSets.test.get().runtimeClasspath
     mainClass.set("com.qingyu.hermescompanion.desktop.RenderPreviews")
+    systemProperty("java.awt.headless", "true")
+    systemProperty("skiko.renderApi", "SOFTWARE")
+}
+
+tasks.register<JavaExec>("renderArtifactLookup205") {
+    dependsOn(tasks.testClasses)
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.RenderArtifactLookup205")
     systemProperty("java.awt.headless", "true")
     systemProperty("skiko.renderApi", "SOFTWARE")
 }
