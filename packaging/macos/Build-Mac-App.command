@@ -25,7 +25,7 @@ hermes_failed() {
 trap hermes_failed ERR
 trap hermes_cleanup EXIT
 
-echo "Hermes macOS 1.8.4 · Apple Silicon"
+echo "Hermes macOS 2.0.1 · Apple Silicon"
 echo "1/6 校验完整文件"
 /usr/bin/shasum -a 256 -c PAYLOAD-SHA256.txt > "$PWD/build/logs/payload-check.log"
 hermes_work="$(/usr/bin/mktemp -d "$PWD/build/session.XXXXXX")"
@@ -42,7 +42,7 @@ hermes_jdk="$hermes_work/toolchain/jdk-21.0.12.1+1/Contents/Home"
 "$hermes_jdk/bin/jlink" --module-path "$hermes_jdk/jmods" --add-modules ALL-MODULE-PATH --bind-services --strip-debug --no-header-files --no-man-pages --compress=2 --output "$hermes_work/runtime"
 
 echo "3/6 生成 Hermes.app"
-"$hermes_jdk/bin/jpackage" --type app-image --name Hermes --app-version 1.8.4 \
+"$hermes_jdk/bin/jpackage" --type app-image --name Hermes --app-version 2.0.1 \
   --vendor Jerome --description "Hermes desktop companion" \
   --dest "$hermes_work/apps" --input "$PWD/app" \
   --main-jar hermes-desktop.jar --main-class com.qingyu.hermescompanion.desktop.MainKt \
@@ -83,7 +83,7 @@ echo "4/6 本机签名与应用校验"
 /usr/bin/codesign --force --deep --sign - "$hermes_app"
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$hermes_app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$hermes_plist")" == com.qingyu.hermes.desktop ]]
-[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$hermes_plist")" == 1.8.4 ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$hermes_plist")" == 2.0.1 ]]
 /usr/bin/file "$hermes_app/Contents/MacOS/Hermes" | /usr/bin/grep -q arm64
 /usr/bin/cmp -s app/hermes-desktop.jar "$hermes_app/Contents/app/hermes-desktop.jar"
 hermes_runtime="$hermes_app/Contents/runtime/Contents/Home"
@@ -93,14 +93,14 @@ if [[ ! -x "$hermes_runtime/bin/java" ]]; then hermes_runtime="$hermes_app/Conte
 /usr/bin/grep -q '^java.desktop@' "$hermes_work/modules.txt"
 
 echo "5/6 生成 DMG"
-hermes_result="$PWD/output/Hermes-1.8.4-$(date +%Y%m%d-%H%M%S)"
+hermes_result="$PWD/output/Hermes-2.0.1-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$hermes_result" "$hermes_work/dmg"
 /usr/bin/ditto "$hermes_app" "$hermes_result/Hermes.app"
 /usr/bin/ditto "$hermes_app" "$hermes_work/dmg/Hermes.app"
 /bin/ln -s /Applications "$hermes_work/dmg/Applications"
-/usr/bin/hdiutil create -volname 'Hermes 1.8.4' -srcfolder "$hermes_work/dmg" -format UDZO "$hermes_result/Hermes-macOS-arm64-1.8.4.dmg"
-/usr/bin/hdiutil verify "$hermes_result/Hermes-macOS-arm64-1.8.4.dmg"
-/usr/bin/shasum -a 256 "$hermes_result/Hermes-macOS-arm64-1.8.4.dmg" > "$hermes_result/SHA256.txt"
+/usr/bin/hdiutil create -volname 'Hermes 2.0.1' -srcfolder "$hermes_work/dmg" -format UDZO "$hermes_result/Hermes-macOS-arm64-2.0.1.dmg"
+/usr/bin/hdiutil verify "$hermes_result/Hermes-macOS-arm64-2.0.1.dmg"
+/usr/bin/shasum -a 256 "$hermes_result/Hermes-macOS-arm64-2.0.1.dmg" > "$hermes_result/SHA256.txt"
 /bin/cp "$hermes_work/modules.txt" "$hermes_result/runtime-modules.txt"
 
 echo "6/6 完成"
