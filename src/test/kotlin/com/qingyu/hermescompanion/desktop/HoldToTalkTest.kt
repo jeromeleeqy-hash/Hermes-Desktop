@@ -106,7 +106,7 @@ class HoldToTalkTest {
         c.companion.releaseHoldToTalk();c.companion.releaseHoldToTalk()
         assertEquals(1,stops.get());assertEquals(VoicePhase.TRANSCRIBING,c.voice.phase)
         await {prompts().size==1}
-        assertEquals(transcript,prompts().single().getJSONObject("params").getString("text"))
+        assertEquals(spokenConversationPrompt(transcript),prompts().single().getJSONObject("params").getString("text"))
         assertEquals(main,c.currentSession);assertEquals(Page.FILES,c.page)
         assertTrue(c.runs.containsKey(daily.scopedId));assertFalse(c.runs.containsKey(main.scopedId))
         assertEquals(1,transcriptions.get());assertTrue(c.voiceNotes.single().committed)
