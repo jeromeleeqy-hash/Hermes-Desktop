@@ -20,7 +20,7 @@ import tempfile
 import zipfile
 from windows_runtime import validate_runtime_image
 
-VERSION = '2.0.2'
+VERSION = '2.0.3'
 
 
 def digest(path: Path) -> str:
@@ -113,7 +113,7 @@ def main() -> None:
         shutil.copy2(project / 'THIRD_PARTY_NOTICES.md', root / 'THIRD_PARTY_NOTICES.md')
         shutil.copytree(project / 'licenses', root / 'licenses')
         (root / 'docs').mkdir()
-        for name in ('CHANGELOG.md', 'WINDOWS-QUICKSTART.md', 'RELEASE-2.0.2.md', 'BUILD-2.0.2.md', 'ACCEPTANCE-2.0.2.md'):
+        for name in ('CHANGELOG.md', 'WINDOWS-QUICKSTART.md', 'RELEASE-2.0.3.md', 'BUILD-2.0.3.md', 'ACCEPTANCE-2.0.3.md'):
             shutil.copy2(project / 'docs' / name, root / 'docs' / name)
         # Preserve license documents as stored in upstream JARs, in addition to the JARs themselves.
         for jar in jars:
@@ -128,7 +128,7 @@ def main() -> None:
                     out.parent.mkdir(parents=True, exist_ok=True)
                     out.write_bytes(z.read(item))
         manifest = {
-            'application': 'Hermes', 'version': VERSION, 'edition': 'Desktop 2.0.2 acceptance', 'platform': 'windows-x64',
+            'application': 'Hermes', 'version': VERSION, 'edition': 'Desktop 2.0.3 acceptance', 'platform': 'windows-x64',
             'launcher': 'Hermes.exe', 'launcher_sha256': digest(root / 'Hermes.exe'),
             'runtime_archive': origin['jdk_archive'] if origin else args.jre.name,
             'runtime_sha256': origin['jdk_sha256'] if origin else args.sha256.lower(),
@@ -137,7 +137,7 @@ def main() -> None:
             'build': VERSION, 'runtime_modules_verified': runtime_modules,
             'runtime_files': [{'path':f.relative_to(root/'runtime').as_posix(),'bytes':f.stat().st_size,'sha256':digest(f)} for f in sorted((root/'runtime').rglob('*')) if f.is_file()],
             'jars': [{'name': p.name, 'bytes': p.stat().st_size, 'sha256': digest(p)} for p in jars],
-            'validation': 'See docs/ACCEPTANCE-2.0.2.md; Windows native execution not performed on the Linux build host.',
+            'validation': 'See docs/ACCEPTANCE-2.0.3.md; Windows native execution not performed on the Linux build host.',
         }
         (root / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
         staged_zip = Path(tmp) / 'portable.zip'
