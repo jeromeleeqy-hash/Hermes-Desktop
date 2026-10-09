@@ -18,6 +18,7 @@ import java.util.UUID
 enum class Page { HOME, SESSIONS, TASKS, FILES, PROFILE, CHAT }
 data class DocumentTab(val document: WorkspaceDocument, val profile: String, val sourceSession: HermesSession? = null)
 data class PendingDecision(val profile: String, val session: HermesSession, val request: AgentRequest)
+internal data class ArtifactLookupPrompt(val item:RecentArtifact,val origin:HermesSession?,val problem:ArtifactLookupException)
 data class DesktopRun(
     val session:HermesSession, val controller:StreamController, val assistantId:String,
     val started:Long=System.currentTimeMillis(), val status:String="正在连接", val lastEvent:Long=started,
@@ -110,6 +111,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     val diagnosticDetails=mutableStateMapOf<String,String>()
     var documentSplit by mutableStateOf(false)
     var documentLoading by mutableStateOf(false)
+    internal var artifactLookupPrompt by mutableStateOf<ArtifactLookupPrompt?>(null)
     var detailsText by mutableStateOf<String?>(null)
     var detailsTitle by mutableStateOf("详情")
     var fileSection by mutableStateOf("目录")
@@ -999,16 +1001,43 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         val raw=normalizeArtifactTarget(path, markdownLink=markdownLink)
         val root=origin?.workspacePath ?: listing?.path ?: project?.primaryPath.orEmpty()
         val recent=RecentArtifact(p,origin?.id.orEmpty(),origin?.title.orEmpty(),messageId=messageId,path=raw,name=artifactFileName(raw),kind="document",workspacePath=root)
-        readArtifact(recent,origin)
+        val known=recentArtifacts.firstOrNull {it.profile==p && it.sessionId==recent.sessionId && it.messageId==messageId &&
+            it.workspacePath==root && it.sourcePath==raw && it.path!=raw}
+        readArtifact(known?:recent,origin)
     }
-    private fun readArtifact(recent:RecentArtifact,origin:HermesSession?) {
+    internal fun rememberArtifactLocation(recent:RecentArtifact,path:String) {
+        if(recent.sessionId.isBlank() || recent.path==path && recent.sourcePath.isBlank())return
+        val original=recent.sourcePath.ifBlank {recent.path}
+        val corrected=recent.copy(path=path,sourcePath=original,name=artifactFileName(path))
+        val index=recentArtifacts.indexOfFirst {it.profile==recent.profile && it.sessionId==recent.sessionId &&
+            it.messageId==recent.messageId && (it.path==recent.path || it.sourcePath==original || it.path==original)}
+        if(index>=0)recentArtifacts[index]=corrected else recentArtifacts.add(0,corrected)
+    }
+    internal fun chooseArtifactLocation(path:String) {
+        val prompt=artifactLookupPrompt?:return
+        val target=normalizeArtifactTarget(path)
+        if(!isAbsoluteRemotePath(target)){error="请粘贴服务器上的完整绝对路径。";return}
+        artifactLookupPrompt=null
+        readArtifact(prompt.item,prompt.origin,explicitPath=target)
+    }
+    private fun readArtifact(recent:RecentArtifact,origin:HermesSession?,explicitPath:String?=null) {
         val p=recent.profile;val token=++documentReadToken
         val cached=origin?.let { messages[it.scopedId] }.orEmpty()
+        artifactLookupPrompt=null
         documentLoading=true
-        request(p,{ ArtifactFileReader(it).read(recent,origin,cached) },finished={if(token==documentReadToken)documentLoading=false}) {
+        request(p,{ api ->
+            try {
+                val target=if(explicitPath!=null)recent.copy(path=explicitPath,sourcePath="",messageId="",sessionId="")else recent
+                ArtifactFileReader(api).read(target,origin,if(explicitPath==null)cached else emptyList()) to null
+            }catch(problem:ArtifactLookupException){null to problem}
+        },finished={if(token==documentReadToken)documentLoading=false}) { result ->
             if(profile==p && token==documentReadToken) {
-                val existing=openDocuments["$p:${it.path}"]
-                selectDocument(if(existing!=null && edits[documentKey(existing)]?.let { text->text!=existing.document.content }==true)existing else DocumentTab(it,p,origin))
+                val doc=result.first
+                if(doc!=null){
+                    rememberArtifactLocation(recent,doc.path)
+                    val existing=openDocuments["$p:${doc.path}"]
+                    selectDocument(if(existing!=null && edits[documentKey(existing)]?.let { text->text!=existing.document.content }==true)existing else DocumentTab(doc,p,origin))
+                }else result.second?.let {artifactLookupPrompt=ArtifactLookupPrompt(recent,origin,it)}
             }
         }
     }
@@ -1168,7 +1197,11 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     fun saveSnippets(values:List<PromptSnippet>) { snippets=values;savePreference("snippets",JSONArray().apply { values.forEach { put(JSONObject().put("id",it.id).put("title",it.title).put("text",it.text)) } }.toString()) }
     fun changeLanguage(value:String) { language=value;setDesktopLanguage(value);savePreference("language",value) }
     fun indexArtifacts(s:HermesSession,values:List<ChatMessage>) {
-        val found=values.filter { it.role==MessageRole.ASSISTANT }.flatMap { message -> ChatInsightParser.artifactsFromText(message.content).map { a->RecentArtifact(s.profile,s.id,s.title,message.id,a.path,a.name,a.kind,s.workspacePath,parseDesktopInstant(message.createdAt)?.toEpochMilli()?:parseDesktopInstant(s.updatedAt)?.toEpochMilli()?:0L) } }
+        val found=values.filter { it.role==MessageRole.ASSISTANT }.flatMap { message -> ChatInsightParser.artifactsFromText(message.content).map { a->
+            val known=recentArtifacts.firstOrNull {it.profile==s.profile && it.sessionId==s.id && it.messageId==message.id && it.workspacePath==s.workspacePath && it.sourcePath==a.path}
+            RecentArtifact(s.profile,s.id,s.title,message.id,known?.path?:a.path,a.name,a.kind,s.workspacePath,
+                parseDesktopInstant(message.createdAt)?.toEpochMilli()?:parseDesktopInstant(s.updatedAt)?.toEpochMilli()?:0L,known?.sourcePath.orEmpty())
+        } }
         sessionSummaries[s.scopedId]=sessionSummary(values,s.preview)
         val refreshedMessages=values.map {it.id}.toSet()
         recentArtifacts.removeAll {it.profile==s.profile&&it.sessionId==s.id&&it.messageId in refreshedMessages}
