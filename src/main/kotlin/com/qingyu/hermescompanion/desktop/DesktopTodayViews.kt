@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -36,21 +38,21 @@ import java.time.format.DateTimeFormatter
     Row(Modifier.fillMaxWidth().padding(vertical=2.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)){
         Glyph("inbox",Modifier.size(17.dp),colors.primary)
         Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(3.dp)){
-            Text("为你留意 · ${t.state.board?.cards.orEmpty().count {!it.isClosed}} 件事",fontSize=13.sp,fontWeight=FontWeight.Medium)
+            Text(tr(localizedText({ "为你留意 · ${t.state.board?.cards.orEmpty().count {!it.isClosed}} 件事" }, { "為你留意 · ${t.state.board?.cards.orEmpty().count {!it.isClosed}} 件事" })),fontSize=13.sp,fontWeight=FontWeight.Medium)
             val updated=t.state.board?.generatedAt?.atZoneSameInstant(ZoneId.systemDefault())?.format(DateTimeFormatter.ofPattern("M月d日 HH:mm"))
-            SubtleText(if(t.state.loading)"正在同步…"else updated?.let {"内容更新于 $it"}?:"与你的手机共享同一份进展",maxLines=1)
+            SubtleText(if(t.state.loading)"正在同步…"else updated?.let { localizedText({ "内容更新于 $it" }, { "內容更新於 $it" }) }?:"与你的手机共享同一份进展",maxLines=1)
         }
         Hint("同步首页"){DeskIconButton(onClick={t.sync()},enabled=!t.state.loading){Glyph("refresh",Modifier.size(17.dp),colors.onSurfaceVariant)}}
         DeskTextButton(onClick={t.refreshOverview()},enabled=!t.preparing&&!t.refreshState.busy&&t.state.rootVerified){
-            Text(if(t.refreshState.busy)"正在整理…"else"更新进展",fontSize=12.sp)
+            Text(tr(if(t.refreshState.busy)"正在整理…"else"更新进展"),fontSize=12.sp)
         }
         Hint("事项整理设置"){DeskIconButton(onClick={t.settingsOpen=true}){Glyph("settings",Modifier.size(18.dp),colors.onSurfaceVariant)}}
     }
-    if(t.changes.unread.isNotEmpty())DeskTextButton(onClick={t.reveal();t.acknowledge()}){Text("${t.changes.unread.size} 项新进展 · 点击查看",fontSize=12.sp)}
+    if(t.changes.unread.isNotEmpty())DeskTextButton(onClick={t.reveal();t.acknowledge()}){Text(tr(localizedText({ "${t.changes.unread.size} 项新进展 · 点击查看" }, { "${t.changes.unread.size} 項新進展 · 點選檢視" })),fontSize=12.sp)}
     t.state.error?.let {SyncProblem(c,"首页暂未同步",it,t.state.loading){t.sync()}}
     if(t.refreshState.message.isNotBlank())Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){
         SubtleText(t.refreshState.message,maxLines=2)
-        if(t.refreshState.sessionId.isNotBlank())DeskTextButton(onClick={t.openProcessing()}){Text("处理详情")}
+        if(t.refreshState.sessionId.isNotBlank())DeskTextButton(onClick={t.openProcessing()}){Text(tr("处理详情"))}
     }
     if(t.state.fromCache)SubtleText("正在显示本机保存的概览，连接后会核对最新内容",maxLines=2)
 }
@@ -59,14 +61,14 @@ import java.time.format.DateTimeFormatter
     val t=c.today;val cards=focusCards(t.state.board?.cards.orEmpty()).take(3)
     SectionCard(Modifier.fillMaxWidth().semantics {testTag="attention-module"}){
         SectionTitle("值得留意的事",t.state.board?.headline?.ifBlank {"关注事项、进展与提醒"}?:"关注事项、进展与提醒",
-            trailing={DeskTextButton(onClick={t.openAttention()},modifier=Modifier.semantics {testTag="open-attention"}){Text("查看全部 →")}})
+            trailing={DeskTextButton(onClick={t.openAttention()},modifier=Modifier.semantics {testTag="open-attention"}){Text(tr("查看全部 →"))}})
         Column(Modifier.padding(horizontal=18.dp,vertical=8.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
             cards.forEach {card->Row(Modifier.fillMaxWidth().desktopClick {t.selectedId=card.id}.padding(vertical=9.dp),horizontalArrangement=Arrangement.spacedBy(12.dp)){
                 StatusPill(card.attentionGroup.label)
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(4.dp)){Text(card.title,fontSize=14.sp,fontWeight=FontWeight.Medium);SubtleText(card.readableContext,maxLines=2)}
                 if(card.id in t.changes.newCardIds)StatusPill("新增")
             }}
-            if(cards.isEmpty())Text(when {t.state.loading->"正在同步关注事项…";t.state.error!=null->"暂时未能同步，打开查看详情或重试。";else->"暂时没有待关注的事项，可以打开查看或整理进展。"},
+            if(cards.isEmpty())Text(tr(when {t.state.loading->"正在同步关注事项…";t.state.error!=null->"暂时未能同步，打开查看详情或重试。";else->"暂时没有待关注的事项，可以打开查看或整理进展。"}),
                 modifier=Modifier.padding(vertical=12.dp),fontSize=13.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -77,10 +79,10 @@ import java.time.format.DateTimeFormatter
     var domain by remember {mutableStateOf<TodayDomain?>(null)};var closed by remember {mutableStateOf(false)}
     val board=t.state.board
     DesktopPage(scrollable=false,maxContentWidth=1440.dp,tag="attention-content"){
-        DeskTextButton(onClick={t.closeAttention()},modifier=Modifier.semantics {testTag="back-to-workbench"}){Glyph("chevron-left",Modifier.size(16.dp));Spacer(Modifier.width(6.dp));Text("返回工作台")}
+        DeskTextButton(onClick={t.closeAttention()},modifier=Modifier.semantics {testTag="back-to-workbench"}){Glyph("chevron-left",Modifier.size(16.dp));Spacer(Modifier.width(6.dp));Text(tr("返回工作台"))}
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(14.dp)){
             Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(6.dp)){
-                Text("值得留意的事",fontSize=25.sp,fontWeight=FontWeight.SemiBold)
+                Text(tr("值得留意的事"),fontSize=25.sp,fontWeight=FontWeight.SemiBold)
                 if(!board?.headline.isNullOrBlank())Text(board!!.headline,fontSize=15.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
                 if(!board?.summary.isNullOrBlank())Text(board!!.summary,fontSize=14.sp,lineHeight=23.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -88,22 +90,22 @@ import java.time.format.DateTimeFormatter
         }
         TodayToolbar(c)
         FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){
-            DeskChip(group==null,{group=null},label={Text("全部事项")})
-            TodayAttentionGroup.entries.forEach {g->DeskChip(group==g,{group=g},label={Text("${g.label} ${board?.cards.orEmpty().count {!it.isClosed&&it.attentionGroup==g}}")})}
-            DeskChip(closed,{closed=!closed},label={Text("含已结束")})
+            DeskChip(group==null,{group=null},label={Text(tr("全部事项"))})
+            TodayAttentionGroup.entries.forEach {g->DeskChip(group==g,{group=g},label={Text("${tr(g.label)} ${board?.cards.orEmpty().count {!it.isClosed&&it.attentionGroup==g}}")})}
+            DeskChip(closed,{closed=!closed},label={Text(tr("含已结束"))})
         }
         val domains=board?.cards.orEmpty().map {it.domain}.distinct()
         if(domains.size>1)FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp)){
-            DeskTextButton(onClick={domain=null}){Text(if(domain==null)"✓ 全部领域"else"全部领域")}
-            domains.forEach {d->DeskTextButton(onClick={domain=if(domain==d)null else d}){Text((if(domain==d)"✓ "else"")+d.label)}}
+            DeskTextButton(onClick={domain=null}){Text(tr(if(domain==null)"✓ 全部领域"else"全部领域"))}
+            domains.forEach {d->DeskTextButton(onClick={domain=if(domain==d)null else d}){Text((if(domain==d)"✓ "else"")+tr(d.label))}}
         }
         val available=focusCards(board?.cards.orEmpty(),closed,domain).filter {group==null || it.attentionGroup==group}
         val cards=if(closed)available else t.order.cards(available)
         val hidden=available.count {a->cards.none {it.id==a.id}}
-        if(hidden>0)SmallButton("显示 $hidden 项新事项",{t.reveal()})
+        if(hidden>0)SmallButton( localizedText({ "显示 $hidden 项新事项" }, { "顯示 $hidden 項新事項" }) ,{t.reveal()})
         if(board==null){
             if(t.state.loading)LoadingRows() else Column(verticalArrangement=Arrangement.spacedBy(12.dp)){
-                Text("连接已有记录，整理关注事项和提醒。",color=MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(tr("连接已有记录，整理关注事项和提醒。"),color=MaterialTheme.colorScheme.onSurfaceVariant)
                 SmallButton("开始整理",{t.refreshOverview()},true,enabled=!t.preparing&&t.state.rootVerified)
             }
         }else LazyColumn(Modifier.weight(1f).fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(12.dp)){
@@ -118,7 +120,7 @@ import java.time.format.DateTimeFormatter
             }
             item("sync-times"){
                 fun time(value:Instant?)=value?.atZone(ZoneId.systemDefault())?.format(DateTimeFormatter.ofPattern("MM-dd HH:mm"))?:"—"
-                SubtleText("内容更新 ${time(board.generatedAt.toInstant())}  ·  内容核对 ${time(board.currentContentCheckedAt?.toInstant())}  ·  本机同步 ${time(t.state.syncedAt?.let(Instant::ofEpochMilli))}",maxLines=3)
+                SubtleText(localizedText({ "内容更新 ${time(board.generatedAt.toInstant())}  ·  内容核对 ${time(board.currentContentCheckedAt?.toInstant())}  ·  本机同步 ${time(t.state.syncedAt?.let(Instant::ofEpochMilli))}" }, { "內容更新 ${time(board.generatedAt.toInstant())}  ·  內容核對 ${time(board.currentContentCheckedAt?.toInstant())}  ·  本機同步 ${time(t.state.syncedAt?.let(Instant::ofEpochMilli))}" }),maxLines=3)
                 if(board.coverageNote.isNotBlank())SubtleText(board.coverageNote,maxLines=4)
             }
         }
@@ -166,7 +168,7 @@ import java.time.format.DateTimeFormatter
     val t=c.today;val a=t.actions["${t.state.profile}\n${t.state.root}\n${card.id}"]
     var raw by remember(card.id,card.interactionFingerprint){mutableStateOf(if(card.presentation.interaction!=null)initialTodayInput(card)else"")}
     var validation by remember {mutableStateOf<String?>(null)}
-    HermesDialog(onDismissRequest=dismiss,inlinePreview=inlinePreview,maxWidth=800.dp,title={Text("事项详情")},text={
+    HermesDialog(onDismissRequest=dismiss,inlinePreview=inlinePreview,maxWidth=800.dp,title={Text(tr("事项详情"))},text={
         val scroll=rememberScrollState()
         Box(Modifier.fillMaxWidth().heightIn(max=520.dp)){
         Column(Modifier.fillMaxWidth().verticalScroll(scroll).padding(end=14.dp),verticalArrangement=Arrangement.spacedBy(18.dp)){
@@ -182,26 +184,26 @@ import java.time.format.DateTimeFormatter
             }
             if(card.presentation.metrics.isNotEmpty())TodayMetrics(card.presentation.metrics)
             if(background.isNotBlank()){
-                Text("背景与进展",fontSize=13.sp,fontWeight=FontWeight.SemiBold,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(tr("背景与进展"),fontSize=13.sp,fontWeight=FontWeight.SemiBold,color=MaterialTheme.colorScheme.onSurfaceVariant)
                 TodayReading(c,background)
             }
             if(card.presentation.facts.isNotEmpty())Column(verticalArrangement=Arrangement.spacedBy(8.dp)){
-                Text("关键事实",fontSize=13.sp,fontWeight=FontWeight.SemiBold)
+                Text(tr("关键事实"),fontSize=13.sp,fontWeight=FontWeight.SemiBold)
                 card.presentation.facts.forEach {TodayReading(c,"- $it")}
             }
             if(card.presentation.steps.isNotEmpty())Column(verticalArrangement=Arrangement.spacedBy(8.dp)){
-                Text("进度",fontSize=13.sp,fontWeight=FontWeight.SemiBold)
+                Text(tr("进度"),fontSize=13.sp,fontWeight=FontWeight.SemiBold)
                 card.presentation.steps.forEach {step->Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){Glyph(if(step.done)"check-square"else"checkbox",Modifier.size(18.dp));Text(step.title,fontSize=14.sp,lineHeight=22.sp)}}
             }
             if(card.presentation.dataNote.isNotBlank())TodayReading(c,card.presentation.dataNote)
-            card.presentation.issue?.let {Text("这张卡的交互格式需要修复，仍可通过聊天继续。",color=MaterialTheme.colorScheme.error)}
+            card.presentation.issue?.let {Text(tr("这张卡的交互格式需要修复，仍可通过聊天继续。"),color=MaterialTheme.colorScheme.error)}
             if(card.sources.isNotEmpty()){
                 HorizontalDivider(color=MaterialTheme.colorScheme.outline.copy(alpha=.5f))
-                Text("来源资料",fontSize=13.sp,fontWeight=FontWeight.Medium)
+                Text(tr("来源资料"),fontSize=13.sp,fontWeight=FontWeight.Medium)
                 card.sources.forEach {path->DeskTextButton(onClick={c.openDocument(path,p=t.state.profile);dismiss()}){Glyph("document",Modifier.size(16.dp));Spacer(Modifier.width(7.dp));Text(path.substringAfterLast('/'),maxLines=2,fontSize=13.sp)}}
             }
-            card.unavailableSources.forEach {SubtleText("当前工作区不可访问：$it",maxLines=2)}
-            a?.let {Text(it.message, color=if(it.status=="failed")MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)}
+            card.unavailableSources.forEach {SubtleText( localizedText({ "当前工作区不可访问：$it" }, { "當前工作區不可訪問：$it" }) ,maxLines=2)}
+            a?.let {Text(tr(it.message), color=if(it.status=="failed")MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)}
             if(a?.pending==true)FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)){
                 SmallButton("同步核对",{t.sync()});SmallButton("处理详情",{t.openProcessing(a.sessionId,a.profile)})
                 if(a.status=="uncertain")SmallButton("恢复原操作",{t.recover(card.id)},enabled=!t.preparing)
@@ -209,7 +211,7 @@ import java.time.format.DateTimeFormatter
             if(card.presentation.interaction!=null&&!card.isClosed){
                 HorizontalDivider();Text(card.presentation.interaction.type.label,fontWeight=FontWeight.Medium)
                 TodayInteractionEditor(card,raw,{raw=it;validation=null},a?.pending!=true)
-                validation?.let {Text(it,color=MaterialTheme.colorScheme.error)}
+                validation?.let {Text(tr(it),color=MaterialTheme.colorScheme.error)}
                 SmallButton(card.presentation.interaction.type.actionLabel,{
                     runCatching {normalizeTodayInput(card,raw)}.onSuccess {t.submit(card,raw)}.onFailure {validation=it.message}
                 },true,enabled=a?.pending!=true&&!t.preparing&&t.state.rootVerified&&t.state.error==null)
@@ -217,7 +219,7 @@ import java.time.format.DateTimeFormatter
         }
         if(scroll.maxValue>0)VerticalScrollbar(rememberScrollbarAdapter(scroll),Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(6.dp))
         }
-    },confirmButton={SmallButton("聊聊这件事",{t.discuss(card);dismiss()},true,enabled=!t.preparing&&t.state.rootVerified)},dismissButton={DeskTextButton(onClick=dismiss){Text("关闭")}})
+    },confirmButton={SmallButton("聊聊这件事",{t.discuss(card);dismiss()},true,enabled=!t.preparing&&t.state.rootVerified)},dismissButton={DeskTextButton(onClick=dismiss){Text(tr("关闭"))}})
 }
 
 @Composable private fun TodayReading(c:DesktopController,text:String){
@@ -234,7 +236,7 @@ import java.time.format.DateTimeFormatter
     if(i.text.isNotBlank())Text(i.text,fontSize=13.sp,lineHeight=22.sp)
     if(i.before.isNotBlank()){SubtleText("当前记录");Text(i.before);SubtleText("拟更新为");Text(i.after)}
     if(i.note.isNotBlank())SubtleText(i.note,maxLines=5)
-    if(i.timezone.isNotBlank())SubtleText("时区：${i.timezone}")
+    if(i.timezone.isNotBlank())SubtleText(localizedText({ "时区：${i.timezone}" }, { "時區：${i.timezone}" }))
     val single=i.type in setOf(TodayLayout.CLARIFICATION,TodayLayout.COMPARISON,TodayLayout.TIME_PICKER)
     val multi=i.type in setOf(TodayLayout.CHECKLIST,TodayLayout.MEETING_ACTIONS,TodayLayout.REVISION,TodayLayout.EVIDENCE)
     order.mapNotNull {id->i.items.firstOrNull {it.id==id}}.forEachIndexed {index,item->
@@ -254,13 +256,13 @@ import java.time.format.DateTimeFormatter
                 FormInput("日期 YYYY-MM-DD",row.optString("due"),{v->edit {it.getJSONObject("rows").getJSONObject(item.id).put("due",v)}},enabled=enabled)
             }
             if(i.type==TodayLayout.TRIAGE)FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp)){
-                listOf("archive" to "归档","lead" to "线索","later" to "稍后").forEach {(v,label)->DeskChip(input.getJSONObject("rows").getJSONObject(item.id).getString("classification")==v,{if(enabled)edit {it.getJSONObject("rows").getJSONObject(item.id).put("classification",v)}},label={Text(label)})}
+                listOf("archive" to "归档","lead" to "线索","later" to "稍后").forEach {(v,label)->DeskChip(input.getJSONObject("rows").getJSONObject(item.id).getString("classification")==v,{if(enabled)edit {it.getJSONObject("rows").getJSONObject(item.id).put("classification",v)}},label={Text(tr(label))})}
             }
         }
     }
-    if(i.type==TodayLayout.MILESTONES)Row(verticalAlignment=Alignment.CenterVertically){Checkbox(input.getBoolean("reviewed"),{v->edit {it.put("reviewed",v)}},enabled=enabled);Text("已核对验收条件")}
+    if(i.type==TodayLayout.MILESTONES)Row(verticalAlignment=Alignment.CenterVertically){Checkbox(input.getBoolean("reviewed"),{v->edit {it.put("reviewed",v)}},enabled=enabled);Text(tr("已核对验收条件"))}
     val operations=when(i.type){TodayLayout.DELIVERABLE->listOf("adopt" to "采用","revise" to "需要修改");TodayLayout.CHANGE->listOf("accept" to "接受变化","keep" to "保留原状");TodayLayout.MEMORY_CHANGE->listOf("correct" to "校正","undo" to "撤销");else->emptyList()}
-    if(operations.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)){operations.forEach {(v,label)->DeskChip(input.optString("operation")==v,{if(enabled)edit {it.put("operation",v)}},label={Text(label)})}}
+    if(operations.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)){operations.forEach {(v,label)->DeskChip(input.optString("operation")==v,{if(enabled)edit {it.put("operation",v)}},label={Text(tr(label))})}}
     i.fields.forEach {f->
         val value=input.getJSONObject("fields").optString(f.id)
         if(f.kind=="select"){
@@ -269,7 +271,7 @@ import java.time.format.DateTimeFormatter
     }
     if(i.series.isNotEmpty()){
         val max=i.series.maxOf {kotlin.math.abs(it.value)}.coerceAtLeast(1.0)
-        i.series.forEach {point->Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){Text(point.label,Modifier.width(90.dp),fontSize=12.sp);Box(Modifier.weight(1f).height(12.dp)){Box(Modifier.fillMaxWidth((kotlin.math.abs(point.value)/max).toFloat()).fillMaxHeight().background(MaterialTheme.colorScheme.primary,RoundedCornerShape(4.dp)))};Text(point.value.toString(),fontSize=12.sp)}}
+        i.series.forEach {point->Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){Text(tr(point.label),Modifier.width(90.dp),fontSize=12.sp);Box(Modifier.weight(1f).height(12.dp)){Box(Modifier.fillMaxWidth((kotlin.math.abs(point.value)/max).toFloat()).fillMaxHeight().background(MaterialTheme.colorScheme.primary,RoundedCornerShape(4.dp)))};Text(point.value.toString(),fontSize=12.sp)}}
     }
     FormInput(when(i.type){TodayLayout.BLOCKER->"补充缺少的信息";TodayLayout.REFLECTION->"今天的复盘";TodayLayout.TIMELINE->"记录具体进展";TodayLayout.PERSON_FOLLOWUP->"跟进要点（生成草稿）";else->"补充说明"},input.optString("note"),{v->edit {it.put("note",v)}},enabled=enabled)
 }
@@ -280,15 +282,15 @@ import java.time.format.DateTimeFormatter
     var migration by remember {mutableStateOf(false)}
     LaunchedEffect(Unit){if(t.state.rootVerified)t.checkSchedule()}
     LaunchedEffect(t.schedule.verified){if(t.schedule.verified){morning=t.schedule.morning;evening=t.schedule.evening;zone=t.schedule.timezone}}
-    HermesDialog(onDismissRequest=dismiss,inlinePreview=inlinePreview,title={Text("事项整理设置")},text={Column(Modifier.widthIn(max=620.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(14.dp)){
-        Text("早晚整理",fontWeight=FontWeight.Medium)
+    HermesDialog(onDismissRequest=dismiss,inlinePreview=inlinePreview,title={Text(tr("事项整理设置"))},text={Column(Modifier.widthIn(max=620.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(14.dp)){
+        Text(tr("早晚整理"),fontWeight=FontWeight.Medium)
         SubtleText("沿用同一服务器工作区的已有任务。调整后核对真实运行时间，手机和电脑共享整理结果。",maxLines=3)
         Row(horizontalArrangement=Arrangement.spacedBy(12.dp)){Column(Modifier.weight(1f)){FormInput("早间 HH:mm",morning,{morning=it})};Column(Modifier.weight(1f)){FormInput("晚间 HH:mm",evening,{evening=it})}}
         FormInput("地区时区",zone,{zone=it})
         Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){SmallButton("保存早晚安排",{t.configure(morning,evening,zone)},true,enabled=!t.preparing&&t.state.rootVerified);SmallButton(if(t.schedule.loading)"核对中…"else"核对是否生效",{t.checkSchedule()},enabled=!t.schedule.loading&&!t.preparing&&t.state.rootVerified)}
-        if(t.schedule.message.isNotBlank())Text(t.schedule.message,fontSize=13.sp,color=if(t.schedule.verified)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
+        if(t.schedule.message.isNotBlank())Text(tr(t.schedule.message),fontSize=13.sp,color=if(t.schedule.verified)MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
         t.schedule.jobs.forEach {SubtleText(it,maxLines=3)}
-        HorizontalDivider();Text("内容与存储",fontWeight=FontWeight.Medium)
+        HorizontalDivider();Text(tr("内容与存储"),fontWeight=FontWeight.Medium)
         SmallButton("优化已有首页和整理规则",{t.prepare("improve_overview_and_schedule")},enabled=!t.preparing&&t.state.rootVerified)
         SubtleText("保留事项、来源和已有任务的时间安排。",maxLines=2)
         if(t.state.fileExists && !t.state.filePath.contains("/.hermes-app/today/")){
@@ -296,5 +298,5 @@ import java.time.format.DateTimeFormatter
             SubtleText("将旧版概览和快照移入专用目录，保留业务文档。",maxLines=2)
         }
     }},confirmButton={SmallButton("完成",dismiss,true)})
-    if(migration)HermesDialog(onDismissRequest={migration=false},title={Text("收纳旧版首页文件？")},text={Text("Hermes 会先核对并暂停匹配的首页整理任务，校验新旧文件后再迁移，随后恢复原安排。遇到冲突会保留两份文件供你核对。")},confirmButton={SmallButton("开始收纳",{migration=false;t.prepare("migrate_today_storage")},true)},dismissButton={DeskTextButton(onClick={migration=false}){Text("取消")}})
+    if(migration)HermesDialog(onDismissRequest={migration=false},title={Text(tr("收纳旧版首页文件？"))},text={Text(tr("Hermes 会先核对并暂停匹配的首页整理任务，校验新旧文件后再迁移，随后恢复原安排。遇到冲突会保留两份文件供你核对。"))},confirmButton={SmallButton("开始收纳",{migration=false;t.prepare("migrate_today_storage")},true)},dismissButton={DeskTextButton(onClick={migration=false}){Text(tr("取消"))}})
 }

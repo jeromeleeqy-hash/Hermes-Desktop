@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.platform.DesktopHost
 
 import androidx.compose.foundation.*
@@ -22,6 +24,9 @@ import com.qingyu.hermescompanion.data.LocalVoiceModels
 private val settingsGroups=linkedMapOf("日常使用" to listOf("外观与账户","桌面助手","对话与记忆","语音","通知","提示词片段"),"AI 能力" to listOf("模型","模型供应商","Skills","工具集","MCP"),"连接与帮助" to listOf("网关","帮助"))
 private val settingsKeywords=mapOf("桌面助手" to "悬浮球 后台 托盘 截图 长按 置顶", "外观与账户" to "主题 皮肤 深色 语言 字号 密度 昵称 头像", "模型" to "服务商 默认模型 推理 辅助 备用 会审", "模型供应商" to "API Key 密钥 服务商 提供商 地址 端点 provider", "对话与记忆" to "人格 时区 记忆 审批 压缩 上下文 发送 换行", "语音" to "麦克风 识别 朗读 音色 转写 录音", "通知" to "消息 提醒 托盘", "提示词片段" to "模板 快捷输入", "Skills" to "技能 扩展", "工具集" to "浏览器 文件 搜索 终端", "MCP" to "服务 外部工具", "网关" to "登录 连接 诊断 更新", "帮助" to "快捷键 版本 使用")
 
+internal fun settingsSearchMatches(section:String,query:String):Boolean = query.isBlank() ||
+    listOf(section,settingsKeywords[section].orEmpty()).any {it.contains(query,true)||tr(it).contains(query,true)}
+
 @Composable fun SettingsView(c:DesktopController) {
     CompositionLocalProvider(LocalSettingsSurface provides true){SettingsContent(c)}
 }
@@ -33,7 +38,7 @@ private val settingsKeywords=mapOf("桌面助手" to "悬浮球 后台 托盘 �
             Column(Modifier.width(212.dp).fillMaxHeight().background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha=.60f)).padding(horizontal=12.dp,vertical=18.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
                 CompactInput(c.settingsSearch,{c.settingsSearch=it},"查找设置")
                 val query=c.settingsSearch.trim()
-                val matches=settingsGroups.values.flatten().filter {query.isBlank()||it.contains(query,true)||settingsKeywords[it].orEmpty().contains(query,true)}
+                val matches=settingsGroups.values.flatten().filter {settingsSearchMatches(it,query)}
                 Column(Modifier.weight(1f).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(4.dp)) {
                     settingsGroups.forEach {(group,tabs)->
                         if(tabs.any {it in matches}) {
@@ -106,14 +111,14 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         listOf(Triple("history","单击","打开快捷提问"),Triple("files","拖入文件","添加文档并提问"),Triple("capture","双击","框选截图；Esc 或右键取消"),Triple("mic","按住左键","按住说话，松开后识别并发送"),Triple("move","按住拖动","移动位置，自动记住停靠位置")).forEach {(icon,gesture,detail)->
             Row(Modifier.fillMaxWidth().padding(vertical=7.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(12.dp)) {
                 Glyph(icon,Modifier.size(20.dp),MaterialTheme.colorScheme.primary)
-                Text(gesture,Modifier.width(90.dp),fontSize=14.sp)
+                Text(tr(gesture),Modifier.width(90.dp),fontSize=14.sp)
                 SubtleText(detail,Modifier.weight(1f),maxLines=2)
             }
         }
         SmallButton("试着问一下",{c.floatingAssistantEnabled=true;c.savePreference("floatingAssistantEnabled","true");c.companion.open()})
     }
     SettingCard("后台运行","关闭主窗口后，正在执行的任务继续运行。") {
-        Text("点击右上角关闭按钮，Hermes 会收起到右下角系统托盘。单击托盘图标可恢复；右键选择‘退出 Hermes’才完整退出。",fontSize=14.sp)
+        Text(tr("点击右上角关闭按钮，Hermes 会收起到右下角系统托盘。单击托盘图标可恢复；右键选择‘退出 Hermes’才完整退出。"),fontSize=14.sp)
         SubtleText("如果系统托盘暂时不可用，窗口会最小化到任务栏，确保随时可以重新打开。",maxLines=3)
     }
 }
@@ -124,7 +129,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
             Row(Modifier.fillMaxWidth().desktopClick(selected=c.sendOnEnter==enter){c.setSendMode(enter)}.padding(horizontal=10.dp,vertical=10.dp).semantics {testTag=if(enter)"setting-send-enter"else"setting-send-ctrl"},verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(12.dp)) {
                 RadioButton(c.sendOnEnter==enter,onClick=null)
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(4.dp)) {
-                    Text(if(enter)"Enter 发送"else shortcutKey()+"+Enter 发送",fontWeight=FontWeight.Medium,fontSize=14.sp)
+                    Text(tr(if(enter)"Enter 发送"else shortcutKey()+tr("+Enter 发送")),fontWeight=FontWeight.Medium,fontSize=14.sp)
                     SubtleText(if(enter)"Shift+Enter 换行；输入法选字不会发送。"else"Enter 换行；组合键发送。")
                 }
             }
@@ -150,7 +155,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         val visible=if(c.modelCatalogError!=null)emptyList()else c.modelCatalog.providers.filter {p->query.isBlank()||p.name.contains(query,true)||p.models.any {it.contains(query,true)}}
         if(visible.isEmpty()&&c.modelCatalogError==null&&!c.modelCatalogLoading)SubtleText(if(query.isBlank())"这个工作空间还没有可选模型，请先配置提供商。"else"没有匹配的模型，试试其他关键词",maxLines=2)
         visible.forEach {p->
-            Disclosure(p.name,p.models.size.toString()+" 个模型",initiallyOpen=query.isNotBlank()) {
+            Disclosure(p.name,p.models.size.toString()+tr(" 个模型"),initiallyOpen=query.isNotBlank()) {
                 p.models.filter {query.isBlank()||p.name.contains(query,true)||it.contains(query,true)}.forEach {model->
                     Row(Modifier.fillMaxWidth().padding(vertical=5.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                         Glyph("model",Modifier.size(16.dp),MaterialTheme.colorScheme.primary);Text(model,Modifier.weight(1f),fontSize=13.sp)
@@ -186,7 +191,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
 
 @Composable private fun AppearanceSettings(c:DesktopController) {
     val profileDraft=settingDraft(c,"appearance",mapOf("name" to c.nickname,"assistant" to c.hermesName,"bio" to c.biography),SettingCodec::text,SettingCodec::text)
-    val name=profileDraft.value["name"].orEmpty();val assistant=profileDraft.value["assistant"].orEmpty();val bio=profileDraft.value["bio"].orEmpty()
+    val name=profileDraft.value["name"].orEmpty();val assistant=profileDraft.value["assistant"].orEmpty();val bio=displayBiography(profileDraft.value["bio"].orEmpty())
     var avatar by remember {mutableStateOf<Boolean?>(null)}
     SectionCard(Modifier.fillMaxWidth()) {
         SectionTitle("界面主题","选择适合你的工作氛围")
@@ -196,7 +201,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         HorizontalDivider(color=MaterialTheme.colorScheme.outline.copy(alpha=.5f))
         Column(Modifier.padding(horizontal=20.dp,vertical=8.dp)) {
             SettingLine("显示模式"){Picker(c.appearance,listOf("浅色","深色","跟随系统"),{tr(it)}){c.appearance=it;c.savePreference("appearance",it)}}
-            SettingLine("界面语言"){Picker(when(c.language){"en"->"English";"zh"->"简体中文";else->tr("跟随系统")},listOf("system","zh","en"),{when(it){"en"->"English";"zh"->"简体中文";else->tr("跟随系统")}}){c.changeLanguage(it)}}
+            SettingLine("界面语言"){Picker(desktopLanguageLabel(c.language),listOf("system","zh","zh-TW","en"),::desktopLanguageLabel){c.changeLanguage(it)}}
             SettingLine("界面密度"){Picker(if(c.compact)"紧凑"else"标准",listOf(true,false),{if(it)"紧凑"else"标准"}){c.compact=it;c.savePreference("compact",it.toString())}}
             SettingLine("文字大小"){Picker("${(c.textScale*100).toInt()}%",listOf(.9f,1f,1.1f,1.2f,1.3f),{"${(it*100).toInt()}%"}){c.textScale=it;c.savePreference("textScale",it.toString())}}
             Toggle("减少动态效果",c.reduceMotion){c.reduceMotion=it;c.savePreference("reduceMotion",it.toString())}
@@ -338,10 +343,10 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
     LocalVoiceModelsSettings(c)
     SettingCard("语音输入","本机偏好立即生效；普通录音和连续语音可以分别使用。") {
         Toggle("启用语音输入",pref.enabled){change(pref.copy(enabled=it))}
-        fun engineLabel(value:String)=when(value){"server"->"Hermes 服务器";"system"->"${DesktopHost.os.label} 系统";"local"->"电脑本地模型";else->"自动选择"}
+        fun engineLabel(value:String)=when(value){"server"->"Hermes 服务器";"system"->localizedText({ "${DesktopHost.os.label} 系统" }, { "${DesktopHost.os.label} 系統" });"local"->"电脑本地模型";else->"自动选择"}
         SettingLine("语音识别"){Picker(engineLabel(pref.sttEngine),listOf("automatic","server","system","local"),::engineLabel){c.voice.models.selectEngine(LocalVoiceModels.recognition,it)}}
         SettingLine("语音朗读"){Picker(engineLabel(pref.ttsEngine),listOf("automatic","server","system","local"),::engineLabel){c.voice.models.selectEngine(LocalVoiceModels.playback,it)}}
-        if(pref.ttsEngine=="local")SettingLine("Kokoro 音色"){Picker("音色 "+(pref.localSpeaker+1),(0..102).toList(),{"音色 "+(it+1)}){change(pref.copy(localSpeaker=it))}}
+        if(pref.ttsEngine=="local")SettingLine("Kokoro 音色"){Picker(tr("音色 ")+(pref.localSpeaker+1),(0..102).toList(),{tr("音色 ")+(it+1)}){change(pref.copy(localSpeaker=it))}}
         SubtleText("可以分别选择识别和朗读方式。本地模型需先下载对应语音包。",maxLines=3)
         SettingLine("识别语言"){Picker(pref.language,listOf("zh-CN","zh-TW","yue-HK","en-US","ja-JP","ko-KR"),{if(it=="yue-HK")"粤语"else optionLabel(it)}){change(pref.copy(language=it))}}
         SettingLine("中文转写"){Picker(pref.transcriptScript,listOf("simplified","traditional","original"),::optionLabel){change(pref.copy(transcriptScript=it))}}
@@ -382,7 +387,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         val notes=c.voiceNotes.filter {it.profile==c.profile}.reversed()
         if(notes.isEmpty())SubtleText("暂无录音记录。")
         notes.forEach {note->
-            Text(note.session?.title?:"识别测试",fontWeight=FontWeight.Medium)
+            Text(note.session?.title?.let(::sessionDisplayTitle)?:tr("识别测试"),fontWeight=FontWeight.Medium)
             SubtleText(note.transcript.ifBlank {"尚未识别"},maxLines=3)
             Row {DeskTextButton(onClick={c.voice.retry(note)},enabled=!c.recording&&!c.voiceBusy){Text(tr("重新识别"))};DeskTextButton(onClick={c.voice.reuse(note)},enabled=note.session!=null&&note.transcript.isNotBlank()){Text(tr("填入草稿"))};DeskTextButton(onClick={c.voice.remove(note)}){Text(tr("删除"))}}
             HorizontalDivider(color=MaterialTheme.colorScheme.outline)
@@ -392,7 +397,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
 
 @Composable private fun GatewaySettings(c:DesktopController) {
     var logout by remember {mutableStateOf(false)};var update by remember {mutableStateOf(false)}
-    Text(c.baseUrl.ifBlank {tr("演示连接")});Caption("${c.username.ifBlank {c.nickname}} · ${c.profile}")
+    Text(tr(c.baseUrl.ifBlank {tr("演示连接")}));Caption("${c.username.ifBlank {c.nickname}} · ${c.profile}")
     Caption("Agent ${c.gateway.agentVersion.ifBlank {"—"}} · Gateway ${c.gateway.gatewayVersion.ifBlank {"—"}}")
     Row(horizontalArrangement=Arrangement.spacedBy(10.dp)) {SmallButton("连接诊断",{c.diagnoseConnection()});SmallButton("重新连接网关",{c.request(block={it.reconnectGateway();it.gatewayInfo()}){c.gateway=it;c.retryRecovery();c.notice="已重新连接。"}})}
     if(c.diagnosticBusy)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
@@ -404,7 +409,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         }
     }
     if(c.diagnosticLines.isNotEmpty())SmallButton("复制诊断结果",{DesktopFiles.copy("Hermes "+BuildConfig.VERSION_NAME+"\n"+c.diagnosticLines.joinToString("\n"){(name,ok)->name+"："+(if(ok)"通过"else"未通过")+c.diagnosticDetails[name]?.let {" · "+it}.orEmpty()});c.notice="诊断结果已复制"})
-    Text(if(c.sessionsLoading)"会话同步中 · 已读取 "+c.sessions.size+" 段"else if(c.sessionsLoadError!=null)"会话同步未完成 · 已保留 "+c.sessions.size+" 段"else"当前工作空间 · "+c.sessions.size+" 段会话",fontSize=13.sp)
+    Text(tr(if(c.sessionsLoading)tr("会话同步中 · 已读取 ")+c.sessions.size+tr(" 段")else if(c.sessionsLoadError!=null)tr("会话同步未完成 · 已保留 ")+c.sessions.size+tr(" 段")else tr("当前工作空间 · ")+c.sessions.size+tr(" 段会话")),fontSize=13.sp)
     c.sessionsLoadError?.let {SyncProblem(c,"会话读取失败",it,c.sessionsLoading){c.refresh()}}
     SmallButton("检查 Hermes Agent 更新",{c.request(block={it.checkAgentUpdate(true)}){c.updateInfo=it}},enabled=!c.updating)
     c.updateInfo?.let {info->Text(info.message);Caption(info.currentVersion);info.commits.take(12).forEach {Caption(it.summary)};if(info.updateAvailable&&info.canApply)SmallButton("更新服务器 Agent",{update=true},true,enabled=!c.updating)}
@@ -428,7 +433,7 @@ private fun settingsIcon(section:String)=when(section){"外观与账户"->"palet
         draft.rawInputs[label]=next
         val parsed=next.toIntOrNull()
         if(parsed!=null&&parsed in range){draft.fieldErrors.remove(label);change(parsed)}
-        else draft.fieldErrors[label]="$label：请输入 ${range.first}–${range.last} 之间的整数。"
-    },error=if(valid)null else "请输入 ${range.first}–${range.last} 之间的整数。")
+        else draft.fieldErrors[label]=localizedText({ "$label：请输入 ${range.first}–${range.last} 之间的整数。" }, { "$label：請輸入 ${range.first}–${range.last} 之間的整數。" })
+    },error=if(valid)null else localizedText({ "请输入 ${range.first}–${range.last} 之间的整数。" }, { "請輸入 ${range.first}–${range.last} 之間的整數。" }))
 }
 @Composable private fun Percentage(label:String,value:Double,range:ClosedFloatingPointRange<Float>,change:(Double)->Unit) {Caption("${tr(label)} · ${(value*100).toInt()}%");Slider(value.toFloat().coerceIn(range.start,range.endInclusive),{change(it.toDouble())},valueRange=range)}

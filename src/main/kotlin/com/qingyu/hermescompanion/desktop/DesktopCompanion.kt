@@ -89,7 +89,7 @@ class DesktopCompanion(private val c:DesktopController) {
         if(bytes.size>8*1024*1024){failure="截图超过 8 MB，请选择小一点的范围。";return}
         val key=s.scopedId
         if(c.attachments[key].orEmpty().size>=10){failure="每次最多添加 10 个附件，请先移除一个附件。";return}
-        val name="截图-"+java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))+".png"
+        val name=tr("截图-")+java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))+".png"
         c.attachments[key]=c.attachments[key].orEmpty()+PendingAttachment(name=name,mimeType="image/png",dataUrl="data:image/png;base64,"+Base64.getEncoder().encodeToString(bytes))
     }
     fun send(){session?.let {c.sendToSession(it,queue=c.runs.containsKey(it.scopedId))}}

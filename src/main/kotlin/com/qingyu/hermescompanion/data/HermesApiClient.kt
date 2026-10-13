@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.data
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.i18n.uiText
 import com.qingyu.hermescompanion.R
 
@@ -1937,7 +1939,7 @@ class HermesApiClient(
                     val existing=readWorkspaceDocumentForProfile(path,session.profile).bytes
                     existing.contentEquals(java.util.Base64.getDecoder().decode(data.substringAfter(',')))
                 }.getOrDefault(false)
-                if(!same)throw ApiException((failure as? ApiException)?.statusCode?:502,"${attachment.name} 上传未完成，附件已保留。${failure.message.orEmpty()}")
+                if(!same)throw ApiException((failure as? ApiException)?.statusCode?:502,localizedText({ "${attachment.name} 上传未完成，附件已保留。${failure.message.orEmpty()}" }, { "${attachment.name} 上傳未完成，附件已保留。${failure.message.orEmpty()}" }))
             }
             attachment.copy(remotePath=path,uploadDataUrl=null)
         }
@@ -2247,7 +2249,7 @@ class HermesApiClient(
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             synchronized(socketLock) {
                 if (socket === webSocket) {
-                    recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText("服务器关闭连接（$code）", "Server closed connection ($code)"))
+                    recordTransportIssue("WebSocket", com.qingyu.hermescompanion.today.todayText( localizedText({ "服务器关闭连接（$code）" }, { "伺服器關閉連線（$code）" }) , "Server closed connection ($code)"))
                     handleSocketClosed(uiText(R.string.ui_0126, "网络连接发生波动，正在尝试恢复"))
                 }
             }
@@ -2930,5 +2932,5 @@ internal fun parseGatewayRequest(payload:JSONObject,runtime:String,type:AgentReq
     }
     return base.copy(requestId=rpcId?.let {JSONTokener(it).nextValue().toString()}?:base.requestId,
         runtimeSessionId=runtime,serverRpcId=rpcId,questions=questions,
-        title=if(questions.size>1)"Hermes 有 ${questions.size} 个问题需要你确认"else base.title)
+        title=if(questions.size>1)localizedText({ "Hermes 有 ${questions.size} 个问题需要你确认" }, { "Hermes 有 ${questions.size} 個問題需要你確認" })else base.title)
 }

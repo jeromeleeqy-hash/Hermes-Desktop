@@ -92,7 +92,7 @@ import kotlinx.coroutines.launch
                 val pending=c.decisions.values.filter {it.session.scopedId==key}
                 var showDecision by remember(key){mutableStateOf(false)}
                 if(pending.isNotEmpty()) {
-                    DeskTextButton(onClick={showDecision=true},modifier=Modifier.padding(horizontal=20.dp)){Glyph("inbox",Modifier.size(16.dp));Spacer(Modifier.width(6.dp));Text("待你确认 · "+pending.first().request.title,maxLines=2)}
+                    DeskTextButton(onClick={showDecision=true},modifier=Modifier.padding(horizontal=20.dp)){Glyph("inbox",Modifier.size(16.dp));Spacer(Modifier.width(6.dp));Text(tr("待你确认 · ")+pending.first().request.title,maxLines=2)}
                     if(showDecision)DecisionDialog(c,pending.first()){showDecision=false}
                 }else LaunchedEffect(Unit){showDecision=false}
                 ChatComposer(c,s)
@@ -107,7 +107,7 @@ import kotlinx.coroutines.launch
     Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primary.copy(alpha=.035f)).padding(horizontal=20.dp,vertical=4.dp),verticalAlignment=Alignment.CenterVertically) {
         Glyph("outline",Modifier.size(16.dp),MaterialTheme.colorScheme.primary)
         Box {
-            DeskTextButton(onClick={open=true}){Text(tr("会话大纲")+" · "+questions.size+" 个问题",fontSize=12.sp);Glyph("chevron-down",Modifier.size(13.dp))}
+            DeskTextButton(onClick={open=true}){Text(tr("会话大纲")+" · "+questions.size+tr(" 个问题"),fontSize=12.sp);Glyph("chevron-down",Modifier.size(13.dp))}
             DeskMenu(open,{open=false},modifier=Modifier.width(440.dp).heightIn(max=400.dp)) {
                 questions.forEachIndexed {i,turn->DeskMenuItem(text={Text((i+1).toString()+". "+outlineText(turn.message),maxLines=2,overflow=TextOverflow.Ellipsis,fontSize=13.sp)},onClick={open=false;c.focusMessageId=turn.message.id})}
                 if(questions.isEmpty())Text(tr("第一条消息会出现在这里"),Modifier.padding(16.dp))
@@ -147,12 +147,12 @@ import kotlinx.coroutines.launch
                 }
                 val activities=(c.runs[s.scopedId]?.takeIf {it.assistantId in turn.sourceIds}?.tools.orEmpty()+turn.sourceIds.flatMap {c.completedActivities[it].orEmpty()}).distinctBy {it.id}
                 if(c.activityMode!="answer"&&(activities.isNotEmpty()||m.reasoning.isNotBlank()&&c.settings?.conversation?.showReasoning!=false)) {
-                    Disclosure("执行记录",if(activities.isNotEmpty())activities.size.toString()+" 项工具活动"else"查看模型提供的过程说明",initiallyOpen=c.activityMode=="expanded") {
+                    Disclosure("执行记录",if(activities.isNotEmpty())activities.size.toString()+tr(" 项工具活动")else"查看模型提供的过程说明",initiallyOpen=c.activityMode=="expanded") {
                         if(m.reasoning.isNotBlank()&&c.settings?.conversation?.showReasoning!=false)SelectionContainer {Text(m.reasoning,fontSize=13.sp,lineHeight=21.sp,color=colors.onSurfaceVariant)}
                         activities.forEach {activity->
                             Row(Modifier.fillMaxWidth().background(colors.primary.copy(alpha=.035f),RoundedCornerShape(8.dp)).padding(9.dp),horizontalArrangement=Arrangement.spacedBy(8.dp),verticalAlignment=Alignment.CenterVertically) {
                                 Glyph(if(activity.status==ToolStatus.FAILED)"alert"else if(activity.status==ToolStatus.COMPLETED)"check"else"clock",Modifier.size(15.dp),if(activity.status==ToolStatus.FAILED)colors.error else colors.primary)
-                                Text(toolLabel(activity.name),Modifier.weight(1f),fontSize=12.sp)
+                                Text(tr(toolLabel(activity.name)),Modifier.weight(1f),fontSize=12.sp)
                                 DeskTextButton(onClick={c.showDetails(toolLabel(activity.name),activity.preview.ifBlank {"没有额外输出"})}){Text(tr("详情"),fontSize=11.sp)}
                             }
                         }
@@ -195,7 +195,7 @@ import kotlinx.coroutines.launch
     val color=if(notice.problem)MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
     Row(Modifier.fillMaxWidth().desktopClick(fillHover=false){c.showDetails(notice.label,notice.raw)}.padding(vertical=3.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         Glyph(if(notice.problem)"alert"else"model",Modifier.size(15.dp),color)
-        Text(notice.label,Modifier.weight(1f),fontSize=12.sp,color=color)
+        Text(tr(notice.label),Modifier.weight(1f),fontSize=12.sp,color=color)
         Glyph("chevron-right",Modifier.size(13.dp),color)
     }
 }
@@ -221,7 +221,7 @@ import kotlinx.coroutines.launch
     Column(Modifier.fillMaxWidth().padding(horizontal=20.dp).background(MaterialTheme.colorScheme.primary.copy(alpha=.045f),RoundedCornerShape(10.dp)).padding(horizontal=10.dp,vertical=4.dp)) {
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
             Glyph("queue",Modifier.size(16.dp),MaterialTheme.colorScheme.primary)
-            DeskTextButton(onClick={expanded=!expanded}){Text(waiting.size.toString()+" 条消息排队中",fontSize=12.sp)}
+            DeskTextButton(onClick={expanded=!expanded}){Text(waiting.size.toString()+tr(" 条消息排队中"),fontSize=12.sp)}
             Spacer(Modifier.weight(1f))
             if(!c.runs.containsKey(s.scopedId))SmallButton("继续发送",{c.resumeQueue(s)})
         }

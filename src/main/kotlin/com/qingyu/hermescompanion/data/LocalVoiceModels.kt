@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.data
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -74,7 +76,7 @@ class VoiceModelStore(val root: File, private val client: OkHttpClient = OkHttpC
             }
             try {
                 call.execute().use { response ->
-                    check(response.isSuccessful) { "下载未完成（${response.code}），可稍后继续" }
+                    check(response.isSuccessful) { localizedText({ "下载未完成（${response.code}），可稍后继续" }, { "下載未完成（${response.code}），可稍後繼續" }) }
                     val append = response.code == 206 && offset > 0
                     if (response.code == 206) require(validResumeRange(response.header("Content-Range"), offset, spec.bytes)) {
                         "下载源返回了错误的续传位置，请重试"

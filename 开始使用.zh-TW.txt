@@ -1,0 +1,6 @@
+Hermes macOS 1.8.3 · M 系列晶片
+
+這是完整原始碼包。直接生成應用請優先下載對應 BuildKit，雙擊 Build-Mac-App.command。
+從原始碼開發和打包請閱讀 README.md 與 docs/BUILD-MACOS-1.8.3.md。
+
+適配目標 macOS 27；本輪尚未在 Mac 真機執行，app 和 DMG 需在 Mac 上生成。

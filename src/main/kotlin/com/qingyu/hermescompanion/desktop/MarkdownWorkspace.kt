@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class,androidx.compose.ui.ExperimentalComposeUiApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
@@ -174,7 +176,7 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
                 Text(tab.document.name,fontSize=15.sp,fontWeight=FontWeight.SemiBold,maxLines=1,overflow=TextOverflow.Ellipsis)
                 SubtleText(if(c.savingDocument)"正在保存到服务器…"else if(dirty)"本机草稿已保留"else"已与服务器同步")
             }
-            Hint("保存 · ${shortcutKey()} S"){SmallButton(if(c.savingDocument)"保存中…"else"保存",{c.saveWithEditor()},true,enabled=dirty&&!c.savingDocument)}
+            Hint(localizedText({ "保存 · ${shortcutKey()} S" }, { "儲存 · ${shortcutKey()} S" })){SmallButton(if(c.savingDocument)"保存中…"else"保存",{c.saveWithEditor()},true,enabled=dirty&&!c.savingDocument)}
             Hint("收起文档"){DeskIconButton(onClick={flushed {if(c.isDirty())discard=true else {c.closeDocument(tab);if(c.document==null)c.documentSplit=false}}}){Glyph("close",Modifier.size(18.dp))}}
         }
         HorizontalDivider(color=colors.outline.copy(alpha=.55f))
@@ -185,7 +187,7 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
                     Glyph("link",Modifier.size(16.dp),if(syncScroll)colors.primary else colors.onSurfaceVariant);Spacer(Modifier.width(5.dp));Text(tr(if(syncScroll)"同步滚动"else"独立滚动"),fontSize=12.sp)
                 }
             }
-            Hint("查找文档 · ${shortcutKey()} F"){DeskIconButton(onClick={search=!search}){Glyph("search",Modifier.size(18.dp))}}
+            Hint(localizedText({ "查找文档 · ${shortcutKey()} F" }, { "查詢文件 · ${shortcutKey()} F" })){DeskIconButton(onClick={search=!search}){Glyph("search",Modifier.size(18.dp))}}
             Box {
                 Hint(if(outline&&contentWidth>=820.dp&&mode=="预览")"收起目录"else"显示目录") {
                     DeskIconButton(onClick={if(contentWidth>=820.dp&&mode=="预览")outline=!outline else outlineMenu=true},enabled=headings.isNotEmpty(),modifier=Modifier.semantics {testTag="markdown-outline"}){Glyph("outline",Modifier.size(18.dp),if(outline)colors.primary else colors.onSurfaceVariant)}
@@ -205,7 +207,7 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
                     DeskMenuItem(text={Text(tr("复制路径"))},leadingIcon={Glyph("link")},onClick={more=false;c.copyDocumentPath();c.notice="服务器路径已复制"})
                     DeskMenuItem(text={Text(tr("排版编辑 · 基础 Markdown"))},leadingIcon={Glyph("edit")},enabled=!requiresSourceEditor(text),onClick={more=false;selectMode("排版编辑")})
                     MenuDivider()
-                    listOf(.9f,1f,1.15f,1.3f).forEach {scale->DeskMenuItem(text={Text("${(scale*100).toInt()}% · ${tr("阅读字号")}")},trailingIcon={if(zoom==scale)Glyph("check",Modifier.size(16.dp))},onClick={zoom=scale;more=false})}
+                    listOf(.9f,1f,1.15f,1.3f).forEach {scale->DeskMenuItem(text={Text(tr("${(scale*100).toInt()}% · ${tr("阅读字号")}"))},trailingIcon={if(zoom==scale)Glyph("check",Modifier.size(16.dp))},onClick={zoom=scale;more=false})}
                 }
             }
             DeskTextButton(onClick={c.discussDocument()},enabled=!c.savingDocument){Glyph("history",Modifier.size(17.dp));Spacer(Modifier.width(5.dp));Text(tr("基于文档提问"))}
@@ -221,10 +223,10 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
         if(search&&replace)FlowRow(Modifier.fillMaxWidth().background(colors.surfaceVariant.copy(alpha=.6f)).padding(horizontal=18.dp,vertical=8.dp),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
             CompactInput(replacement,{replacement=it},"替换为",Modifier.widthIn(min=160.dp,max=300.dp))
             SmallButton("替换当前",{selectMode(if(mode=="双栏")mode else"编辑");update(replaceMarkdownMatch(field,query,replacement));c.notice="已替换，可撤销"},enabled=matches.isNotEmpty())
-            SmallButton("全部替换",{val count=matches.size;selectMode(if(mode=="双栏")mode else"编辑");update(replaceMarkdownMatch(field,query,replacement,true));c.notice="已替换 $count 处，可撤销"},enabled=matches.isNotEmpty())
+            SmallButton("全部替换",{val count=matches.size;selectMode(if(mode=="双栏")mode else"编辑");update(replaceMarkdownMatch(field,query,replacement,true));c.notice= localizedText({ "已替换 $count 处，可撤销" }, { "已替換 $count 處，可撤銷" }) },enabled=matches.isNotEmpty())
         }
         if(mode in setOf("编辑","双栏")&&!changes)Row(Modifier.pointerInput(key){awaitPointerEventScope {while(true){val event=awaitPointerEvent(PointerEventPass.Initial);if(event.type==PointerEventType.Press)toolbarSelection=latestField}}}.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal=18.dp,vertical=5.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(2.dp)) {
-            Picker("标题",listOf("h1","h2","h3","h4","h5","h6"),{"${it.last()} 级标题"}){format(it)}
+            Picker("标题",listOf("h1","h2","h3","h4","h5","h6"),{localizedText({ "${it.last()} 级标题" }, { "${it.last()} 級標題" })}){format(it)}
             listOf(Triple("bold","加粗","bold"),Triple("italic","斜体","italic"),Triple("strike","删除线","strike"),Triple("link","链接","link"),Triple("list-bullet","无序列表","bullet"),Triple("list-number","有序列表","numbered"),Triple("check-square","任务清单","task"),Triple("quote","引用","quote"),Triple("code","代码块","code"),Triple("table","插入表格","table")).forEach {(icon,label,action)->
                 Hint(label){DeskIconButton(onClick={format(action)},modifier=Modifier.semantics {testTag="markdown-$action"}){Glyph(icon,Modifier.size(18.dp),colors.onSurfaceVariant)}}
             }
@@ -248,7 +250,7 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
                             SelectionContainer {
                                 LazyColumn(state=reading,modifier=Modifier.widthIn(max=820.dp).fillMaxSize().semantics {testTag="document-content"},
                                     contentPadding=PaddingValues(horizontal=if(both)28.dp else 48.dp,vertical=36.dp),verticalArrangement=Arrangement.spacedBy(18.dp)) {
-                                    item {Row(Modifier.padding(bottom=6.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {SubtleText("文档");SubtleText("· ${text.length} 字符 · 约 ${(text.length/600+1)} 分钟")}}
+                                    item {Row(Modifier.padding(bottom=6.dp),horizontalArrangement=Arrangement.spacedBy(8.dp)) {SubtleText("文档");SubtleText(localizedText({ "· ${text.length} 字符 · 约 ${(text.length/600+1)} 分钟" }, { "· ${text.length} 字元 · 約 ${(text.length/600+1)} 分鐘" }))}}
                                     itemsIndexed(nodes){index,node->Box(Modifier.fillMaxWidth().onSizeChanged {blockHeights[index]=it.height}.semantics {testTag="markdown-block-$index"}){MarkdownNode(node,::openLink)}}
                                     item {Spacer(Modifier.height(80.dp))}
                                 }
@@ -287,7 +289,7 @@ private val SourceEditorBringIntoView=object:BringIntoViewSpec {
         Row(Modifier.fillMaxWidth().semantics {testTag="document-status"}.padding(horizontal=18.dp,vertical=9.dp),horizontalArrangement=Arrangement.spacedBy(10.dp),verticalAlignment=Alignment.CenterVertically) {
             Box(Modifier.size(5.dp).background(if(dirty)Color(0xFFDBA048)else Color(0xFF3AA78A),RoundedCornerShape(3.dp)))
             SubtleText(if(dirty)"本机草稿 · 尚未保存到服务器"else"服务器版本",Modifier.weight(1f))
-            SubtleText(if(mode=="预览")"${text.length} 字符"else"第 $line 行，第 $column 列 · ${text.length} 字符")
+            SubtleText(if(mode=="预览")localizedText({ "${text.length} 字符" }, { "${text.length} 字元" })else localizedText({ "第 $line 行，第 $column 列 · ${text.length} 字符" }, { "第 $line 行，第 $column 列 · ${text.length} 字元" }))
         }
     }
     if(discard)HermesDialog(onDismissRequest={discard=false},title={Text(tr("文档尚未保存"))},text={Column(verticalArrangement=Arrangement.spacedBy(10.dp)){Text(tab.document.name,fontWeight=FontWeight.Medium);Text(tr("可以保留本机草稿，稍后从文件页继续编辑。"),color=colors.onSurfaceVariant)}},

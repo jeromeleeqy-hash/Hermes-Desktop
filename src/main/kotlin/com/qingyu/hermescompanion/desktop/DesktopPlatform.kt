@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.model.*
 import com.qingyu.hermescompanion.data.VoiceInputSample
 import com.qingyu.hermescompanion.data.voiceInputSample
@@ -43,7 +45,7 @@ object DesktopFiles {
             EventQueue.invokeAndWait(task);return task.get()
         }
         if(DesktopHost.isMac||DesktopHost.isWindows){
-            val picker=nativePicker(parent,"导入 "+model+" 模型包",FileDialog.LOAD)
+            val picker=nativePicker(parent,tr("导入 ")+model+tr(" 模型包"),FileDialog.LOAD)
             return try{
                 picker.isMultipleMode=false
                 picker.filenameFilter=FilenameFilter {_,name->name.endsWith(".tar.bz2",ignoreCase=true)}
@@ -51,7 +53,7 @@ object DesktopFiles {
             }finally{picker.dispose()}
         }
         val picker=JFileChooser().apply {
-            dialogTitle="导入 "+model+" 模型包";isMultiSelectionEnabled=false
+            dialogTitle=tr("导入 ")+model+tr(" 模型包");isMultiSelectionEnabled=false
             fileFilter=javax.swing.filechooser.FileNameExtensionFilter("模型包 · .tar.bz2","bz2")
         }
         return if(picker.showOpenDialog(pickerOwner(parent))==JFileChooser.APPROVE_OPTION)picker.selectedFile else null
@@ -90,8 +92,8 @@ object DesktopFiles {
         picker.selectedFile.writeBytes(document.bytes)
     }
     fun attachment(file:File):PendingAttachment {
-        require(file.isFile) { "请选择具体文件：${file.name}" }
-        require(file.length()<=12L*1024*1024) { "${file.name} 超过 12 MB，请压缩后添加。" }
+        require(file.isFile) { localizedText({ "请选择具体文件：${file.name}" }, { "請選擇具體檔案：${file.name}" }) }
+        require(file.length()<=12L*1024*1024) { localizedText({ "${file.name} 超过 12 MB，请压缩后添加。" }, { "${file.name} 超過 12 MB，請壓縮後新增。" }) }
         val mime=com.qingyu.hermescompanion.platform.ModernImageSupport.mime(file.name) ?: Files.probeContentType(file.toPath()) ?: when(file.extension.lowercase()) { "md","log","yaml","yml","kt","py","js","ts","json","csv" -> "text/plain"; else -> "application/octet-stream" }
         return when {
             mime.startsWith("image/") -> { require(file.length()<=8*1024*1024) { "图片不能超过 8 MB。" }; PendingAttachment(name=file.name,mimeType=mime,dataUrl="data:$mime;base64,${Base64.getEncoder().encodeToString(file.readBytes())}") }
@@ -149,7 +151,7 @@ class DesktopAudio {
                 } } catch(e:Exception) { if(recording)writerFailure=e }
                 finally { if(raw!==file)file.delete() }
             },"hermes-microphone").apply { isDaemon=true;start() }
-        } catch(e:Exception){active.close();throw IllegalStateException("无法使用麦克风，请检查系统授权和输入设备。${e.message}",e)}
+        } catch(e:Exception){active.close();throw IllegalStateException(localizedText({ "无法使用麦克风，请检查系统授权和输入设备。${e.message}" }, { "無法使用麥克風，請檢查系統授權和輸入裝置。${e.message}" }),e)}
     }
     fun stop():File {
         val active=line ?: error("没有正在进行的录音。")
@@ -158,7 +160,7 @@ class DesktopAudio {
         val source=raw ?: error("录音文件不存在。");raw=null
         val wave=Files.createTempFile("hermes-voice-",".wav").toFile()
         try {
-            writerFailure?.let { throw IllegalStateException("录音中断：${it.message}",it) }
+            writerFailure?.let { throw IllegalStateException(localizedText({ "录音中断：${it.message}" }, { "錄音中斷：${it.message}" }),it) }
             require(source.length()>=3200) { "录音太短，请重试。" }
             AudioInputStream(source.inputStream(),format,source.length()/format.frameSize).use { AudioSystem.write(it,AudioFileFormat.Type.WAVE,wave) }
             return wave
@@ -193,7 +195,7 @@ class DesktopAudio {
             }
             playback=process;ownProcess=process
             check(process.waitFor(300,TimeUnit.SECONDS)&&process.exitValue()==0) {
-                "系统语音不可用，请检查系统音色，或选择服务器引擎。" + (result?.let {runCatching {org.json.JSONObject(it.readText(Charsets.UTF_8)).optString("error")}.getOrDefault("")} ?: "")
+                tr("系统语音不可用，请检查系统音色，或选择服务器引擎。") + (result?.let {runCatching {org.json.JSONObject(it.readText(Charsets.UTF_8)).optString("error")}.getOrDefault("")} ?: "")
             }
         } finally {ownProcess?.destroy();ownProcess?.waitFor(3,TimeUnit.SECONDS);if(playback===ownProcess)playback=null;file.delete();result?.delete()}
     }
@@ -261,12 +263,12 @@ object DesktopNotifications {
     fun close() {menu?.close();menu=null;tray?.let {SystemTray.getSystemTray().remove(it)};tray=null;macFloatingItem=null;defaultTarget=null;if(DesktopHost.isMac)runCatching {MacNativeNotifications.close()}}
     fun show(title:String,message:String,sound:Boolean=true,target:DesktopNotificationTarget?=null) {
         if(DesktopHost.isWindows) {
-            javax.swing.SwingUtilities.invokeLater {tray?.displayMessage(title,message,TrayIcon.MessageType.INFO)}
+            javax.swing.SwingUtilities.invokeLater {tray?.displayMessage(tr(title),tr(message),TrayIcon.MessageType.INFO)}
             return
         }
         if(!DesktopHost.isMac)return
         val destination=target?:defaultTarget?.invoke()?:return
-        runCatching {MacNativeNotifications.show(title,message,sound,destination)}
+        runCatching {MacNativeNotifications.show(tr(title),tr(message),sound,destination)}
             .onFailure {java.util.logging.Logger.getLogger("Hermes.Notifications").log(java.util.logging.Level.WARNING,"Native notification failed",it)}
     }
 }

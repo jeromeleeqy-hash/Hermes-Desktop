@@ -3,6 +3,6 @@
 <plist version="1.0"><dict>
 <key>CFBundleIdentifier</key><string>com.qingyu.hermes.desktop.speech</string>
 <key>CFBundleName</key><string>Hermes Speech</string>
-<key>NSSpeechRecognitionUsageDescription</key><string>Hermes 使用 macOS 语音识别将你的录音转换为文字。</string>
-<key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入。</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>Hermes 使用 macOS 語音辨識將你的錄音轉換為文字。</string>
+<key>NSMicrophoneUsageDescription</key><string>Hermes 使用麥克風進行語音輸入。</string>
 </dict></plist>

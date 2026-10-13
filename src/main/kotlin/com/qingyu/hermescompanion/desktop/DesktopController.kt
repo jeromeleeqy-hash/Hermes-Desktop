@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.runtime.*
 import com.qingyu.hermescompanion.data.*
 import com.qingyu.hermescompanion.model.*
@@ -236,7 +238,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             loadLocalPreferences()
             filesPanelOpen=store.get("filesPanelOpen","true")=="true"
             if (autoConnect && baseUrl.isNotBlank()) connect(baseUrl, username, null)
-        } catch (e: Exception) { error = "无法读取本机配置：${e.message}" }
+        } catch (e: Exception) { error = localizedText({ "无法读取本机配置：${e.message}" }, { "無法讀取本機配置：${e.message}" }) }
         scope.launch { while(isActive) {
             delay(5_000)
             if(connected&&!demo) {
@@ -255,7 +257,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         if(!demo) scope.launch {
             snapshotFlow { if(workspaceReady) checkpoint(0) else null }.debounce(450).collectLatest { value ->
                 if(value!=null) { val repo=repository;val next=value.copy(revision=++revision)
-                    try { withContext(Dispatchers.IO) { repo?.save(next) } } catch(e:CancellationException){throw e} catch(e:Exception){ error="本机内容保存失败：${e.message}" }
+                    try { withContext(Dispatchers.IO) { repo?.save(next) } } catch(e:CancellationException){throw e} catch(e:Exception){ error=localizedText({ "本机内容保存失败：${e.message}" }, { "本機內容儲存失敗：${e.message}" }) }
                 }
             }
         }
@@ -712,7 +714,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 attachments[key] = current + added
                 val failures=results.mapIndexedNotNull {index,result->result.exceptionOrNull()?.let {files[index].name+"："+(it.message?:"读取失败")}}
                 if(failures.isNotEmpty())attachmentErrors[key]=failures.joinToString("\n")
-                if(added.isNotEmpty())notice="已添加 ${added.size} 个附件，发送后交给 Hermes。"
+                if(added.isNotEmpty())notice= localizedText({ "已添加 ${added.size} 个附件，发送后交给 Hermes。" }, { "已新增 ${added.size} 個附件，傳送後交給 Hermes。" })
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { if(token==epoch)attachmentErrors[key] = e.message?:"文件添加失败。" }
             finally {if(token==epoch)attachmentLoads[key]=((attachmentLoads[key]?:1)-1).coerceAtLeast(0)}
@@ -849,7 +851,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             StreamEvent.PromptAccepted -> {runs[key]=run.copy(status="已收到，正在处理")}
             is StreamEvent.RunStarted -> runs[key]=run.copy(status="正在处理")
             is StreamEvent.ToolStarted -> {
-                runs[key]=run.copy(status="正在执行 ${event.name}",tools=run.tools+ToolActivity(name=event.name,preview=event.preview,status=ToolStatus.RUNNING))
+                runs[key]=run.copy(status= localizedText({ "正在执行 ${event.name}" }, { "正在執行 ${event.name}" }) ,tools=run.tools+ToolActivity(name=event.name,preview=event.preview,status=ToolStatus.RUNNING))
                 if(event.name in setOf("clarify","approval"))scope.launch {
                     delay(1200)
                     if(runs[key]?.assistantId==run.assistantId&&decisions.values.none {it.session.scopedId==key})refreshAgentState(run.session)
@@ -971,7 +973,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 repository?.save(checkpoint(++revision))
                 store.put(storageKey("decisions"),"[]")
             }
-        }.onFailure { error = "待确认事项恢复失败：${it.message}" }
+        }.onFailure { error =  localizedText({ "待确认事项恢复失败：${it.message}" }, { "待確認事項恢復失敗：${it.message}" })  }
     }
     fun navigate(target:Page) {
         if(target==Page.HOME)today.closeAttention()
@@ -1042,7 +1044,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         }
     }
     fun openProfileFile(file:HermesProfileFile) {
-        
+
         val p=profile;val token=++documentReadToken
         request(p,{ it.readProfileFile(file) }) {
             if(profile==p && token==documentReadToken) { page=Page.FILES; selectDocument(DocumentTab(it,p)); editing=false }
@@ -1100,7 +1102,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             // The user may have switched conversations while the server changed this model.
             sessions=sessions.map {if(it.scopedId==key)updated else it}
             if(currentSession?.scopedId==key)currentSession=updated
-            notice=if(updated.model==model)"已切换模型 · ${updated.model}"else"服务器当前模型为 ${updated.model}，未确认切换到 $model。"
+            notice=if(updated.model==model) localizedText({ "已切换模型 · ${updated.model}" }, { "已切換模型 · ${updated.model}" }) else localizedText({ "服务器当前模型为 ${updated.model}，未确认切换到 $model。" }, { "伺服器當前模型為 ${updated.model}，未確認切換到 $model。" })
             if(updated.profile==profile)loadModelCatalog(force=true)
         }
     }
@@ -1117,7 +1119,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
     fun setSendMode(enter:Boolean){sendOnEnter=enter;savePreference("sendOnEnter",enter.toString())}
     fun rememberReading(key:String,value:ReadingPosition){readingPositions[key]=value}
 
-    fun savePreference(key:String,value:String) { if(!demo) try { store.put(key,value) } catch(e:Exception) { error="设置保存失败：${e.message}" } }
+    fun savePreference(key:String,value:String) { if(!demo) try { store.put(key,value) } catch(e:Exception) { error= localizedText({ "设置保存失败：${e.message}" }, { "設定儲存失敗：${e.message}" })  } }
     fun search(query:String) {
         searchJob?.cancel(); searchResults=null;searchBusy=false;searchError=null
         if(query.isBlank()) return
@@ -1135,7 +1137,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 }
                 if(token==epoch && profile==p) searchResults=found.toList()
             }
-            if(failures>0&&token==epoch&&profile==p)searchError="$failures 段会话暂时无法读取，搜索结果可能不完整。"
+            if(failures>0&&token==epoch&&profile==p)searchError= localizedText({ "$failures 段会话暂时无法读取，搜索结果可能不完整。" }, { "$failures 段對話暫時無法讀取，搜尋結果可能不完整。" })
             } finally {if(isActive && token==epoch && profile==p)searchBusy=false}
         }
     }
@@ -1156,7 +1158,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             unread.toSet(),docs,recentArtifacts.toList(),voiceNotes.toList(),decisions.values.map { it.copy(request=it.request.copy(isResponding=false)) },completions,currentSession,indexedSessionVersions.toMap(),sessionSummaries.toMap(),readMessageCounts.toMap())
     }
     internal suspend fun saveCheckpoint() { if(demo || !workspaceReady)return;val next=checkpoint(++revision);val repo=repository;withContext(Dispatchers.IO) { repo?.save(next) } }
-    fun flushCheckpoint():Boolean { if(demo || !workspaceReady)return true;return try {settingsDrafts.values.forEach {it.persist()}; repository?.save(checkpoint(++revision));true } catch(e:Exception) { error="本机内容保存失败：${e.message}";false } }
+    fun flushCheckpoint():Boolean { if(demo || !workspaceReady)return true;return try {settingsDrafts.values.forEach {it.persist()}; repository?.save(checkpoint(++revision));true } catch(e:Exception) { error= localizedText({ "本机内容保存失败：${e.message}" }, { "本機內容儲存失敗：${e.message}" }) ;false } }
     internal fun restoreWorkspace(saved:WorkspaceState) {
         revision=saved.revision
         saved.drafts.forEach { (key,value) -> drafts[key]=value.text;attachments[key]=value.attachments }
@@ -1220,7 +1222,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
             var failures=0
             try {candidates.forEachIndexed {index,s->
                 ensureActive();if(p!=profile||token!=epoch)return@launch
-                artifactsIndexProgress="正在整理 ${index+1} / ${candidates.size} 段会话"
+                artifactsIndexProgress= localizedText({ "正在整理 ${index+1} / ${candidates.size} 段会话" }, { "正在整理 ${index+1} / ${candidates.size} 段對話" })
                 try {
                     var offset=0;var total=s.messageCount;val collected=mutableListOf<ChatMessage>()
                     do {val page=withContext(Dispatchers.IO){api.loadMessagePage(s,200,offset)}
@@ -1233,7 +1235,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 }catch(e:CancellationException){throw e}catch(_:Exception){failures++}
                 delay(60)
             }
-            if(failures>0)artifactsIndexError="$failures 段会话暂未整理完成，可以重试。"
+            if(failures>0)artifactsIndexError= localizedText({ "$failures 段会话暂未整理完成，可以重试。" }, { "$failures 段對話暫未整理完成，可以重試。" })
             }finally {if(p==profile&&token==epoch){artifactsIndexing=false;artifactsIndexProgress=""}}
         }
     }
@@ -1245,7 +1247,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
         fun attach(s:HermesSession) {
             val existing=attachments[s.scopedId].orEmpty()
             if(existing.none {it.remotePath==tab.document.path})attachments[s.scopedId]=existing+DesktopFiles.remoteAttachment(tab.document)
-            val hint=if(quote.isBlank())"请基于《${tab.document.name}》"else "关于《${tab.document.name}》中的这段内容：\n> ${quote.replace("\n","\n> ")}\n\n"
+            val hint=if(quote.isBlank()) localizedText({ "请基于《${tab.document.name}》" }, { "請基於《${tab.document.name}》" }) else  localizedText({ "关于《${tab.document.name}》中的这段内容：\n> ${quote.replace("\n","\n> ")}\n\n" }, { "關於《${tab.document.name}》中的這段內容：\n> ${quote.replace("\n","\n> ")}\n\n" })
             val draft=drafts[s.scopedId].orEmpty();drafts[s.scopedId]=if(draft.isBlank())hint else "$draft\n\n$hint"
             document=tab;documentSplit=true;page=Page.CHAT
         }
@@ -1312,7 +1314,7 @@ class DesktopController(val demo:Boolean=false, val store:SecureConfigStore=Secu
                 "登录状态" to {api.checkSavedSession();"当前登录状态有效"},
                 "实时连接" to {api.ensureConnected();"实时通道已建立"},
                 "近期连接记录" to {api.recentTransportIssues().ifBlank {"暂无连接异常记录"}},
-                "会话读取" to {val rows=api.listSessions();"已读取 ${rows.sessions.size} 段会话（本次诊断）"},
+                "会话读取" to {val rows=api.listSessions(); localizedText({ "已读取 ${rows.sessions.size} 段会话（本次诊断）" }, { "已讀取 ${rows.sessions.size} 段對話（本次診斷）" }) },
                 "文件能力" to {api.initialWorkspace();"文件目录可以读取"})
             checks.map { (name,check)->
                 val result=runCatching(check)

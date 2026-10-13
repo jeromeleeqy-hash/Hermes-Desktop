@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -84,7 +86,7 @@ import javax.imageio.ImageIO
             "最近产物"->{
                 val files=c.recentArtifacts.filter {it.profile==c.profile&&artifactMatchesProject(it,c.project)&&it.name.contains(query,true)}
                 if(c.artifactsIndexing)SubtleText(c.artifactsIndexProgress,maxLines=2)
-                c.artifactsIndexError?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重试整理",{c.syncArtifactIndex()})}
+                c.artifactsIndexError?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重试整理",{c.syncArtifactIndex()})}
                 if(files.isEmpty()&&!c.artifactsIndexing)Caption(if(query.isNotBlank())"没有匹配的文件"else "当前项目还没有已整理的产物。")
                 LazyColumn(Modifier.weight(1f)) {items(files,key={it.sessionId+":"+it.path}) {file->FileListRow(file.name,file.sessionTitle,false,false,{c.openArtifact(file)})}}
             }
@@ -110,7 +112,7 @@ import javax.imageio.ImageIO
                 }
                 if(c.filesLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
                 c.filesLoadError?.let {message->
-                    Text(message,color=MaterialTheme.colorScheme.error,fontSize=12.sp,maxLines=3,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    Text(tr(message),color=MaterialTheme.colorScheme.error,fontSize=12.sp,maxLines=3,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                     Row {SmallButton("重试读取",{c.browse(c.requestedFilesPath,navigate=false)});DeskTextButton(onClick={c.showDetails("读取文件失败",message)}){Text(tr("详情"))}}
                     if(c.listing!=null)SubtleText("下方仍显示上次成功读取的目录。",maxLines=2)
                 }
@@ -201,7 +203,7 @@ import javax.imageio.ImageIO
         HorizontalDivider(color=colors.outline.copy(alpha=.5f))
         if(changes) {
             val diff=remember(tab.document.content,c.documentText()){documentDiff(tab.document.content,c.documentText())}
-            SubtleText("与打开时的服务器版本比较 · +${diff.count {it.kind=='+'}} / −${diff.count {it.kind=='-'}}",Modifier.padding(12.dp),maxLines=2)
+            SubtleText(localizedText({ "与打开时的服务器版本比较 · +${diff.count {it.kind=='+'}} / −${diff.count {it.kind=='-'}}" }, { "與開啟時的伺服器版本比較 · +${diff.count {it.kind=='+'}} / −${diff.count {it.kind=='-'}}" }),Modifier.padding(12.dp),maxLines=2)
             val diffScroll=rememberLazyListState()
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 SelectionContainer {LazyColumn(state=diffScroll,modifier=Modifier.fillMaxSize(),contentPadding=PaddingValues(12.dp)) {items(diff) {line->
@@ -214,7 +216,7 @@ import javax.imageio.ImageIO
             if(markdown&&!sourceMode) {
                 Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal=12.dp),verticalAlignment=Alignment.CenterVertically) {
                     Picker("正文",listOf("p","h1","h2","h3"),{when(it){"h1"->"一级标题";"h2"->"二级标题";"h3"->"三级标题";else->"正文"}},handle::command)
-                    listOf("B" to "bold","I" to "italic","• 列表" to "ul","1. 列表" to "ol").forEach {(label,cmd)->DeskTextButton(onClick={handle.command(cmd)}){Text(label)}}
+                    listOf("B" to "bold","I" to "italic","• 列表" to "ul","1. 列表" to "ol").forEach {(label,cmd)->DeskTextButton(onClick={handle.command(cmd)}){Text(tr(label))}}
                 }
                 key(c.documentKey(tab),sourceMode) {WebDocument(editableDocumentHtml(c.documentText(),colors.surface.cssHex(),colors.onSurface.cssHex(),colors.onSurfaceVariant.cssHex(),colors.primary.cssHex(),colors.surfaceVariant.cssHex(),colors.outline.cssHex()),Modifier.weight(1f).fillMaxWidth(),true,handle){c.setDocumentText(tab,it)}}
             }else OutlinedTextField(c.documentText(),{c.setDocumentText(tab,it)},modifier=Modifier.weight(1f).fillMaxWidth().padding(12.dp),textStyle=LocalTextStyle.current.copy(fontFamily=FontFamily.Monospace))
@@ -259,7 +261,7 @@ internal fun saveLocalDocument(c:DesktopController,tab:DocumentTab) {
     runCatching {
         val value=if(c.isDirty()) tab.document.copy(content=c.documentText(),bytes=c.documentText().toByteArray(Charsets.UTF_8)) else tab.document
         DesktopFiles.save(value)
-    }.onFailure { c.error="无法保存到本机：${it.message}" }
+    }.onFailure { c.error=localizedText({ "无法保存到本机：${it.message}" }, { "無法儲存到本機：${it.message}" }) }
 }
 
 internal val markdownParser=Parser.builder().includeSourceSpans(org.commonmark.parser.IncludeSourceSpans.BLOCKS).extensions(listOf(TablesExtension.create(),org.commonmark.ext.gfm.strikethrough.StrikethroughExtension.create())).build()
@@ -387,7 +389,7 @@ internal fun markdownSoftBreak(node:SoftLineBreak):String {
         if(bitmap!=null)Image(bitmap,tr("对话图片"),Modifier.heightIn(max=280.dp).widthIn(max=400.dp).clip(RoundedCornerShape(6.dp)).desktopClick {c.openDocument(path,p=profile)},contentScale=ContentScale.Fit)
         Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(7.dp)) {
             if(loading)CircularProgressIndicator(Modifier.size(14.dp),strokeWidth=1.5.dp)else Glyph("image",Modifier.size(16.dp),colors.primary)
-            Text(if(loading)tr("正在读取图片…")else if(path.startsWith("data:"))tr("图片")else path.substringBefore('?').substringAfterLast('/').substringAfterLast('\\'),Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
+            Text(tr(if(loading)tr("正在读取图片…")else if(path.startsWith("data:"))tr("图片")else path.substringBefore('?').substringAfterLast('/').substringAfterLast('\\')),Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
         }
         if(!loading&&bitmap==null)Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
             Text(tr("图片暂时无法显示"),Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant)

@@ -1,0 +1,910 @@
+{
+  "schema_version": 1,
+  "presentation_version": 4,
+  "date": "2026-10-03",
+  "generated_at": "2026-10-03T19:00:00+08:00",
+  "headline": "互動卡片示例",
+  "summary": "只用於樣式體驗和格式參考，禁止寫入使用者的真實概覽。",
+  "example_only": true,
+  "cards": [
+    {
+      "id": "example-clarification",
+      "title": "這兩條是同一次安排嗎？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "clarification",
+          "items": [
+            {
+              "id": "same",
+              "title": "同一件事",
+              "detail": "關聯記錄，保留各自來源",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "different",
+              "title": "兩件不同的事",
+              "detail": "",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "unknown",
+              "title": "暫時不能確定",
+              "detail": "",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "note": "確認關聯不等於任務已完成。"
+        },
+        "facts": [
+          "9/28：看場地",
+          "9/29：場地已選定"
+        ],
+        "metrics": [],
+        "intent": "clarify",
+        "question": "這兩條是同一次安排嗎？",
+        "options": [
+          {
+            "title": "同一件事",
+            "detail": "關聯記錄，保留各自來源"
+          },
+          {
+            "title": "兩件不同的事",
+            "detail": ""
+          },
+          {
+            "title": "暫時不能確定",
+            "detail": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "example-comparison",
+      "title": "新流程，怎樣開始？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "comparison",
+          "items": [
+            {
+              "id": "pilot",
+              "title": "先試點",
+              "detail": "準備約 2 天；先驗證效果。",
+              "value": "1 個小組",
+              "status": "open"
+            },
+            {
+              "id": "all",
+              "title": "統一推廣",
+              "detail": "準備約 1 周；先做好培訓。",
+              "value": "全部小組",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "note": "耗時為討論中的估計。"
+        },
+        "facts": [],
+        "metrics": [],
+        "intent": "decide",
+        "question": "新流程，怎樣開始？",
+        "options": [
+          {
+            "title": "先試點",
+            "detail": "準備約 2 天；先驗證效果。"
+          },
+          {
+            "title": "統一推廣",
+            "detail": "準備約 1 周；先做好培訓。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example-priorities",
+      "title": "先把精力放在哪？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "general",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "priorities",
+          "items": [
+            {
+              "id": "decision",
+              "title": "確認會議決策",
+              "detail": "需要你做決定",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "outline",
+              "title": "完成研究提綱",
+              "detail": "留一段專注時間",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "study",
+              "title": "安排本週學習",
+              "detail": "個人計劃",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-time_picker",
+      "title": "哪段時間適合討論？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "schedule",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "time_picker",
+          "items": [
+            {
+              "id": "morning",
+              "title": "10 月 6 日 · 10:00",
+              "detail": "",
+              "value": "2026-10-06T10:00:00+08:00",
+              "status": "open"
+            },
+            {
+              "id": "afternoon",
+              "title": "10 月 6 日 · 14:00",
+              "detail": "",
+              "value": "2026-10-06T14:00:00+08:00",
+              "status": "open"
+            },
+            {
+              "id": "late",
+              "title": "10 月 6 日 · 16:30",
+              "detail": "",
+              "value": "2026-10-06T16:30:00+08:00",
+              "status": "open"
+            }
+          ],
+          "fields": [
+            {
+              "id": "duration",
+              "label": "討論時長",
+              "kind": "select",
+              "value": "30 分鐘",
+              "choices": [
+                "30 分鐘",
+                "45 分鐘",
+                "60 分鐘"
+              ],
+              "required": true
+            }
+          ],
+          "timezone": "Asia/Shanghai"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-meeting_actions",
+      "title": "把決定落到具體的人",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "meeting_actions",
+          "items": [
+            {
+              "id": "scope",
+              "title": "整理試點範圍",
+              "detail": "",
+              "value": "",
+              "status": "open",
+              "owner": "小林",
+              "due": "2026-10-06"
+            },
+            {
+              "id": "criteria",
+              "title": "確認驗收標準",
+              "detail": "",
+              "value": "",
+              "status": "open",
+              "owner": "我",
+              "due": "2026-10-07"
+            },
+            {
+              "id": "training",
+              "title": "準備培訓資料",
+              "detail": "",
+              "value": "",
+              "status": "open",
+              "owner": "",
+              "due": ""
+            }
+          ],
+          "fields": [],
+          "note": "建立個人跟蹤待辦，不自動向負責人發訊息。"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-checklist",
+      "title": "週末分享會準備",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "life",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "checklist",
+          "items": [
+            {
+              "id": "topic",
+              "title": "確定主題",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "cases",
+              "title": "整理三個案例",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "rehearse",
+              "title": "試講一遍",
+              "detail": "",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "questions",
+              "title": "準備討論問題",
+              "detail": "",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": [],
+        "steps": [
+          {
+            "title": "確定主題",
+            "status": "done"
+          },
+          {
+            "title": "整理三個案例",
+            "status": "done"
+          },
+          {
+            "title": "試講一遍",
+            "status": "open"
+          },
+          {
+            "title": "準備討論問題",
+            "status": "open"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example-milestones",
+      "title": "試點結束，進入下一階段？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "milestones",
+          "items": [
+            {
+              "id": "requirements",
+              "title": "需求確認",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "pilot",
+              "title": "小範圍試點",
+              "detail": "驗收材料已就緒",
+              "value": "",
+              "status": "active"
+            },
+            {
+              "id": "review",
+              "title": "復盤與推廣",
+              "detail": "等待啟動",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "text": "核對試點記錄與問題清單；確認流程可重複，關鍵問題有處理結論。"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-blocker",
+      "title": "還差交付時間，才能比較",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "blocker",
+          "items": [
+            {
+              "id": "scope",
+              "title": "範圍與費用",
+              "detail": "兩個方案均已提供",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "deadline",
+              "title": "方案 B 的交付時間",
+              "detail": "尚未提供",
+              "value": "",
+              "status": "waiting"
+            }
+          ],
+          "fields": [],
+          "text": "需要方案 B 的交付時間。補充後由 Hermes 核驗，再繼續比較。"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-execution",
+      "title": "整理這週的研究資料",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "execution",
+          "items": [
+            {
+              "id": "read",
+              "title": "讀取資料",
+              "detail": "已讀取 4 份資料",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "compare",
+              "title": "整理差異",
+              "detail": "",
+              "value": "",
+              "status": "active"
+            },
+            {
+              "id": "write",
+              "title": "形成建議",
+              "detail": "",
+              "value": "",
+              "status": "waiting"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-deliverable",
+      "title": "這份方案可以採用了嗎？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "deliverable",
+          "items": [
+            {
+              "id": "document",
+              "title": "週會流程最佳化方案",
+              "detail": "包含會前準備、會上決策和會後跟蹤。",
+              "value": "第 2 版",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "note": "採用只表示認可本版本，不會自動釋出或傳送。"
+        },
+        "facts": [],
+        "metrics": [],
+        "intent": "decide",
+        "question": "這份方案可以採用了嗎？"
+      }
+    },
+    {
+      "id": "example-metrics",
+      "title": "任務按期完成率",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "update",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "metrics",
+          "items": [],
+          "fields": [],
+          "series": [
+            {
+              "label": "8/29",
+              "value": 61
+            },
+            {
+              "label": "9/5",
+              "value": 67
+            },
+            {
+              "label": "9/12",
+              "value": 65
+            },
+            {
+              "label": "9/19",
+              "value": 71
+            },
+            {
+              "label": "9/26",
+              "value": 74
+            },
+            {
+              "label": "10/3",
+              "value": 82
+            }
+          ],
+          "text": "本週 41/50，上週 37/50，提高 8 個百分點。已取消任務不計入分母。"
+        },
+        "facts": [],
+        "metrics": [
+          {
+            "label": "本週按期完成率",
+            "value": "82",
+            "unit": "%"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example-change",
+      "title": "交付時間有了新訊息",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "change",
+          "items": [
+            {
+              "id": "review",
+              "title": "材料審閱",
+              "detail": "原定 10 月 8 日",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "report",
+              "title": "彙總報告",
+              "detail": "原定 10 月 9 日",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "before": "10 月 7 日 · 週三",
+          "after": "10 月 9 日 · 週五"
+        },
+        "facts": [],
+        "metrics": [],
+        "intent": "decide",
+        "question": "交付時間有了新訊息"
+      }
+    },
+    {
+      "id": "example-timeline",
+      "title": "流程試點，推進到哪了？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "timeline",
+          "items": [
+            {
+              "id": "need",
+              "title": "提出需求",
+              "detail": "討論記錄：希望減少重複彙報。",
+              "value": "9/28",
+              "status": "open"
+            },
+            {
+              "id": "scope",
+              "title": "確定試點範圍",
+              "detail": "會議紀要：先由一個小組試行。",
+              "value": "9/30",
+              "status": "open"
+            },
+            {
+              "id": "feedback",
+              "title": "收集反饋中",
+              "detail": "正在收集反饋，尚無效果結論。",
+              "value": "10/3",
+              "status": "open"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-evidence",
+      "title": "先試點，再決定是否推廣",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "update",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "evidence",
+          "items": [
+            {
+              "id": "interview",
+              "title": "重複彙報耗時較多",
+              "detail": "示例訪談：不同渠道需要重複填寫相同內容。",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "tools",
+              "title": "現有工具支援小組試行",
+              "detail": "示例檢查：範圍和許可權可獨立配置。",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "risk",
+              "title": "是否會增加協作遺漏？",
+              "detail": "尚未取得試點後的觀察記錄。",
+              "value": "",
+              "status": "waiting"
+            }
+          ],
+          "fields": [],
+          "text": "現有資料支援嘗試，尚不足以預測整體效果。"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-revision",
+      "title": "把這段話說得更清楚",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "revision",
+          "items": [
+            {
+              "id": "direct",
+              "title": "表達更直接",
+              "detail": "為了進一步提升溝通效率",
+              "value": "為減少重複彙報",
+              "status": "open"
+            },
+            {
+              "id": "specific",
+              "title": "補充具體動作",
+              "detail": "請大家及時反饋",
+              "value": "請在週四前補充試點問題",
+              "status": "open"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": [],
+        "intent": "decide",
+        "question": "把這段話說得更清楚"
+      }
+    },
+    {
+      "id": "example-triage",
+      "title": "這些內容，怎麼留下來？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "information",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "triage",
+          "items": [
+            {
+              "id": "chat",
+              "title": "專案討論記錄",
+              "detail": "微信分享 · 已解析",
+              "value": "lead",
+              "status": "open"
+            },
+            {
+              "id": "archive",
+              "title": "去年工作總結",
+              "detail": "PDF · 已解析",
+              "value": "archive",
+              "status": "open"
+            },
+            {
+              "id": "voice",
+              "title": "散步時的想法",
+              "detail": "語音 · 已轉寫",
+              "value": "later",
+              "status": "open"
+            }
+          ],
+          "fields": []
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-memory_change",
+      "title": "偏好的閱讀時段變了",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "decision",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "memory_change",
+          "items": [],
+          "fields": [],
+          "before": "清晨",
+          "after": "睡前",
+          "text": "來自你的明確表達：最近更喜歡睡前讀一會兒。"
+        },
+        "facts": [],
+        "metrics": [],
+        "intent": "decide",
+        "question": "偏好的閱讀時段變了"
+      }
+    },
+    {
+      "id": "example-person_followup",
+      "title": "記得這個約定",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "relationships",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "person_followup",
+          "items": [
+            {
+              "id": "promise",
+              "title": "你答應過",
+              "detail": "分享最近的閱讀清單",
+              "value": "",
+              "status": "open"
+            },
+            {
+              "id": "next",
+              "title": "還沒確定",
+              "detail": "下次討論的時間",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "text": "林同學 · 上次溝通 3 天前"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-quick_log",
+      "title": "今天讀了多久？",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "quick_log",
+          "items": [],
+          "fields": [
+            {
+              "id": "minutes",
+              "label": "閱讀時長 · 分鐘",
+              "kind": "number",
+              "value": "25",
+              "required": true,
+              "min": 0,
+              "max": 1440
+            },
+            {
+              "id": "takeaway",
+              "label": "想記住的一點 · 可不填",
+              "kind": "text",
+              "value": ""
+            }
+          ]
+        },
+        "facts": [],
+        "metrics": []
+      }
+    },
+    {
+      "id": "example-reflection",
+      "title": "今天，留住一點收穫",
+      "summary": "這是用於體驗的虛構示例，不是你的真實記錄。",
+      "kind": "followup",
+      "domain": "life",
+      "status": "open",
+      "sources": [],
+      "presentation": {
+        "layout": "interactive",
+        "caption": "這是用於體驗的虛構示例，不是你的真實記錄。",
+        "interaction": {
+          "version": 1,
+          "type": "reflection",
+          "items": [
+            {
+              "id": "decision",
+              "title": "確認會議決策",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "materials",
+              "title": "整理研究資料",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "read",
+              "title": "完成閱讀記錄",
+              "detail": "",
+              "value": "",
+              "status": "done"
+            },
+            {
+              "id": "outline",
+              "title": "研究提綱",
+              "detail": "",
+              "value": "",
+              "status": "open"
+            }
+          ],
+          "fields": [],
+          "note": "選中延續事項只調整明日重點，原截止日期保持不變。"
+        },
+        "facts": [],
+        "metrics": []
+      }
+    }
+  ]
+}

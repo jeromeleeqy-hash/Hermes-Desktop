@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "presentation_version": 4,
+  "editorial_version": 2,
+  "example_only": true,
+  "date": "2026-10-04",
+  "generated_at": "2026-10-04T14:00:00+08:00",
+  "headline": "虛構示例：清楚地呈現值得關注的事",
+  "summary": "所有內容僅用於說明結構，絕不能複製成使用者事實。",
+  "cards": [
+    {
+      "id": "reading-plan",
+      "title": "方案方向已定，分工還待確認",
+      "summary": "評審已經確定方案方向。執行負責人和完成時間尚未記錄，討論分工後就能繼續推進。",
+      "kind": "followup",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "followup",
+        "reason": "示例：使用者明確要求跟進此方案。",
+        "priority": 1
+      },
+      "presentation": {
+        "layout": "note",
+        "caption": "評審已經確定方案方向。執行負責人和完成時間尚未記錄，討論分工後就能繼續推進。"
+      }
+    },
+    {
+      "id": "reading-progress",
+      "title": "研究材料已整理，接著比較兩種觀點",
+      "summary": "已有材料和來源索引，接下來需要對照兩種觀點的證據，整理成自己的判斷。",
+      "kind": "followup",
+      "domain": "learning",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "focus",
+        "reason": "示例：這是使用者本週的學習重點。",
+        "priority": 2
+      },
+      "presentation": {
+        "layout": "progress",
+        "caption": "已有材料和來源索引，接下來需要對照兩種觀點的證據，整理成自己的判斷。",
+        "steps": [
+          {
+            "title": "整理材料",
+            "status": "done"
+          },
+          {
+            "title": "核對來源",
+            "status": "done"
+          },
+          {
+            "title": "比較觀點並寫結論",
+            "status": "open"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reading-schedule",
+      "title": "明天下午，討論方案的執行安排",
+      "summary": "日曆中已有這次討論。負責人和時間安排是本次需要討論的內容，可先準備一個分工草稿。",
+      "kind": "schedule",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "focus",
+        "reason": "示例：來自已確認的日曆安排。",
+        "priority": 2
+      },
+      "presentation": {
+        "layout": "schedule",
+        "caption": "日曆中已有這次討論。負責人和時間安排是本次需要討論的內容，可先準備一個分工草稿。"
+      },
+      "when": "2026-10-05 15:00 · Asia/Shanghai"
+    },
+    {
+      "id": "reading-metrics",
+      "title": "本週完成了更多事項",
+      "summary": "這組示例資料來自同一份週記錄，統計範圍一致。完成數量增加，仍有兩項需要繼續核對。",
+      "kind": "update",
+      "domain": "work",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "reminder",
+        "reason": "示例：與正在跟蹤的工作有關的新變化。",
+        "priority": 2
+      },
+      "presentation": {
+        "layout": "metrics",
+        "caption": "完成數量比上週增加，仍有兩項需要繼續核對。統計範圍與上週一致。",
+        "metrics": [
+          {
+            "label": "本週完成",
+            "value": "8",
+            "unit": "項"
+          },
+          {
+            "label": "上週完成",
+            "value": "5",
+            "unit": "項"
+          }
+        ],
+        "data_note": "示例週記錄 · 同一統計範圍；具體起止日期未提供"
+      }
+    },
+    {
+      "id": "reading-personal",
+      "title": "給今晚留一點休息時間",
+      "summary": "示例記錄顯示最近兩天工作結束較晚。如果今晚沒有緊急安排，可以考慮提前收尾。",
+      "kind": "update",
+      "domain": "life",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "reminder",
+        "reason": "建議，並非已安排的任務。",
+        "priority": 2
+      },
+      "presentation": {
+        "layout": "note",
+        "caption": "示例記錄顯示最近兩天工作結束較晚。如果今晚沒有緊急安排，可以考慮提前收尾。"
+      }
+    },
+    {
+      "id": "reading-receipt",
+      "title": "資料訂閱費用已記下",
+      "summary": "這筆示例訂閱支出已在原記錄儲存。需要調整分類或補充說明時，可以直接聊。",
+      "kind": "update",
+      "domain": "finance",
+      "status": "open",
+      "sources": [],
+      "attention": {
+        "group": "reminder",
+        "reason": "示例：回應使用者剛才的記賬請求。",
+        "priority": 2
+      },
+      "presentation": {
+        "layout": "receipt",
+        "caption": "這筆示例訂閱支出已在原記錄儲存。需要調整分類或補充說明時，可以直接聊。",
+        "metrics": [
+          {
+            "label": "訂閱費用",
+            "value": "68",
+            "unit": "元"
+          }
+        ]
+      },
+      "when": "2026-10-04"
+    }
+  ]
+}

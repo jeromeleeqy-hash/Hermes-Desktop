@@ -13,7 +13,7 @@ ROOT_FILES = {
     "Preview-Layout.bat", "Preview-Layout.command", "README.md",
     "Run-Hermes.bat", "Run-Hermes.command", "THIRD_PARTY_NOTICES.md",
     "build.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
-    "settings.gradle.kts", "开始使用.txt",
+    "settings.gradle.kts", "开始使用.txt", "README.zh-TW.md", "开始使用.zh-TW.txt",
 }
 ROOT_DIRS = {"src", "tests", "docs", "gradle", "licenses", "packaging", ".github"}
 EXCLUDED_DIRS = {".git", ".gradle", ".kotlin", "__pycache__", "build"}

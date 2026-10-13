@@ -2,6 +2,8 @@
 package com.qingyu.hermescompanion.desktop
 
 import com.qingyu.hermescompanion.model.*
+import com.qingyu.hermescompanion.storage.SecureConfigStore
+import java.nio.file.Files
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.input.pointer.*
@@ -29,8 +31,9 @@ object RenderPreviews {
         val destination=File(args.firstOrNull() ?: "build/previews").apply {mkdirs()}
         for(name in args.drop(1).ifEmpty {listOf("home-wide","home-narrow","home-empty","tasks-wide-empty","tasks-wide-active","tasks-narrow","settings-wide-glass","settings-retina-glass","settings-paper","settings","english-dark","chat","chat-paper","chat-glass","chat-wide","chat-collapsed","narrow-active","jump","dialog","dialog-paper","dialog-glass","files","files-wide","sessions","assistant","dialog-approval","dialog-approval-glass")}) {
             val loginPreview=name.startsWith("login")
-            val page=when {loginPreview->Page.HOME;name.startsWith("dialog-approval")->Page.TASKS;(name.startsWith("settings")||name=="english-dark")->Page.PROFILE;name.startsWith("home")->Page.HOME;(name.startsWith("tasks")||name.startsWith("cron"))->Page.TASKS;name.startsWith("files")->Page.FILES;name=="sessions"->Page.SESSIONS;else->Page.CHAT}
-            val c=DesktopController(true);c.page=page;c.reduceMotion=true
+            val page=when {loginPreview->Page.HOME;name.startsWith("dialog-approval")->Page.TASKS;(name.startsWith("settings")||name=="english-dark")->Page.PROFILE;name.startsWith("home")->Page.HOME;(name.startsWith("tasks")||name.startsWith("cron"))->Page.TASKS;name.startsWith("files")->Page.FILES;name.startsWith("sessions")->Page.SESSIONS;else->Page.CHAT}
+            val previewState=Files.createTempDirectory("hermes-preview-")
+            val c=DesktopController(true,SecureConfigStore(previewState){ByteArray(32){17}});c.page=page;c.reduceMotion=true
             var quickDismissed=false
             if(name=="chat-focus")c.focusMode=true
             if(name=="chat-collapsed")c.sidebarCollapsed=true
@@ -44,8 +47,12 @@ object RenderPreviews {
             if(name=="chat-drawer")c.sessionDrawer=true
             if(name=="chat-split"){c.documentSplit=true;c.setFilesPanel(false)}
             if(name.contains("large-text"))c.textScale=1.3f
-            val settingsSections=mapOf("settings-model" to "模型","settings-memory" to "对话与记忆","settings-voice" to "语音","settings-skills" to "Skills","settings-tools" to "工具集","settings-notices" to "通知","settings-help" to "帮助")
+            val settingsSections=mapOf("settings-desktop" to "桌面助手","settings-providers" to "模型供应商","settings-snippets" to "提示词片段","settings-gateway" to "网关","settings-mcp" to "MCP","settings-model" to "模型","settings-memory" to "对话与记忆","settings-voice" to "语音","settings-skills" to "Skills","settings-tools" to "工具集","settings-notices" to "通知","settings-help" to "帮助")
             settingsSections[name]?.let {c.settingsSection=it}
+            if(name=="settings-snippets")c.snippets=listOf(
+                PromptSnippet("plan","梳理目标","先梳理目标，再给出可执行步骤"),
+                PromptSnippet("summarize","总结重点","总结重点，并列出需要我确认的事项"),
+                PromptSnippet("improve","改进内容","检查现有内容，直接给出改进后的版本"))
             c.settings=ServerSettings(models=ServerModelSettings(provider="deepseek",model="deepseek-v4-flash",auxiliary=mapOf("vision" to ModelChoice("anthropic","claude-haiku-4-5"))),conversation=ConversationStyleSettings("清楚、自然，先说重点。","Asia/Shanghai"))
             c.modelCatalog=ModelCatalog(providers=listOf(ModelProvider(slug="deepseek",name="DeepSeek",models=listOf("deepseek-v4-flash","deepseek-v4-pro"))))
             c.skills=listOf(ServerSkill("daily-review","整理一天的进展，标出待处理的问题。"),ServerSkill("document-editor","整理和修改 Markdown 文档，保留来源与版本。"),ServerSkill("web-research","搜索资料并提取可核对的引用。",enabled=false))
@@ -87,10 +94,18 @@ object RenderPreviews {
                 c.sessions=c.sessions.map {if(it.scopedId==selected.scopedId)selected else it};c.currentSession=selected
             }
             if(name.contains("model-error"))c.modelCatalogError=modelCatalogProblem("Restart required: This process is running code from 2554a16a1d but the checkout on disk is now 939e45c91d. The model picker would risk a stale-module crash — restart this Hermes process.")
+            if(name=="chat-placeholder"||name=="sessions-placeholder"||name=="chat-custom-title") {
+                val placeholder=c.sessions.first().copy(title="新会话",preview="用户的简体预览")
+                c.sessions=listOf(placeholder,c.sessions.last().copy(id="custom-title",title="用户自定义标题",preview="原始用户内容"))
+                c.currentSession=if(name=="chat-custom-title")placeholder.copy(title="设置")else placeholder
+                if(name=="chat-custom-title")c.sessions=c.sessions.map {if(it.id==placeholder.id)c.currentSession!!else it}
+                c.setFilesPanel(false)
+            }
             c.assistantPanel=name=="assistant"
             if(loginPreview){c.baseUrl="https://gateway.example.com";c.username="admin"}
             if(name=="english-dark"){c.appearance="深色";c.language="en"}
-            setDesktopLanguage(if(name=="english-dark")"en"else"zh")
+            c.language=if(name=="english-dark")"en"else System.getProperty("hermes.preview.language","zh")
+            setDesktopLanguage(c.language)
             if(name=="narrow-active")c.currentSession!!.let {session->
                 val record=RunRecord(session,"demo")
                 c.runs[session.scopedId]=DesktopRun(session,com.qingyu.hermescompanion.data.StreamController(),record.assistantId,record=record,status="正在处理")
@@ -149,10 +164,10 @@ object RenderPreviews {
                 if(name.contains("model-picker")||name.contains("model-error")) {
                     click(scene,allNodes(scene).first {it.config.getOrNull(SemanticsProperties.TestTag)=="composer-model"}.boundsInRoot.center)
                     repeat(8){scene.render(System.nanoTime()).close();delay(25)}
-                    check(allNodes(scene).any {nodeText(it)=="选择模型"}) {"Model popup did not open by pointer"}
+                    check(allNodes(scene).any {nodeText(it)==tr("选择模型")}) {"Model popup did not open by pointer"}
                     if(name.contains("model-error")) {
-                        check(allNodes(scene).any {nodeText(it)=="服务器需要完成重启"})
-                        check(allNodes(scene).none {nodeText(it)=="没有匹配的模型"})
+                        check(allNodes(scene).any {nodeText(it)==tr("服务器需要完成重启")})
+                        check(allNodes(scene).none {nodeText(it)==tr("没有匹配的模型")})
                     }
                 }
                 if(name=="quick-keyboard") {
@@ -252,8 +267,63 @@ object RenderPreviews {
                     check(c.drafts[c.currentSession!!.scopedId].orEmpty().startsWith("> ")) {"Selected text was not placed in the draft"}
                     println("Verified actual mouse selection and quote context menu")
                 }
+                if(name=="settings-language-menu") {
+                    click(scene,allNodes(scene).first {nodeText(it)=="繁體中文"}.boundsInRoot.center)
+                    repeat(5){scene.render(System.nanoTime()).close();delay(30)}
+                    for(label in listOf("English",tr("简体中文"),tr("跟随系统"),"繁體中文"))
+                        check(allNodes(scene).any {nodeText(it)==label}) {"Missing language option: $label"}
+                }
+                if(c.language=="zh-TW") {
+                    val texts=allNodes(scene).mapNotNull(::nodeText)
+                    File(destination,"$name.labels.json").writeText(org.json.JSONArray(texts).toString(2))
+                    // Exact catalog entries catch raw variable labels; server/user fixtures remain original.
+                    val originalContent=c.sessions.flatMap {listOf(it.title,it.preview)}+
+                        c.messages.values.flatten().map {it.content}+c.projects.map {it.name}+
+                        c.listing?.entries.orEmpty().map {it.name}+c.cronJobs.flatMap {listOf(it.name,it.prompt)}+
+                        c.document?.document?.content.orEmpty().lineSequence().map {it.replace(Regex("^#{1,6}\\s+"),"")}.toList()
+                    val catalog=org.json.JSONObject(requireNotNull(javaClass.getResourceAsStream("/desktop-zh-TW.json")).bufferedReader().use {it.readText()})
+                    val translatedLabels=catalog.keySet().map {catalog.getString(it)}.toSet()
+                    val untranslated=texts.filter {it !in originalContent&&it !in translatedLabels&&com.qingyu.hermescompanion.i18n.traditionalLabel(it)!=it}
+                    check(untranslated.isEmpty()) {"Untranslated owned labels in $name: $untranslated"}
+                    if(name=="chat-workspace-menu") {
+                        check("工作空間" in texts&&"預設工作空間" in texts)
+                        check("工作空间" !in texts&&"默认工作空间" !in texts)
+                    }
+
+                    if(name=="chat-custom-title")check(texts.count {it=="设置"}>=2) {"An app-looking custom title was changed"}
+                    if(name=="settings-desktop") {
+                        for(label in listOf("單擊","雙擊","拖入檔案"))check(label in texts) {"Missing Traditional gesture: $label"}
+                        check(texts.none {it in listOf("单击","双击","拖入文件")})
+                    }
+                    if(name=="settings-snippets") {
+                        for(label in listOf("梳理目標","總結重點","改進內容","恢復預設","先梳理目標，再給出可執行步驟"))check(label in texts) {"Untranslated saved default: $label"}
+                        check(texts.none {it in listOf("梳理目标","总结重点","改进内容","恢复默认")})
+                        check(c.snippets[0].title=="梳理目标") {"Rendering mutated saved snippets"}
+                    }
+                    if(name=="chat-placeholder"||name=="sessions-placeholder") {
+                        check("新對話" in texts) {"Cached placeholder title was not localized"}
+                        check("新会话" !in texts)
+                        check("用户自定义标题" in texts) {"Custom title was altered"}
+                        check(c.sessions.first().title=="新会话") {"Display localization mutated stored state"}
+                    }
+                }
                 verifyLayout(scene,name,scale)
                 File(destination,"$name.png").writeBytes(snapshot(scene))
+                if(c.language=="zh-TW"&&name.startsWith("settings")&&name!="settings-language-menu") {
+                    val scroll=allNodes(scene).filter {it.boundsInRoot.center.x>logicalWidth*scale*.45f}
+                        .mapNotNull {node->node.config.getOrNull(SemanticsProperties.VerticalScrollAxisRange)?.let {node to it}}
+                        .maxByOrNull {it.second.maxValue()}
+                    if(scroll!=null&&scroll.second.maxValue()>0) {
+                        val action=scroll.first.config.getOrNull(SemanticsActions.ScrollBy)?.action
+                        if(action!=null) {
+                            action.invoke(0f,scroll.second.maxValue())
+                            repeat(10){scene.render(System.nanoTime()).close();delay(25)}
+                            check(scroll.second.value()>=scroll.second.maxValue()-1) {"Settings bottom was not reached: $name"}
+                            File(destination,"$name-bottom.png").writeBytes(snapshot(scene))
+                        }
+                    }
+                }
+
                 if(name=="settings-retina-glass") {
                     scene.sendPointerEvent(PointerEventType.Move,Offset(1800f,1100f))
                     scene.sendPointerEvent(PointerEventType.Scroll,Offset(1800f,1100f),scrollDelta=Offset(0f,1200f))
@@ -305,7 +375,7 @@ object RenderPreviews {
                     println("Verified jump footer position and pointer interaction")
                 }
                 println("Rendered $name")
-            } finally {scene.close();c.close()}
+            } finally {scene.close();c.close();Files.walk(previewState).use {it.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)}}
         }
     }
     private fun seedWideFixtures(c:DesktopController,name:String) {
@@ -329,7 +399,7 @@ object RenderPreviews {
             c.completions=c.sessions.takeLast(3).map {RunCompletionSummary(it.scopedId,it.title,it.preview)}
         }
         if(name=="tasks-wide-empty")c.completions=emptyList()
-        if(name=="home-empty") {c.sessions=emptyList();c.recentArtifacts.clear();c.completions=emptyList()}
+        if(name.startsWith("home-empty")) {c.sessions=emptyList();c.recentArtifacts.clear();c.completions=emptyList()}
     }
     private fun verifyLayout(scene:ImageComposeScene,name:String,scale:Float) {
         val nodes=allNodes(scene)
@@ -366,10 +436,10 @@ object RenderPreviews {
         if(name.startsWith("home")||name=="sessions") {
             check(nodes.mapNotNull(::nodeText).none {it.contains("hermes-mobile-context")||it.contains("/root/.hermes/")}) {"Internal metadata is visible in conversation previews"}
         }
-        if(name.startsWith("settings")&&name !in setOf("settings-model","settings-memory","settings-voice","settings-skills","settings-tools","settings-notices","settings-help")) {
+        if(name.startsWith("settings")&&name !in setOf("settings-desktop","settings-providers","settings-snippets","settings-gateway","settings-mcp","settings-model","settings-memory","settings-voice","settings-skills","settings-tools","settings-notices","settings-help")) {
             listOf("轻盈办公","纸间留白","流光玻璃").forEach {label->
                 val card=tagged("skin-$label").boundsInRoot
-                val text=nodes.first {nodeText(it)==label}.boundsInRoot
+                val text=nodes.first {nodeText(it)==tr(label)}.boundsInRoot
                 check(text.left>=card.left+9*scale&&text.right<=card.right-9*scale&&text.bottom<card.bottom-20*scale) {"Theme label is outside its padded card: $label"}
             }
         }

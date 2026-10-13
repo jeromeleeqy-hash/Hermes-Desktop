@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +38,7 @@ import com.qingyu.hermescompanion.data.*
     }
     SettingCard("自定义供应商","连接你自己的 API 服务，或兼容 OpenAI 的模型端点。",trailing={SmallButton("添加供应商",{endpointEditor=CustomProviderConfiguration()},true,enabled=catalog!=null&&!endpointLoading)}) {
         if(endpointLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
-        endpointError?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重新读取",{refresh()})}
+        endpointError?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重新读取",{refresh()})}
         val endpoints=catalog?.items.orEmpty().filter {query.isBlank()||it.name.contains(query,true)||it.baseUrl.contains(query,true)}
         if(endpoints.isEmpty()&&!endpointLoading&&endpointError==null)PanelEmpty("model","还没有自定义供应商","添加 API 地址与模型，便可在输入框选择。")
         endpoints.forEach {provider->
@@ -45,7 +47,7 @@ import com.qingyu.hermescompanion.data.*
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(5.dp)) {
                     Text(provider.name,fontSize=14.sp,fontWeight=FontWeight.SemiBold)
                     SubtleText(provider.baseUrl,maxLines=1)
-                    SubtleText("${provider.models.size} 个模型 · ${if(provider.hasKey)"已配置凭据"else"未设置密钥"}")
+                    SubtleText(localizedText({ "${provider.models.size} 个模型 · ${if(provider.hasKey)"已配置凭据"else"未设置密钥"}" }, { "${provider.models.size} 個模型 · ${if(provider.hasKey)"已配置憑據"else"未設定金鑰"}" }))
                 }
                 if(provider.isCurrent)StatusPill("默认")
                 Glyph("edit",Modifier.size(17.dp),MaterialTheme.colorScheme.onSurfaceVariant)
@@ -54,7 +56,7 @@ import com.qingyu.hermescompanion.data.*
     }
     SettingCard("常用供应商","添加或更新 API Key。已保存的密钥不会回显。") {
         if(keyLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
-        keyError?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重新读取",{refresh()})}
+        keyError?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp);SmallButton("重新读取",{refresh()})}
         val rows=credentials.filter {query.isBlank()||it.name.contains(query,true)||it.key.contains(query,true)}
         if(rows.isEmpty()&&!keyLoading&&keyError==null)Caption("没有匹配的供应商。也可以在上方添加自定义 API。")
         rows.forEach {provider->
@@ -80,7 +82,7 @@ import com.qingyu.hermescompanion.data.*
     HermesDialog(onDismissRequest={if(!saving)dismiss()},title={Text(provider.name)},text={Column(Modifier.width(450.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
         Text(tr(if(provider.configured)"输入新密钥以替换；关闭窗口会保留原有密钥。"else"填入供应商提供的 API Key，保存后刷新可选模型。"),fontSize=13.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedTextField(key,{key=it},modifier=Modifier.fillMaxWidth().semantics {testTag="provider-key-input"},label={Text("API Key")},singleLine=true,visualTransformation=PasswordVisualTransformation(),enabled=!saving)
-        failure?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
+        failure?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
     }},confirmButton={SmallButton(if(saving)"保存中…"else"保存密钥",{saving=true;failure=null
         val submittedKey=key
         c.request(profile,{it.saveProviderCredential(provider.key,submittedKey)},finished={saving=false},failed={failure=it}){key="";c.notice="密钥已保存";saved();dismiss()}
@@ -98,23 +100,23 @@ import com.qingyu.hermescompanion.data.*
         FormInput("名称",value.name,{value=value.copy(name=it)})
         if(initial.id.isBlank())FormInput("标识，例如 my-provider",value.id,{value=value.copy(id=it.trim().lowercase())})
         FormInput("API 地址，包含服务要求的 /v1 等路径",value.baseUrl,{value=value.copy(baseUrl=it);result=null})
-        OutlinedTextField(key,{key=it;result=null},label={Text(if(initial.hasKey)"API Key · 留空保留原密钥"else"API Key · 本地无密钥服务可留空")},singleLine=true,visualTransformation=PasswordVisualTransformation(),modifier=Modifier.fillMaxWidth())
+        OutlinedTextField(key,{key=it;result=null},label={Text(tr(if(initial.hasKey)"API Key · 留空保留原密钥"else"API Key · 本地无密钥服务可留空"))},singleLine=true,visualTransformation=PasswordVisualTransformation(),modifier=Modifier.fillMaxWidth())
         FormInput("默认模型标识",value.model,{value=value.copy(model=it)})
-        Disclosure("更多模型",if(models.isBlank())"可选，每行填写一个模型标识"else"${proposed.models.size} 个模型") {Field("模型列表",models,{models=it},4)}
+        Disclosure("更多模型",if(models.isBlank())"可选，每行填写一个模型标识"else localizedText({ "${proposed.models.size} 个模型" }, { "${proposed.models.size} 個模型" })) {Field("模型列表",models,{models=it},4)}
         Toggle("自动发现服务提供的模型",value.discoverModels){value=value.copy(discoverModels=it)}
         Toggle("设为新对话的默认供应商",makeDefault){makeDefault=it}
         if(native) {
             SmallButton(if(probing)"测试中…"else"测试连接并读取模型",{probing=true;failure=null;result=null
                 val submitted=proposed;val submittedKey=key
-                c.request(profile,{it.probeCustomProvider(submitted,submittedKey)},finished={probing=false},failed={failure="连接测试未完成：$it"}){probe->
-                    result=if(probe.ok)"连接成功，服务返回 ${probe.models.size} 个模型。"else if(probe.reachable)"服务拒绝了请求，请检查地址和密钥。"else"暂时无法连接到该服务。"
+                c.request(profile,{it.probeCustomProvider(submitted,submittedKey)},finished={probing=false},failed={failure= localizedText({ "连接测试未完成：$it" }, { "連線測試未完成：$it" }) }){probe->
+                    result=if(probe.ok)localizedText({ "连接成功，服务返回 ${probe.models.size} 个模型。" }, { "連線成功，服務返回 ${probe.models.size} 個模型。" })else if(probe.reachable)"服务拒绝了请求，请检查地址和密钥。"else"暂时无法连接到该服务。"
                     if(probe.ok&&probe.models.isNotEmpty()&&value.baseUrl==submitted.baseUrl&&key==submittedKey)models=(models.lines().filter(String::isNotBlank)+probe.models).distinct().joinToString("\n")
                 }
             },enabled=!busy&&validation==null&&(!initial.hasKey||key.isNotBlank()))
             if(initial.hasKey&&key.isBlank())SubtleText("已有密钥保持隐藏；测试连接需临时填入密钥，直接保存则无需重填。",maxLines=2)
         }
         result?.let {Caption(it)}
-        failure?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
+        failure?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
         if(validation!=null&&value.name.isNotBlank())SubtleText(validation,maxLines=2)
     }},confirmButton={SmallButton(if(saving)"保存中…"else"保存供应商",{saving=true;failure=null
         val submitted=proposed;val submittedKey=key;val submittedDefault=makeDefault

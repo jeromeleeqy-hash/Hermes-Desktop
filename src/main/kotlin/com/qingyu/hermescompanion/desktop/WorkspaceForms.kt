@@ -15,7 +15,7 @@ import com.qingyu.hermescompanion.model.*
         FormInput("项目名称",value["name"].orEmpty(),{value=value+("name" to it)},enabled=!draft.saving)
         FormInput("服务器目录的完整路径",value["path"].orEmpty(),{value=value+("path" to it)},enabled=!draft.saving)
         SubtleText("填写 Hermes 服务器上的目录；例如 /workspace/my-project。",maxLines=2)
-        draft.error?.let {Text(it,fontSize=12.sp,color=MaterialTheme.colorScheme.error)}
+        draft.error?.let {Text(tr(it),fontSize=12.sp,color=MaterialTheme.colorScheme.error)}
     }},confirmButton={SmallButton(if(draft.saving)"正在创建…"else"创建",{
         val p=c.profile;val submitted=value;draft.saving=true;draft.error=null
         c.request(p,{it.createProject(submitted.getValue("name").trim(),submitted.getValue("path").trim())},finished={draft.saving=false},failed={draft.error=it}) {project->
@@ -28,7 +28,7 @@ import com.qingyu.hermescompanion.model.*
     val draft=settingDraft(c,"rename:${session.id}",mapOf("name" to session.title),SettingCodec::text,SettingCodec::text)
     HermesDialog(onDismissRequest={if(!draft.saving)onDismiss()},title={Text(tr("重命名会话"))},text={Column(Modifier.width(440.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         FormInput("会话名称",draft.value["name"].orEmpty(),{draft.value=mapOf("name" to it)},enabled=!draft.saving)
-        draft.error?.let {Text(it,fontSize=12.sp,color=MaterialTheme.colorScheme.error)}
+        draft.error?.let {Text(tr(it),fontSize=12.sp,color=MaterialTheme.colorScheme.error)}
     }},confirmButton={SmallButton(if(draft.saving)"正在保存…"else"保存",{
         val submitted=draft.value;val name=submitted.getValue("name").trim();draft.saving=true;draft.error=null
         c.request(session.profile,{it.renameSession(session.id,name)},finished={draft.saving=false},failed={draft.error=it}) {

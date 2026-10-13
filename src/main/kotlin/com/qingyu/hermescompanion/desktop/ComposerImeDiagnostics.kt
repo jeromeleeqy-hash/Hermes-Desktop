@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -59,8 +61,8 @@ internal fun showComposerImeDiagnostics(controller: DesktopController) {
             var copied by remember {mutableStateOf(false)}
             Surface {
                 Column(Modifier.fillMaxSize().padding(22.dp),verticalArrangement=Arrangement.spacedBy(14.dp)) {
-                    Text("用微信输入法输入 nihaoshijie，不选词，按一次退格。",style=MaterialTheme.typography.titleMedium)
-                    Text("只记录本窗口的事件顺序、文字长度和光标范围，不记录输入内容。",style=MaterialTheme.typography.bodySmall)
+                    Text(tr("用微信输入法输入 nihaoshijie，不选词，按一次退格。"),style=MaterialTheme.typography.titleMedium)
+                    Text(tr("只记录本窗口的事件顺序、文字长度和光标范围，不记录输入内容。"),style=MaterialTheme.typography.bodySmall)
                     Surface(Modifier.weight(1f).fillMaxWidth(),shape=MaterialTheme.shapes.small,border=androidx.compose.foundation.BorderStroke(1.dp,MaterialTheme.colorScheme.outline)) {
                         ComposerImeSession {
                             BasicTextField(value,{next->value=next;record("VALUE length=${next.text.length} selection=${next.selection} composition=${next.composition}")},
@@ -69,9 +71,9 @@ internal fun showComposerImeDiagnostics(controller: DesktopController) {
                         }
                     }
                     Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
-                        Text("已记录 ${events.size} 条事件",style=MaterialTheme.typography.bodySmall)
+                        Text(tr( localizedText({ "已记录 ${events.size} 条事件" }, { "已記錄 ${events.size} 條事件" }) ),style=MaterialTheme.typography.bodySmall)
                         Button(onClick={Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(header+events.joinToString("\n")),null);copied=true}) {
-                            Text(if(copied)"已复制，可粘贴反馈"else"复制诊断结果")
+                            Text(tr(if(copied)"已复制，可粘贴反馈"else"复制诊断结果"))
                         }
                     }
                 }

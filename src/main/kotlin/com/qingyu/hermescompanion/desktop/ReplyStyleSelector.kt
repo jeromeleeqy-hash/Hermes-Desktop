@@ -40,7 +40,7 @@ internal fun replyStyleOptions(rawConfig:String,current:String):List<ReplyStyleO
             choices[name]=ReplyStyleOption(name,existing?.label?:name,"服务器自定义风格")
         }
     }
-    if(current.isNotBlank()&&current !in choices)choices[current]=ReplyStyleOption(current,"当前自定义风格","保留当前服务器设置："+current)
+    if(current.isNotBlank()&&current !in choices)choices[current]=ReplyStyleOption(current,"当前自定义风格",tr("保留当前服务器设置：")+current)
     return choices.values.toList()
 }
 

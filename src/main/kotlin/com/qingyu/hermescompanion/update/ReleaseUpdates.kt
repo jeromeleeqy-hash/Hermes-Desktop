@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.update
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -51,7 +53,7 @@ object ReleaseUpdates {
     }
     fun check(current: String, platform: String): UpdateRelease? = response(LATEST).use { response ->
         if(response.code == 404) return null
-        require(response.isSuccessful) { if(response.code == 403 || response.code == 429) "GitHub 请求暂时受限，请稍后重试" else "检查更新失败（HTTP ${response.code}）" }
+        require(response.isSuccessful) { if(response.code == 403 || response.code == 429) "GitHub 请求暂时受限，请稍后重试" else localizedText({ "检查更新失败（HTTP ${response.code}）" }, { "檢查更新失敗（HTTP ${response.code}）" }) }
         val body = response.body ?: error("服务器没有返回版本信息")
         require(body.contentLength() <= 2_000_000) { "版本信息过大" }
         val bytes = body.byteStream().readNBytes(2_000_001)
@@ -86,7 +88,7 @@ object ReleaseUpdates {
         val part = File.createTempFile("download-", ".part", directory)
         try {
             response(release.url).use { r ->
-                require(r.isSuccessful) { "下载失败（HTTP ${r.code}）" }
+                require(r.isSuccessful) { localizedText({ "下载失败（HTTP ${r.code}）" }, { "下載失敗（HTTP ${r.code}）" }) }
                 val body=r.body ?: error("安装包为空")
                 body.byteStream().use { input -> part.outputStream().use { output ->
                     val buffer=ByteArray(131072);var total=0L;var last=0L

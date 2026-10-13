@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -23,7 +25,7 @@ import com.qingyu.hermescompanion.model.*
         when(section) {
             "Skills"->{
                 val visible=c.skills.filter {matches(it.name,it.description,it.enabled)};count=visible.size
-                Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {CountBadge(c.skills.count {it.enabled});SubtleText("已启用 · 共 ${c.skills.size} 个技能")}
+                Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {CountBadge(c.skills.count {it.enabled});SubtleText(localizedText({ "已启用 · 共 ${c.skills.size} 个技能" }, { "已啟用 · 共 ${c.skills.size} 個技能" }))}
                 BoxWithConstraints {
                     val columns=if(maxWidth>=780.dp)2 else 1
                     Column(verticalArrangement=Arrangement.spacedBy(10.dp)) {visible.chunked(columns).forEach {row->
@@ -34,9 +36,9 @@ import com.qingyu.hermescompanion.model.*
                     },enabled=pending[skill.name]!=true)}) {
                     Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(7.dp)){Glyph("bookmark",Modifier.size(15.dp),MaterialTheme.colorScheme.primary);SubtleText(skill.category);Spacer(Modifier.weight(1f));SubtleText(if(skill.enabled)"已启用"else"未启用")}
                     Text(skill.description,Modifier.heightIn(min=40.dp),fontSize=12.sp,lineHeight=20.sp,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=2,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis)
-                    errors[skill.name]?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
+                    errors[skill.name]?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
                     Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically){
-                        DeskTextButton(onClick={c.request(block={it.skillContent(skill.name)}){c.showDetails("技能说明 · ${skill.name}",it)}}){Text(tr("查看完整说明"))}
+                        DeskTextButton(onClick={c.request(block={it.skillContent(skill.name)}){c.showDetails(localizedText({ "技能说明 · ${skill.name}" }, { "技能說明 · ${skill.name}" }),it)}}){Text(tr("查看完整说明"))}
                         Spacer(Modifier.weight(1f));if(pending[skill.name]==true)CircularProgressIndicator(Modifier.size(16.dp),strokeWidth=2.dp)
                     }
                 }}
@@ -51,8 +53,8 @@ import com.qingyu.hermescompanion.model.*
                         },enabled=pending[tool.name]!=true)}) {
                     SubtleText(tool.description,maxLines=2)
                     if(!tool.configured)StatusPill("缺少服务器配置",error=true)
-                    errors[tool.name]?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
-                    Disclosure("包含 ${tool.tools.size} 个工具") {tool.tools.forEach {name->Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){Glyph("tool",Modifier.size(14.dp),MaterialTheme.colorScheme.primary);Text(toolLabel(name),fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}}}
+                    errors[tool.name]?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
+                    Disclosure(localizedText({ "包含 ${tool.tools.size} 个工具" }, { "包含 ${tool.tools.size} 個工具" })) {tool.tools.forEach {name->Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)){Glyph("tool",Modifier.size(14.dp),MaterialTheme.colorScheme.primary);Text(tr(toolLabel(name)),fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}}}
                 }
             }
             else->c.mcpServers.filter {matches(it.name,it.transport,it.enabled)}.forEach {server->count++
@@ -70,7 +72,7 @@ import com.qingyu.hermescompanion.model.*
                         server.authorizationUrl?.let {url->SmallButton("重新授权",{runCatching {DesktopFiles.openLink(url)}.onFailure {errors[server.name]=it.message?:"无法打开授权页面"}})}
                     }
                     if(mcpNeedsAttention(server)&&server.authorizationUrl==null)Caption("服务器没有提供授权入口。请在 Hermes 服务端完成配置或授权，然后刷新状态。")
-                    SubtleText("服务器报告 ${server.toolCount} 个工具 · ${if(server.enabled)"已启用"else"已停用"}")
+                    SubtleText(localizedText({ "服务器报告 ${server.toolCount} 个工具 · ${if(server.enabled)"已启用"else"已停用"}" }, { "伺服器報告 ${server.toolCount} 個工具 · ${if(server.enabled)"已啟用"else"已停用"}" }))
                     if(server.enabled&&server.toolCount==0)Caption("已启用配置，尚未发现可调用工具。请检查服务器运行状态。")
                     errors[server.name]?.let {Text(safeDiagnostic(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
                 }

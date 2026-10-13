@@ -1,2 +1,6 @@
 package com.qingyu.hermescompanion.today
-fun todayText(zh:String,en:String):String = if(com.qingyu.hermescompanion.desktop.desktopLocale().language=="en")en else zh
+
+import com.qingyu.hermescompanion.i18n.desktopLanguage
+import com.qingyu.hermescompanion.i18n.traditionalLabel
+
+fun todayText(zh:String,en:String):String = when(desktopLanguage){"en"->en;"zh-TW"->traditionalLabel(zh);else->zh}

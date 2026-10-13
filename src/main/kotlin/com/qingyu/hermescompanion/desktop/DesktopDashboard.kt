@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,8 +33,8 @@ import java.time.format.DateTimeFormatter
     DesktopPage(maxContentWidth=1440.dp,tag="home-content") {
         Row(Modifier.fillMaxWidth().background(Brush.horizontalGradient(listOf(colors.primary.copy(alpha=if(d.glass).13f else .065f),colors.primary.copy(alpha=.012f))),d.shape).padding(horizontal=26.dp,vertical=20.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(24.dp)) {
             Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(10.dp)) {
-                Text(LocalDate.now().format(DateTimeFormatter.ofPattern("M月d日 · EEEE",desktopLocale())),fontSize=12.sp,color=colors.onSurfaceVariant)
-                Text("${tr(when(LocalTime.now().hour){in 5..10->"早上好";in 11..13->"中午好";in 14..18->"下午好";else->"晚上好"})}，${c.nickname}",fontSize=28.sp,lineHeight=39.sp,fontWeight=FontWeight.SemiBold,maxLines=2,overflow=TextOverflow.Ellipsis)
+                Text(tr(LocalDate.now().format(DateTimeFormatter.ofPattern("M月d日 · EEEE",desktopLocale()))),fontSize=12.sp,color=colors.onSurfaceVariant)
+                Text(tr("${tr(when(LocalTime.now().hour){in 5..10->"早上好";in 11..13->"中午好";in 14..18->"下午好";else->"晚上好"})}，${c.nickname}"),fontSize=28.sp,lineHeight=39.sp,fontWeight=FontWeight.SemiBold,maxLines=2,overflow=TextOverflow.Ellipsis)
                 Text(tr("想法在这里开始，事情在这里完成。"),fontSize=15.sp,color=colors.onSurfaceVariant)
             }
             AnimatedMascot(c,Modifier.size(100.dp).semantics {testTag="home-mascot"},homePortrait=true)
@@ -66,7 +68,7 @@ import java.time.format.DateTimeFormatter
         BoxWithConstraints {
             @Composable fun RecentConversations(modifier:Modifier) {
                 SectionCard(modifier) {
-                    SectionTitle("继续上次的事",if(c.sessionsLoading)"正在同步会话…"else if(c.sessionsLoadError!=null)"同步未完成 · 已有内容仍可打开"else "${sessions.size} 段会话 · ${c.project?.name?:"全部项目"}",trailing={DeskTextButton(onClick={c.navigate(Page.SESSIONS)}){Text(tr("全部会话 →"))}})
+                    SectionTitle("继续上次的事",if(c.sessionsLoading)"正在同步会话…"else if(c.sessionsLoadError!=null)"同步未完成 · 已有内容仍可打开"else localizedText({ "${sessions.size} 段会话 · ${c.project?.name?:"全部项目"}" }, { "${sessions.size} 段對話 · ${c.project?.name?:"全部專案"}" }),trailing={DeskTextButton(onClick={c.navigate(Page.SESSIONS)}){Text(tr("全部会话 →"))}})
                     if(c.sessionsLoading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
                     c.sessionsLoadError?.let {SyncProblem(c,"暂时无法同步会话",it,c.sessionsLoading){c.refresh()}}
                     when {
@@ -100,7 +102,7 @@ import java.time.format.DateTimeFormatter
                         }
                     }}
                     val drafts=c.openDocuments.values.count {it.profile==c.profile&&c.edits[c.documentKey(it)]?.let {text->text!=it.document.content}==true}
-                    if(drafts>0)DeskTextButton(onClick={c.fileSection="本机草稿";c.setFilesPanel(true);c.navigate(Page.FILES)}){Text("$drafts 份文档有本机草稿 →")}
+                    if(drafts>0)DeskTextButton(onClick={c.fileSection="本机草稿";c.setFilesPanel(true);c.navigate(Page.FILES)}){Text(tr( localizedText({ "$drafts 份文档有本机草稿 →" }, { "$drafts 份文件有本機草稿 →" }) ))}
                 }
             }
             if(maxWidth>=820.dp)Row(horizontalArrangement=Arrangement.spacedBy(d.sectionGap)) {RecentConversations(Modifier.weight(1.3f));RecentFiles(Modifier.weight(1f))}
@@ -126,10 +128,10 @@ import java.time.format.DateTimeFormatter
                 shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}
                 else->false
             }
-        }.semantics {contentDescription=tr("交办新任务")},textStyle=MaterialTheme.typography.bodyLarge.copy(color=colors.onSurface,fontSize=17.sp,lineHeight=27.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(draft.isEmpty())Text(tr("想把什么事交给 ${c.hermesName}？"),fontSize=17.sp,color=colors.onSurfaceVariant);inner()}})
+        }.semantics {contentDescription=tr("交办新任务")},textStyle=MaterialTheme.typography.bodyLarge.copy(color=colors.onSurface,fontSize=17.sp,lineHeight=27.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(draft.isEmpty())Text(tr(localizedText({ "想把什么事交给 ${c.hermesName}？" }, { "想把什麼事交給 ${c.hermesName}？" })),fontSize=17.sp,color=colors.onSurfaceVariant);inner()}})
         }
         if(fileHover)Text(tr("松开鼠标，添加到新任务"),color=colors.primary,fontSize=13.sp)
-        c.attachmentErrors[key]?.let {Text(it,color=colors.error,fontSize=12.sp,maxLines=4)}
+        c.attachmentErrors[key]?.let {Text(tr(it),color=colors.error,fontSize=12.sp,maxLines=4)}
         if(attached.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {attached.forEach {a->
             ComposerAttachment(c,key,a)
         }}
@@ -137,7 +139,7 @@ import java.time.format.DateTimeFormatter
             DeskTextButton(onClick={c.chooseFiles(key)},enabled=!loading) {Glyph("add",Modifier.size(17.dp));Spacer(Modifier.width(6.dp));Text(tr(if(loading)"附件准备中…"else"添加文件"))}
             DeskTextButton(onClick={c.voice.open()}){Text(tr("语音对话"))}
             Spacer(Modifier.weight(1f))
-            Hint(if(c.sendOnEnter)"Enter 发送 · Shift Enter 换行"else"${shortcutKey()} Enter 发送") {
+            Hint(if(c.sendOnEnter)"Enter 发送 · Shift Enter 换行"else localizedText({ "${shortcutKey()} Enter 发送" }, { "${shortcutKey()} Enter 傳送" })) {
                 SmallButton(if(c.creatingSession)"正在开始…"else"开始任务  ↑",{c.startFromHome()},true,enabled=!c.creatingSession&&!loading&&(draft.isNotBlank()||attached.isNotEmpty()))
             }
         }

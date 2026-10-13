@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -49,7 +51,7 @@ fun main(args:Array<String>) {
     val minWidth=minOf(if(DesktopHost.isWindows)1040 else 1160,maxWidth);val minHeight=minOf(if(DesktopHost.isWindows)640 else 760,maxHeight)
     val defaultWidth=if(DesktopHost.isWindows)1280 else 1440;val defaultHeight=if(DesktopHost.isWindows)820 else 900
     val state=rememberWindowState(width=(if(controller.demo)defaultWidth else controller.store.get("windowWidth",defaultWidth.toString()).toIntOrNull() ?: defaultWidth).coerceIn(minWidth,maxWidth).dp,height=(if(controller.demo)defaultHeight else controller.store.get("windowHeight",defaultHeight.toString()).toIntOrNull() ?: defaultHeight).coerceIn(minHeight,maxHeight).dp)
-    
+
     var floatingSize by remember {mutableStateOf(state.size)}
     LaunchedEffect(state.size,state.placement){if(state.placement==WindowPlacement.Floating)floatingSize=state.size}
     var searchOpen by remember { mutableStateOf(false) }
@@ -191,7 +193,7 @@ fun main(args:Array<String>) {
     }
 }
 @Composable fun Caption(text:String,modifier:Modifier=Modifier) = Text(tr(text),modifier,color=MaterialTheme.colorScheme.onSurface.copy(alpha=.6f),fontSize=13.sp)
-@Composable fun Heading(text:String,modifier:Modifier=Modifier) = Text(tr(text),modifier,fontSize=19.sp,fontWeight=FontWeight.SemiBold,maxLines=1,overflow=TextOverflow.Ellipsis)
+@Composable fun Heading(text:String,modifier:Modifier=Modifier,localize:Boolean=true) = Text(if(localize)tr(text)else text,modifier,fontSize=19.sp,fontWeight=FontWeight.SemiBold,maxLines=1,overflow=TextOverflow.Ellipsis)
 @Composable fun EmptyState(title:String,detail:String="") { Column(Modifier.fillMaxSize().padding(48.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally) { Heading(title);if(detail.isNotBlank()) { Spacer(Modifier.height(12.dp));Caption(detail) } } }
 @Composable fun <T> Picker(label:String,values:List<T>,text:(T)->String,onSelect:(T)->Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -278,7 +280,7 @@ fun main(args:Array<String>) {
         val sessions=c.sessions.filter {it.title.contains(query,true)}.sortedByDescending {it.isPinned}
         LazyColumn(Modifier.weight(1f)) {items(sessions,key={it.scopedId}) {s->
             Column(Modifier.fillMaxWidth().desktopClick(selected=c.currentSession?.scopedId==s.scopedId){c.openSession(s)}.padding(10.dp),verticalArrangement=Arrangement.spacedBy(3.dp)) {
-                Text((if(s.isPinned)"• "else "")+s.title,fontSize=13.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
+                Text((if(s.isPinned)"• "else "")+sessionDisplayTitle(s.title),fontSize=13.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
                 SubtleText(conversationPreview(visibleUserText(c.sessionSummaries[s.scopedId]?:s.preview)))
                 SubtleText(friendlyTime(s.updatedAt))
             }
@@ -290,10 +292,10 @@ fun main(args:Array<String>) {
 @Composable fun Header(c:DesktopController,onSearch:()->Unit) {
     val colors=MaterialTheme.colorScheme
     Row(Modifier.fillMaxWidth().height(64.dp).padding(horizontal=20.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-        Hint("展开或收起导航 · "+shortcutKey()+" B"){DeskIconButton(onClick={c.toggleSidebar()}){Glyph("sidebar",Modifier.size(19.dp))}}
+        Hint(tr("展开或收起导航 · ")+shortcutKey()+" B"){DeskIconButton(onClick={c.toggleSidebar()}){Glyph("sidebar",Modifier.size(19.dp))}}
         Box(Modifier.weight(1f).fillMaxHeight(),contentAlignment=Alignment.CenterStart) {
             LocalMacWindowDragArea.current?.invoke(Modifier.matchParentSize().semantics {testTag="mac-header-drag"})
-            Heading(when(c.page){Page.HOME->"工作台";Page.SESSIONS->"会话";Page.CHAT->c.currentSession?.title?:"对话";Page.TASKS->"任务中心";Page.FILES->"文件";Page.PROFILE->"设置"})
+            Heading(when(c.page){Page.HOME->"工作台";Page.SESSIONS->"会话";Page.CHAT->c.currentSession?.title?.let(::sessionDisplayTitle)?:tr("对话");Page.TASKS->"任务中心";Page.FILES->"文件";Page.PROFILE->"设置"},localize=c.page!=Page.CHAT)
         }
         if(c.page==Page.CHAT) {
             c.currentSession?.let {s->
@@ -301,11 +303,11 @@ fun main(args:Array<String>) {
                 Hint(if(c.showOutline)"收起会话大纲"else"会话大纲"){DeskIconButton(onClick={c.showOutline=!c.showOutline;c.savePreference("showOutline",c.showOutline.toString())},modifier=Modifier.semantics {testTag="toggle-outline"}){Glyph("outline",Modifier.size(19.dp),if(c.showOutline)colors.primary else colors.onSurfaceVariant)}}
             }
             if(c.documentSplit)SmallButton("收起文档",{c.flushEditor?.invoke {c.documentSplit=false}?:run {c.documentSplit=false}})
-            Hint("专注模式 · "+shortcutKey()+" Shift F"){DeskIconButton(onClick={c.focusMode=!c.focusMode}){Glyph("focus",Modifier.size(19.dp),if(c.focusMode)colors.primary else colors.onSurfaceVariant)}}
+            Hint(tr("专注模式 · ")+shortcutKey()+" Shift F"){DeskIconButton(onClick={c.focusMode=!c.focusMode}){Glyph("focus",Modifier.size(19.dp),if(c.focusMode)colors.primary else colors.onSurfaceVariant)}}
         }
         if(c.page==Page.FILES&&c.currentSession!=null)SmallButton("边看边聊",{c.documentSplit=true;c.navigate(Page.CHAT)})
         if(c.page!=Page.CHAT&&c.focusMode)Hint("退出专注模式"){DeskIconButton(onClick={c.focusMode=false}){Glyph("focus",Modifier.size(19.dp),colors.primary)}}
-        Hint("快速查找 · "+shortcutKey()+" K"){DeskIconButton(onClick=onSearch){Glyph("search",Modifier.size(19.dp))}}
+        Hint(tr("快速查找 · ")+shortcutKey()+" K"){DeskIconButton(onClick=onSearch){Glyph("search",Modifier.size(19.dp))}}
         Hint("刷新当前内容"){DeskIconButton(onClick={
             when(c.page){Page.CHAT->{c.currentSession?.let {c.openSession(it)};c.refresh();c.loadModelCatalog(force=true)};Page.PROFILE->c.loadSettings();Page.FILES->c.browse(c.listing?.path,navigate=false);else->c.refresh()}
         },enabled=!c.sessionsLoading,modifier=Modifier.semantics {testTag="refresh-content"}){Glyph("refresh",Modifier.size(18.dp))}}
@@ -350,7 +352,7 @@ fun main(args:Array<String>) {
 @Composable fun SessionRow(s:HermesSession,onClick:()->Unit,showDivider:Boolean=true,trailing:@Composable ()->Unit={}) {
     Row(Modifier.fillMaxWidth().desktopClick(onClick=onClick).padding(vertical=if(LocalDesktopDesign.current.compact)10.dp else 14.dp,horizontal=8.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(14.dp)) {
         Glyph(if(s.isPinned)"pin"else"history",Modifier.size(19.dp),MaterialTheme.colorScheme.primary)
-        Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(3.dp)) { Text(s.title,fontWeight=FontWeight.Medium,maxLines=1,overflow=TextOverflow.Ellipsis);SubtleText(conversationPreview(visibleUserText(s.preview)).ifBlank {"打开对话继续聊聊"}) }
+        Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(3.dp)) { Text(sessionDisplayTitle(s.title),fontWeight=FontWeight.Medium,maxLines=1,overflow=TextOverflow.Ellipsis);SubtleText(conversationPreview(visibleUserText(s.preview)).ifBlank {"打开对话继续聊聊"}) }
         trailing()
     }
     if(showDivider)HorizontalDivider(color=MaterialTheme.colorScheme.outline.copy(alpha=.6f))
@@ -369,17 +371,17 @@ fun main(args:Array<String>) {
             if(search.isNotBlank())Caption("搜索最近 100 段会话，每段最多 200 条消息")
         }
         FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-            listOf("全部","已置顶","未读","执行中").forEach {filter->DeskChip(c.sessionFilter==filter,{c.sessionFilter=filter},label={Text(filter)})}
-            if(search.isNotBlank()||period!=0||c.sessionFilter!="全部")DeskTextButton(onClick={search="";period=0;c.sessionFilter="全部";c.search("")}){Text("清除筛选")}
+            listOf("全部","已置顶","未读","执行中").forEach {filter->DeskChip(c.sessionFilter==filter,{c.sessionFilter=filter},label={Text(tr(filter))})}
+            if(search.isNotBlank()||period!=0||c.sessionFilter!="全部")DeskTextButton(onClick={search="";period=0;c.sessionFilter="全部";c.search("")}){Text(tr("清除筛选"))}
         }
-        DeskChip(c.allConversations,{c.allConversations=!c.allConversations},label={Text("包含后台任务的全部会话")})
+        DeskChip(c.allConversations,{c.allConversations=!c.allConversations},label={Text(tr("包含后台任务的全部会话"))})
         val candidates=c.searchResults?.map {it.session} ?: if(c.showArchived)c.archived else (c.sessions+if(c.allConversations)c.cronSessions else emptyList()).filter { c.project==null || it.workspacePath==c.project?.primaryPath }
         val list=candidates.filter {(c.allConversations||!c.today.isBackground(it))&&(period==0 || sessionWithinDays(it.updatedAt,period))&&(c.project==null||it.workspacePath==c.project?.primaryPath)&&when(c.sessionFilter){"已置顶"->it.isPinned;"未读"->it.scopedId in c.unread;"执行中"->it.scopedId in c.runs;else->true}}.distinctBy {it.scopedId}.sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)})
-        Caption("${list.size} 段${if(c.showArchived)"归档"else""}会话 · ${c.project?.name?:"全部项目"}")
+        Caption(localizedText({ "${list.size} 段${if(c.showArchived)"归档"else""}会话 · ${c.project?.name?:"全部项目"}" }, { "${list.size} 段${if(c.showArchived)"封存"else""}對話 · ${c.project?.name?:"全部專案"}" }))
         val loading=if(c.showArchived)c.archivedLoading else c.sessionsLoading
         val syncError=if(c.showArchived)c.archivedError else c.sessionsLoadError
         if(loading)LinearProgressIndicator(Modifier.fillMaxWidth().height(2.dp))
-        c.searchError?.let {Row(verticalAlignment=Alignment.CenterVertically){Text(it,Modifier.weight(1f),fontSize=12.sp,color=MaterialTheme.colorScheme.error);SmallButton("重试搜索",{c.search(search)})}}
+        c.searchError?.let {Row(verticalAlignment=Alignment.CenterVertically){Text(tr(it),Modifier.weight(1f),fontSize=12.sp,color=MaterialTheme.colorScheme.error);SmallButton("重试搜索",{c.search(search)})}}
         syncError?.let {SyncProblem(c,"暂时无法同步会话",it,loading){if(c.showArchived)c.loadArchived()else c.refresh()}}
         if(list.isEmpty()&&(loading||c.searchBusy))LoadingRows()
         else if(list.isEmpty()&&c.searchError==null&&syncError==null) EmptyState(if(search.isNotBlank()||period!=0||c.project!=null||c.sessionFilter!="全部")"没有匹配的会话"else if(c.showArchived)"还没有归档会话"else"还没有会话",if(search.isNotBlank()||period!=0||c.project!=null||c.sessionFilter!="全部")"试试其他关键词，或清除筛选条件。"else"点击左侧新对话，开始和 Hermes 聊聊。")
@@ -400,7 +402,7 @@ fun main(args:Array<String>) {
                         DeskMenuItem(text={Text(tr("AI 起标题"))},leadingIcon={Glyph("model")},onClick={menu=false;c.request(s.profile,{it.generateSessionTitles(listOf(s))}){c.refresh()}})
                         DeskMenuItem(text={Text(tr(if(s.isPinned)"取消置顶" else "置顶"))},leadingIcon={Glyph("pin")},onClick={menu=false;c.request(s.profile,{it.setSessionPinned(s.id,!s.isPinned)}){c.refresh()}})
                         DeskMenuItem(text={Text(tr(if(c.showArchived)"恢复" else "归档"))},leadingIcon={Glyph("archive")},onClick={menu=false;c.request(s.profile,{if(c.showArchived)it.restoreSession(s.id) else it.archiveSession(s.id)}){c.refresh();c.archived=c.archived.filterNot { it.id==s.id }}})
-                        c.projects.forEach { p -> DeskMenuItem(text={Text("移至 ${p.name}")},leadingIcon={Glyph("folder")},onClick={menu=false;c.request(s.profile,{it.moveSessionToProject(s,p)}){c.refresh()}}) }
+                        c.projects.forEach { p -> DeskMenuItem(text={Text(tr("移至 ${p.name}"))},leadingIcon={Glyph("folder")},onClick={menu=false;c.request(s.profile,{it.moveSessionToProject(s,p)}){c.refresh()}}) }
                         DeskMenuItem(text={Text(tr("删除"))},leadingIcon={Glyph("delete")},onClick={menu=false;deleting=s})
                     } }
                 }
@@ -410,7 +412,7 @@ fun main(args:Array<String>) {
         }
     }
     rename?.let { s -> SessionRenameDialog(c,s){rename=null} }
-    deleting?.let { s -> ConfirmDialog("删除这段会话？","“${s.title}”将从服务器删除，无法撤销。",{deleting=null}) { c.request(s.profile,{it.deleteSession(s.id)}){c.refresh()};deleting=null } }
+    deleting?.let { s -> ConfirmDialog("删除这段会话？",localizedText({ "“${s.title}”将从服务器删除，无法撤销。" }, { "“${s.title}”將從伺服器刪除，無法撤銷。" }),{deleting=null}) { c.request(s.profile,{it.deleteSession(s.id)}){c.refresh()};deleting=null } }
     if(newProject)ProjectEditor(c){newProject=false}
 }
 

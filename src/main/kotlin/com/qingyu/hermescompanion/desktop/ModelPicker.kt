@@ -24,7 +24,7 @@ import com.qingyu.hermescompanion.model.*
                 .semantics {testTag="composer-model";contentDescription=tr("切换当前会话模型")}.padding(horizontal=9.dp),
                 verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(7.dp)) {
                 if(switching)CircularProgressIndicator(Modifier.size(14.dp),strokeWidth=1.5.dp)else Glyph("model",Modifier.size(16.dp),colors.primary)
-                Text(if(switching)tr("正在切换…")else s.model.ifBlank {c.modelCatalog.currentModel.ifBlank {tr("默认模型")}},Modifier.weight(1f),fontSize=12.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
+                Text(tr(if(switching)tr("正在切换…")else s.model.ifBlank {c.modelCatalog.currentModel.ifBlank {tr("默认模型")}}),Modifier.weight(1f),fontSize=12.sp,maxLines=1,overflow=TextOverflow.Ellipsis)
                 Glyph(if(c.modelCatalogError!=null)"alert"else"chevron-down",Modifier.size(12.dp),colors.onSurfaceVariant)
             }
         }
@@ -45,7 +45,7 @@ import com.qingyu.hermescompanion.model.*
         Text(tr(problem.guidance),fontSize=12.sp,lineHeight=20.sp,color=colors.onSurfaceVariant)
         Row(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalAlignment=Alignment.CenterVertically) {
             SmallButton(if(c.modelCatalogLoading)"正在读取…"else"重新读取",{c.loadModelCatalog(force=true)},enabled=!c.modelCatalogLoading)
-            DeskTextButton(onClick={c.showDetails("模型目录诊断",problem.guidance+"\n\n服务器原始返回：\n"+problem.raw)}) {Text(tr("查看详情"),fontSize=12.sp)}
+            DeskTextButton(onClick={c.showDetails("模型目录诊断",problem.guidance+tr("\n\n服务器原始返回：\n")+problem.raw)}) {Text(tr("查看详情"),fontSize=12.sp)}
         }
     }
 }

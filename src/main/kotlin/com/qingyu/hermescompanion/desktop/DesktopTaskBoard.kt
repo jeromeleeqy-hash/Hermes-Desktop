@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter
                     TaskItem(Modifier.desktopClick(shape=LocalDesktopDesign.current.shape){onDecision(id)}) {
                         SubtleText(when(value.request.type){AgentRequestType.APPROVAL->"待审批";AgentRequestType.CLARIFICATION->"待澄清";else->"待处理"})
                         Text(value.request.title,fontWeight=FontWeight.Medium,fontSize=14.sp,lineHeight=21.sp,maxLines=3,overflow=TextOverflow.Ellipsis)
-                        SubtleText(value.session.title)
+                        SubtleText(sessionDisplayTitle(value.session.title))
                         DeskTextButton(onClick={onDecision(id)}){Text(tr("查看并处理"))}
                     }
                 }
@@ -50,9 +50,9 @@ import java.time.format.DateTimeFormatter
                             SubtleText(run.status)
                             if(run.failed)StatusPill("需要重试",error=true)
                         }
-                        Text(run.session.title,fontWeight=FontWeight.Medium,fontSize=14.sp,maxLines=2,overflow=TextOverflow.Ellipsis)
+                        Text(sessionDisplayTitle(run.session.title),fontWeight=FontWeight.Medium,fontSize=14.sp,maxLines=2,overflow=TextOverflow.Ellipsis)
                         run.tools.lastOrNull()?.let {SubtleText(toolLabel(it.name),maxLines=2)}
-                        SubtleText("开始于 " + java.time.Instant.ofEpochMilli(run.started).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")))
+                        SubtleText(tr("开始于 ") + java.time.Instant.ofEpochMilli(run.started).atZone(java.time.ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.ofPattern("HH:mm")))
                         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(4.dp)) {
                             DeskTextButton(onClick={c.openSession(run.session)}){Text(tr("查看对话"))}
                             Spacer(Modifier.weight(1f))

@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -51,7 +53,7 @@ import com.qingyu.hermescompanion.model.*
                 Glyph("attachment",Modifier.size(18.dp),colors.primary);Text(tr("松开鼠标，添加到这段对话"),fontSize=13.sp,color=colors.primary)
             }
             c.attachmentErrors[key]?.let {message->Row(verticalAlignment=Alignment.CenterVertically) {
-                Text(message,Modifier.weight(1f),color=colors.error,fontSize=12.sp,maxLines=4)
+                Text(tr(message),Modifier.weight(1f),color=colors.error,fontSize=12.sp,maxLines=4)
                 DeskIconButton(onClick={c.attachmentErrors.remove(key)}){Glyph("close",Modifier.size(14.dp))}
             }}
             if(attached.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(6.dp),verticalArrangement=Arrangement.spacedBy(6.dp)) {
@@ -116,7 +118,7 @@ import com.qingyu.hermescompanion.model.*
             }
         }
         Row(Modifier.fillMaxWidth().padding(horizontal=4.dp),verticalAlignment=Alignment.CenterVertically) {
-            if(run==null)SubtleText(if(preparing)"正在读取文件…"else if(attached.isNotEmpty())"${attached.size} 个附件 · 发送时提交"else"草稿自动保留 · 支持拖入 / 粘贴文件",Modifier.weight(1f))else SubtleText(when(c.runningSendMode){"steer"->"向当前任务补充要求";"interrupt"->"确认停止当前任务后再发送";else->"当前任务完成后自动发送"},Modifier.weight(1f))
+            if(run==null)SubtleText(if(preparing)"正在读取文件…"else if(attached.isNotEmpty())localizedText({ "${attached.size} 个附件 · 发送时提交" }, { "${attached.size} 個附件 · 傳送時提交" })else"草稿自动保留 · 支持拖入 / 粘贴文件",Modifier.weight(1f))else SubtleText(when(c.runningSendMode){"steer"->"向当前任务补充要求";"interrupt"->"确认停止当前任务后再发送";else->"当前任务完成后自动发送"},Modifier.weight(1f))
             ComposerSendHint(c)
         }
     }
@@ -126,11 +128,11 @@ import com.qingyu.hermescompanion.model.*
     var open by remember {mutableStateOf(false)}
     Box {
         DeskTextButton(onClick={open=true},modifier=Modifier.semantics {testTag="send-mode"}) {
-            Text(sendKeyLabel(c.sendOnEnter),fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(tr(sendKeyLabel(c.sendOnEnter)),fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.width(4.dp));Glyph("chevron-down",Modifier.size(12.dp),MaterialTheme.colorScheme.onSurfaceVariant)
         }
         DeskMenu(open,{open=false}) {listOf(true,false).forEach {enter->
-            DeskMenuItem(text={Text(sendKeyLabel(enter))},leadingIcon={Glyph("keyboard")},trailingIcon={if(c.sendOnEnter==enter)Glyph("check",Modifier.size(16.dp))},onClick={c.setSendMode(enter);open=false})
+            DeskMenuItem(text={Text(tr(sendKeyLabel(enter)))},leadingIcon={Glyph("keyboard")},trailingIcon={if(c.sendOnEnter==enter)Glyph("check",Modifier.size(16.dp))},onClick={c.setSendMode(enter);open=false})
         }}
     }
 }

@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.today
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.model.CronJob
 import org.json.JSONObject
 
@@ -43,7 +45,7 @@ fun verifyTodaySchedule(raw: String, jobs: List<CronJob>, profile: String, root:
             else -> ""
         }
         if (reason.isNotBlank()) valid = false
-        "$label · $id\n" + if (reason.isNotBlank()) reason else todayText("下次运行：${job!!.nextRunAt}", "Next run: ${job!!.nextRunAt}")
+        "$label · $id\n" + if (reason.isNotBlank()) reason else todayText(localizedText({ "下次运行：${job!!.nextRunAt}" }, { "下次執行：${job!!.nextRunAt}" }), "Next run: ${job!!.nextRunAt}")
     }
     return TodayScheduleCheck(profile, root, message = if (valid)
         todayText("已从服务器核对两项任务，均已启用。下次运行时间以服务器返回为准。", "Both server jobs are enabled. Next run times below are returned by the server.")

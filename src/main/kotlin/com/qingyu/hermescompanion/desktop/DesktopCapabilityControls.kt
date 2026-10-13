@@ -21,13 +21,13 @@ internal fun reasoningLabel(value:String?):String=when(value) {
     val busy=c.modelSwitching[s.scopedId]==true||c.runs.containsKey(s.scopedId)
     Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
         Box {
-            DeskTextButton(onClick={open=true}){Text("思考：${reasoningLabel(s.reasoningEffort)}",fontSize=12.sp);Glyph("chevron-down",Modifier.size(12.dp))}
+            DeskTextButton(onClick={open=true}){Text(tr("思考：${tr(reasoningLabel(s.reasoningEffort))}"),fontSize=12.sp);Glyph("chevron-down",Modifier.size(12.dp))}
             DeskMenu(open,{open=false}) {
-                if(options.isNullOrEmpty())DeskMenuItem(text={Text(if(options==null)"服务器尚未提供该模型的档位"else"该模型不支持调节思考强度")},onClick={open=false})
+                if(options.isNullOrEmpty())DeskMenuItem(text={Text(tr(if(options==null)"服务器尚未提供该模型的档位"else"该模型不支持调节思考强度"))},onClick={open=false})
                 options.orEmpty().forEach {effort->
-                    DeskMenuItem(text={Text(reasoningLabel(effort))},onClick={open=false;if(!busy)c.setReasoning(s,effort)},enabled=!busy)
+                    DeskMenuItem(text={Text(tr(reasoningLabel(effort)))},onClick={open=false;if(!busy)c.setReasoning(s,effort)},enabled=!busy)
                 }
-                DeskMenuItem(text={Text("重新读取模型能力")},onClick={open=false;c.loadModelCatalog(force=true)})
+                DeskMenuItem(text={Text(tr("重新读取模型能力"))},onClick={open=false;c.loadModelCatalog(force=true)})
             }
         }
         SubtleText(if(busy)"任务结束后可调整"else"仅影响当前对话",Modifier.weight(1f))
@@ -37,7 +37,7 @@ internal fun reasoningLabel(value:String?):String=when(value) {
 @Composable internal fun ConnectionRecoveryBanner(c:DesktopController) {
     if(c.connectionHealth!="online"||!c.realtimeConnected)Surface(color=MaterialTheme.colorScheme.surfaceVariant) {
         Row(Modifier.fillMaxWidth().padding(horizontal=16.dp,vertical=6.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-            Text(when(c.connectionHealth){"auth"->"登录已过期，草稿和附件已保留";"checking"->"正在核对服务器连接，消息同步会自动重试";"offline"->"暂时无法访问服务器，正在恢复连接 · 草稿已保留";else->"实时连接恢复中，消息仍会自动同步"},Modifier.weight(1f),fontSize=12.sp)
+            Text(tr(when(c.connectionHealth){"auth"->"登录已过期，草稿和附件已保留";"checking"->"正在核对服务器连接，消息同步会自动重试";"offline"->"暂时无法访问服务器，正在恢复连接 · 草稿已保留";else->"实时连接恢复中，消息仍会自动同步"}),Modifier.weight(1f),fontSize=12.sp)
             SmallButton(if(c.connectionHealth=="auth")"重新登录"else if(c.connectionChecking)"检查中…"else"立即检查",{
                 if(c.connectionHealth=="auth")c.reauthenticationOpen=true else c.checkConnection()
             },enabled=!c.connectionChecking)
@@ -45,14 +45,14 @@ internal fun reasoningLabel(value:String?):String=when(value) {
     }
     if(c.reauthenticationOpen) {
         var password by remember {mutableStateOf("")}
-        HermesDialog(onDismissRequest={if(!c.connectionChecking)c.reauthenticationOpen=false},title={Text("恢复登录")},text={
+        HermesDialog(onDismissRequest={if(!c.connectionChecking)c.reauthenticationOpen=false},title={Text(tr("恢复登录"))},text={
             Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
                 Text("${c.baseUrl}\n${c.username}")
-                OutlinedTextField(password,{password=it},singleLine=true,label={Text("密码")},visualTransformation=PasswordVisualTransformation())
-                Text("当前对话、草稿和附件会保留。密码仅用于本次登录。",fontSize=12.sp)
+                OutlinedTextField(password,{password=it},singleLine=true,label={Text(tr("密码"))},visualTransformation=PasswordVisualTransformation())
+                Text(tr("当前对话、草稿和附件会保留。密码仅用于本次登录。"),fontSize=12.sp)
             }
-        },confirmButton={DeskTextButton(onClick={val value=password;password="";c.reauthenticate(value)},enabled=password.isNotBlank()&&!c.connectionChecking){Text("登录")}},
-            dismissButton={DeskTextButton(onClick={password="";c.reauthenticationOpen=false},enabled=!c.connectionChecking){Text("稍后")}})
+        },confirmButton={DeskTextButton(onClick={val value=password;password="";c.reauthenticate(value)},enabled=password.isNotBlank()&&!c.connectionChecking){Text(tr("登录"))}},
+            dismissButton={DeskTextButton(onClick={password="";c.reauthenticationOpen=false},enabled=!c.connectionChecking){Text(tr("稍后"))}})
     }
 }
 

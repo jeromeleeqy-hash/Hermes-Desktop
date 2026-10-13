@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.model.*
 import com.qingyu.hermescompanion.data.ChatInsightParser
 import com.qingyu.hermescompanion.ui.format.conversationPreview
@@ -90,7 +92,7 @@ fun simpleSchedule(expression:String):ScheduleChoice? {
 }
 val weekdayNames=mapOf(1 to "周一",2 to "周二",3 to "周三",4 to "周四",5 to "周五",6 to "周六",0 to "周日")
 fun scheduleLabel(expression:String):String = simpleSchedule(expression)?.let {s->
-    val day=if(s.mode=="每周")s.weekdays.sortedBy {if(it==0)7 else it}.joinToString("、") {weekdayNames[it].orEmpty()}else s.mode
+    val day=if(s.mode=="每周")s.weekdays.sortedBy {if(it==0)7 else it}.joinToString("、") {tr(weekdayNames[it].orEmpty())}else tr(s.mode)
     "$day %02d:%02d".format(s.hour,s.minute)
 }?:expression
 fun cronValidation(expression:String):String? {
@@ -99,10 +101,10 @@ fun cronValidation(expression:String):String? {
     fields.forEachIndexed {index,field->
         if(field.isBlank())return "时间表达式不能为空。"
         for(part in field.split(',')) {
-            val stepped=part.split('/');if(stepped.size>2||stepped.size==2&&(stepped[1].toIntOrNull()?.let {it>0&&it<=ranges[index].last+1}!=true))return "时间步长无效，请检查第 ${index+1} 段。"
+            val stepped=part.split('/');if(stepped.size>2||stepped.size==2&&(stepped[1].toIntOrNull()?.let {it>0&&it<=ranges[index].last+1}!=true))return localizedText({ "时间步长无效，请检查第 ${index+1} 段。" }, { "時間步長無效，請檢查第 ${index+1} 段。" })
             val base=stepped[0];if(base=="*")continue
-            val bounds=base.split('-').map {it.toIntOrNull()?:return "第 ${index+1} 段请使用数字、*、范围或步长。"}
-            if(bounds.size !in 1..2||bounds.any {it !in ranges[index]}||bounds.size==2&&bounds[0]>bounds[1])return "第 ${index+1} 段超出有效范围 ${ranges[index].first}–${ranges[index].last}。"
+            val bounds=base.split('-').map {it.toIntOrNull()?:return localizedText({ "第 ${index+1} 段请使用数字、*、范围或步长。" }, { "第 ${index+1} 段請使用數字、*、範圍或步長。" })}
+            if(bounds.size !in 1..2||bounds.any {it !in ranges[index]}||bounds.size==2&&bounds[0]>bounds[1])return localizedText({ "第 ${index+1} 段超出有效范围 ${ranges[index].first}–${ranges[index].last}。" }, { "第 ${index+1} 段超出有效範圍 ${ranges[index].first}–${ranges[index].last}。" })
         }
     };return null
 }

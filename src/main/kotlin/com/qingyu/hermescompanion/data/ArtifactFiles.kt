@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.data
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.i18n.uiText
 import com.qingyu.hermescompanion.R
 
@@ -112,12 +114,12 @@ internal class ArtifactFileReader(private val client: HermesApiClient) {
                 else -> "在这段会话的工作目录及子目录中未找到同名文件。请核对实际保存位置，或粘贴完整路径打开。"
             }
             val details = buildString {
-                appendLine("文件：${item.name}")
+                appendLine(localizedText({ "文件：${item.name}" }, { "檔案：${item.name}" }))
                 appendLine("Profile：${item.profile}")
-                appendLine("来源会话：${item.sessionTitle} (${item.sessionId})")
-                appendLine("原始链接：$original")
-                appendLine("查找范围：$workspace")
-                appendLine("查找完成：${search.complete}")
+                appendLine(localizedText({ "来源会话：${item.sessionTitle} (${item.sessionId})" }, { "來源對話：${item.sessionTitle} (${item.sessionId})" }))
+                appendLine( localizedText({ "原始链接：$original" }, { "原始連結：$original" }) )
+                appendLine( localizedText({ "查找范围：$workspace" }, { "查詢範圍：$workspace" }) )
+                appendLine(localizedText({ "查找完成：${search.complete}" }, { "查詢完成：${search.complete}" }))
                 appendLine(message)
                 if (!search.complete && search.reason.isNotBlank() && search.reason != message) appendLine(search.reason)
                 appendLine("已尝试读取：")

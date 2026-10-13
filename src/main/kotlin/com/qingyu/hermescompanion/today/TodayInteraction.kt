@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.today
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import org.json.JSONArray
 import org.json.JSONObject
 import java.security.MessageDigest
@@ -105,8 +107,8 @@ fun parseTodayInteraction(obj: JSONObject): TodayInteraction {
 }
 
 fun validateTodayField(field: TodayInputField, value: String) {
-    require(value.length <= 500) { todayText("${field.label}内容过长", "${field.label} is too long") }
-    require(!field.required || value.isNotBlank()) { todayText("请填写${field.label}", "Enter ${field.label}") }
+    require(value.length <= 500) { todayText(localizedText({ "${field.label}内容过长" }, { "${field.label}內容過長" }), "${field.label} is too long") }
+    require(!field.required || value.isNotBlank()) { todayText(localizedText({ "请填写${field.label}" }, { "請填寫${field.label}" }), "Enter ${field.label}") }
     if (value.isBlank()) return
     val valid = runCatching {
         when (field.kind) {
@@ -116,7 +118,7 @@ fun validateTodayField(field: TodayInputField, value: String) {
             "select" -> require(value in field.choices)
         }
     }.isSuccess
-    require(valid) { todayText("请检查${field.label}的格式或范围", "Check the format or range of ${field.label}") }
+    require(valid) { todayText(localizedText({ "请检查${field.label}的格式或范围" }, { "請檢查${field.label}的格式或範圍" }), "Check the format or range of ${field.label}") }
 }
 
 fun todayFingerprint(text: String): String = MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }

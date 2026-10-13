@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.runtime.*
 import com.qingyu.hermescompanion.model.*
 import org.json.JSONObject
@@ -44,8 +46,8 @@ class SettingDraft<T>(server:T,private val write:(String)->Unit,private val enco
     @Suppress("UNCHECKED_CAST")
     val draft=remember(key) { c.settingsDrafts.getOrPut(key) {SettingDraft(initial,{if(!c.demo)c.store.put(key,it)},encode,decode,if(c.demo)""else c.store.get(key))} as SettingDraft<T> }
     LaunchedEffect(initial){draft.rebase(initial)}
-    LaunchedEffect(draft.value,draft.rawInputs.toMap(),draft.fieldErrors.toMap()){kotlinx.coroutines.delay(350);runCatching {draft.persist()}.onFailure {draft.error="草稿保存失败：${it.message}"}}
-    DisposableEffect(key){onDispose {runCatching {draft.persist()}.onFailure {c.error="草稿保存失败：${it.message}"}}}
+    LaunchedEffect(draft.value,draft.rawInputs.toMap(),draft.fieldErrors.toMap()){kotlinx.coroutines.delay(350);runCatching {draft.persist()}.onFailure {draft.error=localizedText({ "草稿保存失败：${it.message}" }, { "草稿儲存失敗：${it.message}" })}}
+    DisposableEffect(key){onDispose {runCatching {draft.persist()}.onFailure {c.error=localizedText({ "草稿保存失败：${it.message}" }, { "草稿儲存失敗：${it.message}" })}}}
     return draft
 }
 

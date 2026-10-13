@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.storage
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.sun.jna.NativeLibrary
 import com.qingyu.hermescompanion.platform.DesktopHost
 import com.sun.jna.Pointer
@@ -122,10 +124,10 @@ private object MacKeychain {
             try { return data.value.getByteArray(0, length.value).also { require(it.size == 32) } }
             finally { security.getFunction("SecKeychainItemFreeContent").invokeInt(arrayOf(null, data.value)) }
         }
-        check(status == -25300) { "无法读取 macOS 钥匙串（$status）。请允许 Hermes 访问自己的登录配置。" }
+        check(status == -25300) {  localizedText({ "无法读取 macOS 钥匙串（$status）。请允许 Hermes 访问自己的登录配置。" }, { "無法讀取 macOS 鑰匙串（$status）。請允許 Hermes 訪問自己的登入配置。" })  }
         val bytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
         val added = security.getFunction("SecKeychainAddGenericPassword").invokeInt(arrayOf(null, service.size, service, account.size, account, bytes.size, bytes, null))
-        check(added == 0) { "无法保存 macOS 钥匙串（$added）。" }
+        check(added == 0) {  localizedText({ "无法保存 macOS 钥匙串（$added）。" }, { "無法儲存 macOS 鑰匙串（$added）。" })  }
         return bytes
     }
 }

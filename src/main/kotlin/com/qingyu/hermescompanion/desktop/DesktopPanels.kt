@@ -130,7 +130,7 @@ internal fun readAvatarImage(file:java.io.File):BufferedImage {
             Caption("缩放");Slider(zoom,{zoom=it},enabled=source!=null&&!busy,valueRange=1f..4f)
             Caption("水平位置");Slider(x,{x=it},enabled=source!=null&&!busy,valueRange=-1f..1f)
             Caption("垂直位置");Slider(y,{y=it},enabled=source!=null&&!busy,valueRange=-1f..1f)
-            if(failure.isNotBlank())Text(failure,color=MaterialTheme.colorScheme.error)
+            if(failure.isNotBlank())Text(tr(failure),color=MaterialTheme.colorScheme.error)
         }
     },confirmButton={DeskTextButton(onClick={
         val original=source?:return@DeskTextButton
@@ -151,7 +151,7 @@ internal fun readAvatarImage(file:java.io.File):BufferedImage {
     var query by remember { mutableStateOf("") };var category by remember { mutableStateOf("") }
     HermesDialog(onDismissRequest={c.commandsOpen=false},title={Text(tr("快捷命令"))},text={Column(Modifier.width(580.dp).heightIn(max=480.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         OutlinedTextField(query,{query=it},placeholder={Text(tr("搜索命令或说明"))},modifier=Modifier.fillMaxWidth(),singleLine=true)
-        Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)){(listOf("")+c.commands.map { it.category }.distinct()).distinct().forEach { item->DeskChip(category==item,{category=item},label={Text(if(item.isBlank())tr("全部")else item)}) }}
+        Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)){(listOf("")+c.commands.map { it.category }.distinct()).distinct().forEach { item->DeskChip(category==item,{category=item},label={Text(tr(if(item.isBlank())tr("全部")else item))}) }}
         val commands=c.commands.filter { (category.isBlank()||category==it.category) && (it.command.contains(query,true)||it.description.contains(query,true)) }
         LazyColumn(Modifier.weight(1f,false)) {
             if(commands.isEmpty())item{Caption(tr("没有匹配的命令。"))}
@@ -164,7 +164,8 @@ internal fun readAvatarImage(file:java.io.File):BufferedImage {
     var editing by remember { mutableStateOf<PromptSnippet?>(null) };var deleting by remember {mutableStateOf<PromptSnippet?>(null)};var reset by remember {mutableStateOf(false)}
     Column(modifier,verticalArrangement=Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement=Arrangement.spacedBy(10.dp)){SmallButton("新建提示词",{editing=PromptSnippet(java.util.UUID.randomUUID().toString(),"","")},true);SmallButton("恢复默认",{reset=true})}
-        c.snippets.forEachIndexed { index,snippet ->
+        c.snippets.forEachIndexed { index,saved ->
+            val snippet=localizedPromptSnippet(saved)
             Column(Modifier.fillMaxWidth().border(1.dp,MaterialTheme.colorScheme.outline,RoundedCornerShape(12.dp)).padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                 Text(snippet.title,fontWeight=FontWeight.SemiBold);Text(snippet.text)
                 Row(horizontalArrangement=Arrangement.spacedBy(6.dp)) {
@@ -188,7 +189,7 @@ internal fun readAvatarImage(file:java.io.File):BufferedImage {
     val s=c.currentSession ?: return
     val all=c.messages[s.scopedId].orEmpty();val insights=remember(all){ChatInsightParser.fromMessages(all)}
     Column(modifier.verticalScroll(rememberScrollState()).padding(12.dp),verticalArrangement=Arrangement.spacedBy(10.dp)) {
-        
+
         SmallButton("连续语音",{c.voice.open()},true)
         Text(tr("本次专家会审"),fontWeight=FontWeight.SemiBold)
         Picker(when(c.councilMode){"quick"->"快速会审";"deep"->"深度会审";else->"关闭"},listOf("off","quick","deep"),{when(it){"quick"->tr("快速会审");"deep"->tr("深度会审");else->tr("关闭")}}){c.councilMode=it}
@@ -217,7 +218,7 @@ internal fun readAvatarImage(file:java.io.File):BufferedImage {
     if(c.runs.isEmpty())return
     val focused=c.runs[c.currentSession?.scopedId] ?: c.runs.values.first()
     Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primary.copy(alpha=.06f)).desktopClick {c.page=Page.TASKS}.padding(horizontal=16.dp,vertical=3.dp),verticalAlignment=Alignment.CenterVertically) {
-        Text("${c.runs.size} · ${focused.session.title}",Modifier.weight(1f),maxLines=1,fontSize=13.sp)
+        Text("${c.runs.size} · ${sessionDisplayTitle(focused.session.title)}",Modifier.weight(1f),maxLines=1,fontSize=13.sp)
         Text(tr(focused.status),fontSize=13.sp,color=MaterialTheme.colorScheme.primary)
         DeskTextButton(onClick={c.page=Page.TASKS}){Text(tr("查看任务"))}
     }

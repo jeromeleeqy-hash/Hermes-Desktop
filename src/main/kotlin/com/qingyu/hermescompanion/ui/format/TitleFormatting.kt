@@ -15,6 +15,8 @@ fun isPlaceholderSessionTitle(value: String): Boolean {
         "new conversation",
         "新会话",
         "新对话",
+        "新會話",
+        "新對話",
     )
 }
 

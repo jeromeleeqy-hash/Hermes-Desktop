@@ -77,7 +77,7 @@ compose.desktop {
                 minimumSystemVersion = "13.0"
                 dockName = "Hermes"
                 infoPlist {
-                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.5</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麦克风进行语音输入和对话。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 将录音识别为对话文字。</string>"
+                    extraKeysRawXml = "<key>HermesBuildRevision</key><string>desktop-2.0.5</string><key>NSMicrophoneUsageDescription</key><string>Hermes 使用麥克風進行語音輸入和對話。</string><key>NSSpeechRecognitionUsageDescription</key><string>Hermes 將錄音辨識為對話文字。</string>"
                 }
             }
         }
@@ -97,6 +97,10 @@ tasks.register<Zip>("packageWindowsPortable") {
 }
 tasks.test {
     maxHeapSize = "1g"
+    // Legacy fixtures assert Simplified Chinese; zh-TW is tested with explicit locales.
+    systemProperty("user.language", "zh")
+    systemProperty("user.country", "CN")
+    systemProperty("user.script", "Hans")
     // Cloud builds exercise offscreen Compose; desktop Robot tests need a local interactive session.
     systemProperty("java.awt.headless", providers.gradleProperty("headlessTests").getOrElse("false"))
 }
@@ -233,4 +237,14 @@ tasks.register<JavaExec>("render202Previews") {
     mainClass.set("com.qingyu.hermescompanion.desktop.Render202Previews")
     systemProperty("java.awt.headless","true")
     systemProperty("skiko.renderApi","SOFTWARE")
+}
+
+tasks.register<JavaExec>("renderTraditionalPreviews") {
+    dependsOn(tasks.testClasses)
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass.set("com.qingyu.hermescompanion.desktop.RenderPreviews")
+    systemProperty("java.awt.headless", "true")
+    systemProperty("skiko.renderApi", "SOFTWARE")
+    systemProperty("hermes.preview.language", "zh-TW")
+    args("build/previews-zh-TW", "login", "settings", "settings-language-menu", "settings-desktop", "settings-model", "settings-memory", "settings-voice", "settings-providers", "settings-skills", "settings-tools", "settings-mcp", "settings-notices", "settings-snippets", "settings-gateway", "settings-help", "chat-placeholder", "chat-custom-title", "sessions-placeholder", "chat-workspace-menu", "chat-model-picker", "cron-editor", "home-empty", "home-empty-paper", "home-empty-glass", "tasks-wide-empty", "dialog", "files")
 }

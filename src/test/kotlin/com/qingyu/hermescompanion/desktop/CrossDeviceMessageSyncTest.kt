@@ -85,7 +85,8 @@ class CrossDeviceMessageSyncTest {
     }
     @After fun close()=runBlocking<Unit> {
         release.countDown()
-        if(::c.isInitialized){withContext(Dispatchers.Swing){c.close()};withTimeout(12_000){c.scope.coroutineContext[Job]?.join()}}
+        // Gateway open/ready waits can drain for 20 seconds after cancellation.
+        if(::c.isInitialized){withContext(Dispatchers.Swing){c.close()};withTimeout(30_000){c.scope.coroutineContext[Job]?.join()}}
         if(::server.isInitialized)server.shutdown()
         if(::root.isInitialized)Files.walk(root).use {it.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)}
     }

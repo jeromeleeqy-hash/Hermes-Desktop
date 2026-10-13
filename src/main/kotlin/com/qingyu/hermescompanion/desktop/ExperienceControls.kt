@@ -65,7 +65,7 @@ fun optionLabel(value:String)=mapOf(
         BasicTextField(value,onChange,enabled=enabled,singleLine=lines==1,minLines=lines,maxLines=if(lines==1)1 else 12,
             textStyle=MaterialTheme.typography.bodyMedium.copy(color=colors.onSurface),cursorBrush=SolidColor(colors.primary),
             modifier=Modifier.fillMaxWidth().onFocusChanged {focused=it.isFocused}.background(colors.surface,shape).border(1.dp,if(error!=null)colors.error else if(focused)colors.primary else colors.outline,shape).padding(horizontal=10.dp,vertical=9.dp)
-                .semantics {contentDescription=label})
+                .semantics {contentDescription=tr(label)})
         if(error!=null)Text(tr(error),color=colors.error,fontSize=12.sp)
     }
 }
@@ -75,7 +75,7 @@ fun optionLabel(value:String)=mapOf(
         Text(tr("服务器设置已更新。你的草稿已保留，请先确认采用哪份内容。"),fontSize=12.sp,color=MaterialTheme.colorScheme.error)
         Row {DeskTextButton(onClick={draft.reset()}){Text(tr("使用服务器设置"))};DeskTextButton(onClick={draft.useLatestBaseline()}){Text(tr("继续使用我的修改"))}}
     }
-    draft.error?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
+    draft.error?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
     draft.fieldErrors.values.firstOrNull()?.let {Text(tr(it),color=MaterialTheme.colorScheme.error,fontSize=12.sp)}
     if(validation!=null)Text(tr(validation),color=MaterialTheme.colorScheme.error,fontSize=12.sp)
     Row(Modifier.fillMaxWidth().padding(top=4.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {

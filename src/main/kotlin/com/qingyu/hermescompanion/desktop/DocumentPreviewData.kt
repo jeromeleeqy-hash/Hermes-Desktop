@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import com.qingyu.hermescompanion.model.WorkspaceDocument
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.rendering.PDFRenderer
@@ -56,7 +58,7 @@ internal fun wordPreview(bytes:ByteArray,legacy:Boolean):String {
                     r.fontSizeAsDouble?.takeIf {it in 6.0..72.0}?.let {append("font-size:${it}pt;")}
                 }
                 val content=htmlEscape(r.text()).replace("\n","<br>").replace("\t","&emsp;")+r.embeddedPictures.joinToString(""){picture->
-                    picture.pictureData?.let {"<img alt=\"文档图片\" src=\"${imageData(it.data,it.packagePart.contentType)}\">"}.orEmpty()
+                    picture.pictureData?.let {localizedText({ "<img alt=\"文档图片\" src=\"${imageData(it.data,it.packagePart.contentType)}\">" }, { "<img alt=\"文件圖片\" src=\"${imageData(it.data,it.packagePart.contentType)}\">" })}.orEmpty()
                 }
                 val link=(r as? XWPFHyperlinkRun)?.getHyperlink(doc)?.url
                 val text="<span style=\"$css\">$content</span>"

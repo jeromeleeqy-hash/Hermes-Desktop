@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -143,7 +145,7 @@ private object HermesContextMenu:ContextMenuRepresentation {
             Surface(shape=RoundedCornerShape(10.dp),color=colors.surface,border=BorderStroke(1.dp,colors.outline.copy(alpha=.5f)),shadowElevation=8.dp) {
                 MenuKeyboardContent({state.status=ContextMenuState.Status.Closed},Modifier.widthIn(min=150.dp,max=300.dp).padding(5.dp)) {items().forEach {item->
                     val icon=when(item.label.lowercase()) {"cut","剪切"->"cut";"paste","粘贴"->"paste";"select all","全选"->"check-square";else->"copy"}
-                    DeskMenuItem(text={Text(item.label)},leadingIcon={Glyph(icon,Modifier.size(18.dp))},onClick={state.status=ContextMenuState.Status.Closed;item.onClick()})
+                    DeskMenuItem(text={Text(tr(item.label))},leadingIcon={Glyph(icon,Modifier.size(18.dp))},onClick={state.status=ContextMenuState.Status.Closed;item.onClick()})
                 }}
             }
         }
@@ -152,7 +154,8 @@ private object HermesContextMenu:ContextMenuRepresentation {
 
 @Composable fun SkinThumbnail(name:String,modifier:Modifier=Modifier) {
     val asset=when(skinDisplayName(name)){"纸间留白"->"paper";"流光玻璃"->"glass";else->"office"}
-    Image(painterResource("themes/$asset.png"),tr("${skinDisplayName(name)}界面预览"),modifier.clip(RoundedCornerShape(7.dp)),contentScale=ContentScale.Crop)
+    val suffix=if(desktopLocale()==java.util.Locale.TAIWAN)"-zh-TW"else""
+    Image(painterResource("themes/$asset$suffix.png"),tr(localizedText({ "${skinDisplayName(name)}界面预览" }, { "${tr(skinDisplayName(name))}介面預覽" })),modifier.clip(RoundedCornerShape(7.dp)),contentScale=ContentScale.Crop)
 }
 
 @Composable fun HermesDialog(onDismissRequest:()->Unit,confirmButton:@Composable ()->Unit,title:(@Composable ()->Unit)?=null,text:(@Composable ()->Unit)?=null,dismissButton:(@Composable ()->Unit)?=null,inlinePreview:Boolean=false,showFooter:Boolean=true,maxWidth:Dp=600.dp,maxHeight:Dp=680.dp) {

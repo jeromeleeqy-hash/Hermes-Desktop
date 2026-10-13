@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,7 +68,7 @@ internal fun localAttachmentDocument(file:PendingAttachment):WorkspaceDocument? 
         Box(Modifier.width(540.dp).heightIn(min=180.dp,max=430.dp),contentAlignment=Alignment.Center) {
             when {
                 loaded==null->CircularProgressIndicator()
-                doc==null->Text("暂时无法预览：${loaded?.exceptionOrNull()?.message.orEmpty()}",color=MaterialTheme.colorScheme.error)
+                doc==null->Text(tr(localizedText({ "暂时无法预览：${loaded?.exceptionOrNull()?.message.orEmpty()}" }, { "暫時無法預覽：${loaded?.exceptionOrNull()?.message.orEmpty()}" })),color=MaterialTheme.colorScheme.error)
                 doc.mimeType.startsWith("image/")->ImageBytes(doc.bytes,doc.name)
                 doc.name.substringAfterLast('.').lowercase() in setOf("pdf","ppt","pptx")->PagedDocumentPreview(doc.bytes,doc.name.endsWith(".pdf",true))
                 doc.name.substringAfterLast('.').lowercase() in setOf("xls","xlsx")->SpreadsheetPreview(doc.bytes)
@@ -76,11 +78,11 @@ internal fun localAttachmentDocument(file:PendingAttachment):WorkspaceDocument? 
                 else->Column(verticalArrangement=Arrangement.spacedBy(12.dp)) {
                     FileEmblem(file.name,Modifier.size(48.dp))
                     Text("${file.name} · ${fileSizeLabel(doc.bytes.size.toLong())}")
-                    Text("此格式可保存到本机，用对应软件查看。",color=MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(tr("此格式可保存到本机，用对应软件查看。"),color=MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
-    },confirmButton={DeskTextButton(onClick=onClose){Text("关闭")}},dismissButton={
+    },confirmButton={DeskTextButton(onClick=onClose){Text(tr("关闭"))}},dismissButton={
         if(doc!=null)Row {
             if(com.qingyu.hermescompanion.platform.ModernImageSupport.isModern(doc.name)) {
                 var converting by remember(file.id){mutableStateOf(false)}
@@ -94,13 +96,13 @@ internal fun localAttachmentDocument(file:PendingAttachment):WorkspaceDocument? 
                             if(token!=c.epoch)return@launch
                             require(png.size<=8*1024*1024){"PNG 副本超过 8 MB，未自动压缩。请保存原图后自行处理。"}
                             require(c.attachments[key].orEmpty().size<10){"附件数量已达上限。"}
-                            c.attachments[key]=c.attachments[key].orEmpty()+PendingAttachment(name=doc.name.substringBeforeLast('.')+"-副本.png",mimeType="image/png",dataUrl="data:image/png;base64,"+Base64.getEncoder().encodeToString(png))
+                            c.attachments[key]=c.attachments[key].orEmpty()+PendingAttachment(name=doc.name.substringBeforeLast('.')+tr("-副本.png"),mimeType="image/png",dataUrl="data:image/png;base64,"+Base64.getEncoder().encodeToString(png))
                             c.notice="已添加 PNG 首帧副本，原图保留；预览及转换后的色彩请与原图核对。"
                         }catch(e:CancellationException){throw e}catch(e:Exception){c.error=e.message}finally{converting=false}
                     }
-                }){Text(if(converting)"转换中…"else"添加 PNG 副本")}
+                }){Text(tr(if(converting)"转换中…"else"添加 PNG 副本"))}
             }
-            DeskTextButton(onClick={runCatching {DesktopFiles.save(doc)}.onFailure {c.error=it.message}}){Text("保存原文件")}
+            DeskTextButton(onClick={runCatching {DesktopFiles.save(doc)}.onFailure {c.error=it.message}}){Text(tr("保存原文件"))}
         }
     })
 }

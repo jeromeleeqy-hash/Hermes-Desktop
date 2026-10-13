@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -33,14 +35,14 @@ import com.qingyu.hermescompanion.model.scopedId
         .border(1.dp,colors.outline.copy(alpha=.6f),shape).arrive(q.panelOpen).semantics {testTag="floating-quick-panel"}) {
         Row(Modifier.fillMaxWidth().padding(start=16.dp,end=8.dp,top=10.dp,bottom=8.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(7.dp)) {
             Image(painterResource("icon.png"),"Hermes",Modifier.size(30.dp))
-            Text("随时问 Hermes",Modifier.weight(1f),fontSize=15.sp,fontWeight=FontWeight.SemiBold)
+            Text(tr("随时问 Hermes"),Modifier.weight(1f),fontSize=15.sp,fontWeight=FontWeight.SemiBold)
             Hint("打开主窗口"){DeskIconButton(onClick=q::openInMain){Glyph("expand",Modifier.size(17.dp))}}
             Hint("收起，保留草稿"){DeskIconButton(onClick=q::close){Glyph("close",Modifier.size(17.dp))}}
         }
         HorizontalDivider(color=colors.outline.copy(alpha=.6f))
         if(!c.connected||q.failure!=null)Column(Modifier.fillMaxWidth().padding(16.dp),verticalArrangement=Arrangement.spacedBy(9.dp)) {
-            Text(q.failure?:"请先连接 Hermes 网关。",fontSize=13.sp,color=colors.error)
-            if(q.pendingFileCount>0)Caption("${q.pendingFileCount} 个文件等待添加")
+            Text(tr(q.failure?:"请先连接 Hermes 网关。"),fontSize=13.sp,color=colors.error)
+            if(q.pendingFileCount>0)Caption(localizedText({ "${q.pendingFileCount} 个文件等待添加" }, { "${q.pendingFileCount} 個檔案等待新增" }))
             SmallButton(if(c.connected)"重试"else"打开连接设置",q::retry)
         }
         if(q.preparing)LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -51,15 +53,15 @@ import com.qingyu.hermescompanion.model.scopedId
             var query by remember {mutableStateOf("")}
             Row(Modifier.fillMaxWidth().padding(horizontal=12.dp,vertical=6.dp),verticalAlignment=Alignment.CenterVertically) {
                 Box(Modifier.weight(1f)) {
-                    DeskTextButton(onClick={choosing=true}){Glyph("history",Modifier.size(15.dp));Spacer(Modifier.width(6.dp));Text(s.title,Modifier.widthIn(max=230.dp),fontSize=13.sp,maxLines=1,overflow=TextOverflow.Ellipsis);Glyph("chevron-down",Modifier.size(13.dp))}
+                    DeskTextButton(onClick={choosing=true}){Glyph("history",Modifier.size(15.dp));Spacer(Modifier.width(6.dp));Text(sessionDisplayTitle(s.title),Modifier.widthIn(max=230.dp),fontSize=13.sp,maxLines=1,overflow=TextOverflow.Ellipsis);Glyph("chevron-down",Modifier.size(13.dp))}
                     DeskMenu(choosing,{choosing=false},modifier=Modifier.width(310.dp).heightIn(max=350.dp)) {
                         CompactInput(query,{query=it},"搜索会话",Modifier.padding(8.dp))
                         val list=c.sessions.filter {it.profile==c.profile&&(query.isBlank()||it.title.contains(query,true))}.sortedByDescending {it.title=="日常助理"}.take(60)
-                        list.forEach {row->DeskMenuItem(text={Text(row.title,maxLines=1,overflow=TextOverflow.Ellipsis)},leadingIcon={Glyph("history",Modifier.size(16.dp))},trailingIcon={if(row.scopedId==s.scopedId)Glyph("check",Modifier.size(15.dp))},onClick={q.select(row);choosing=false})}
+                        list.forEach {row->DeskMenuItem(text={Text(sessionDisplayTitle(row.title),maxLines=1,overflow=TextOverflow.Ellipsis)},leadingIcon={Glyph("history",Modifier.size(16.dp))},trailingIcon={if(row.scopedId==s.scopedId)Glyph("check",Modifier.size(15.dp))},onClick={q.select(row);choosing=false})}
                         if(list.isEmpty())Caption("没有匹配的会话",Modifier.padding(16.dp))
                     }
                 }
-                if(q.voicePanel)DeskTextButton(onClick={c.voice.dismiss();q.open()}){Text("文字提问",fontSize=12.sp)}
+                if(q.voicePanel)DeskTextButton(onClick={c.voice.dismiss();q.open()}){Text(tr("文字提问"),fontSize=12.sp)}
                 else Hint("框选截图"){DeskIconButton(onClick={q.open(CompanionAction.CAPTURE)}){Glyph("capture",Modifier.size(18.dp))}}
             }
             if(q.voicePanel&&c.voice.active)Box(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(10.dp)){VoicePanel(c)}
@@ -70,14 +72,14 @@ import com.qingyu.hermescompanion.model.scopedId
                 LaunchedEffect(key,rows.lastOrNull()?.message?.content,rows.size){if(follow&&rows.isNotEmpty())scroll.scrollToItem(rows.lastIndex)}
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     if(rows.isEmpty())Column(Modifier.fillMaxSize().padding(26.dp),verticalArrangement=Arrangement.Center,horizontalAlignment=Alignment.CenterHorizontally) {
-                        Text("想到什么，随时问",fontSize=21.sp,fontWeight=FontWeight.Medium)
+                        Text(tr("想到什么，随时问"),fontSize=21.sp,fontWeight=FontWeight.Medium)
                         Spacer(Modifier.height(10.dp));Caption("拖入文件，或截取屏幕的一部分",Modifier.padding(horizontal=8.dp))
                     }else LazyColumn(Modifier.fillMaxSize().padding(horizontal=16.dp),state=scroll,contentPadding=PaddingValues(vertical=12.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
                         items(rows,key={it.message.id}){turn->val m=turn.message
                             Column(Modifier.fillMaxWidth(),verticalArrangement=Arrangement.spacedBy(5.dp)) {
                                 Text(if(m.role==MessageRole.USER)c.nickname else c.hermesName,fontSize=11.sp,color=colors.onSurfaceVariant)
                                 SelectionContainer {Box(Modifier.fillMaxWidth().then(if(m.role==MessageRole.USER)Modifier.background(colors.primary.copy(alpha=.07f),RoundedCornerShape(11.dp)).padding(12.dp)else Modifier)) {
-                                    if(m.content.isBlank())Text("正在回应…",fontSize=13.sp,color=colors.onSurfaceVariant)else Markdown(visibleUserText(m.content),DesktopFiles::openLink)
+                                    if(m.content.isBlank())Text(tr("正在回应…"),fontSize=13.sp,color=colors.onSurfaceVariant)else Markdown(visibleUserText(m.content),DesktopFiles::openLink)
                                 }}
                             }
                         }
@@ -104,7 +106,7 @@ import com.qingyu.hermescompanion.model.scopedId
     LaunchedEffect(key,q.panelOpen){if(q.panelOpen)focus.requestFocus()}
     Column(Modifier.fillMaxWidth().padding(12.dp).composerFileDrop(c,key){hover=it}.background(colors.surfaceVariant.copy(alpha=.45f),RoundedCornerShape(12.dp))
         .border(1.dp,if(hover)colors.primary else colors.outline,RoundedCornerShape(12.dp)).padding(10.dp),verticalArrangement=Arrangement.spacedBy(7.dp)) {
-        (c.attachmentErrors[key]?:c.sendErrors[key]?:c.modelSwitchErrors[key])?.let {Text(it,fontSize=12.sp,lineHeight=18.sp,color=colors.error,maxLines=3)}
+        (c.attachmentErrors[key]?:c.sendErrors[key]?:c.modelSwitchErrors[key])?.let {Text(tr(it),fontSize=12.sp,lineHeight=18.sp,color=colors.error,maxLines=3)}
         if(hover)Caption("松开即可添加文件")
         if(files.isNotEmpty())FlowRow(horizontalArrangement=Arrangement.spacedBy(5.dp),verticalArrangement=Arrangement.spacedBy(4.dp),modifier=Modifier.heightIn(max=100.dp).verticalScroll(rememberScrollState())) {
             files.forEach {file->ComposerAttachment(c,key,file)}
@@ -115,7 +117,7 @@ import com.qingyu.hermescompanion.model.scopedId
             shouldSendOnKey(c.sendOnEnter,e,field.composition!=null)->{q.send();true}
             shouldInsertNewlineOnKey(c.sendOnEnter,e,field.composition!=null)->{field=insertComposerNewline(field);c.setDraft(key,field.text);true}
             else->false
-        }}.semantics {testTag="quick-input";contentDescription="向助理提问"},textStyle=MaterialTheme.typography.bodyMedium.copy(color=colors.onSurface,lineHeight=23.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(text.isBlank())Text("写下问题…",color=colors.onSurfaceVariant);inner()}})
+        }}.semantics {testTag="quick-input";contentDescription=tr("向助理提问")},textStyle=MaterialTheme.typography.bodyMedium.copy(color=colors.onSurface,lineHeight=23.sp),cursorBrush=SolidColor(colors.primary),decorationBox={inner->Box {if(text.isBlank())Text(tr("写下问题…"),color=colors.onSurfaceVariant);inner()}})
         }
         ComposerModelPicker(c,s,Modifier.fillMaxWidth())
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(3.dp)) {

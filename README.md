@@ -1,3 +1,5 @@
+[繁體中文說明](README.zh-TW.md)
+
 # Hermes Desktop
 
 Hermes Agent 桌面客户端，支持 Windows x64 与 macOS Apple Silicon（M 系列）。

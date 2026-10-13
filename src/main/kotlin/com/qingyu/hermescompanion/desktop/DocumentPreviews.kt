@@ -1,6 +1,8 @@
 @file:OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
@@ -82,10 +84,10 @@ internal fun clampImagePan(pan:Offset,width:Int,height:Int,viewport:IntSize,scal
             if(!rotationAllowed)DeskTextButton(onClick={fitWidth=true;manualScale=null;pan=Offset(0f,((bitmap.height*((viewport.width-64).coerceAtLeast(1).toFloat()/bitmap.width).coerceAtMost(1f)-viewport.height+40)/2).coerceAtLeast(0f))}){Text(tr("适应宽度"),fontSize=12.sp)}
             DeskTextButton(onClick={manualScale=1f;pan=Offset.Zero}){Text("1:1",fontSize=12.sp)}
             if(rotationAllowed)DeskTextButton(onClick={rotation=(rotation+1)%4;manualScale=null;pan=Offset.Zero}){Text(tr("旋转"),fontSize=12.sp)}
-            Spacer(Modifier.width(10.dp));Caption(if(rotationAllowed)"${bitmap.width} × ${bitmap.height}"else"${shortcutKey()} + 滚轮缩放")
+            Spacer(Modifier.width(10.dp));Caption(if(rotationAllowed)"${bitmap.width} × ${bitmap.height}"else localizedText({ "${shortcutKey()} + 滚轮缩放" }, { "${shortcutKey()} + 滾輪縮放" }))
         }
         Canvas(Modifier.weight(1f).fillMaxWidth().clip(RoundedCornerShape(4.dp)).background(colors.surfaceVariant.copy(alpha=.6f))
-            .semantics {contentDescription=tr("图片预览；拖动平移，${shortcutKey()} 加滚轮缩放，双击切换原始大小")}
+            .semantics {contentDescription=tr(localizedText({ "图片预览；拖动平移，${shortcutKey()} 加滚轮缩放，双击切换原始大小" }, { "圖片預覽；拖動平移，${shortcutKey()} 加滾輪縮放，雙擊切換原始大小" }))}
             .onSizeChanged {viewport=it}
             .onPointerEvent(PointerEventType.Scroll){event->
                 val change=event.changes.firstOrNull()?:return@onPointerEvent
@@ -163,10 +165,10 @@ internal fun clampImagePan(pan:Offset,width:Int,height:Int,viewport:IntSize,scal
                     val text by produceState<String?>(null,document,page){value=withContext(Dispatchers.IO){runCatching {document.text(page)}.getOrDefault("")}}
                     Column(Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)) {
                         if(bitmap?.isFailure==true&&!textMode) {Caption("此页有暂不支持的排版，已显示可读取的文字。");SmallButton("重试页面预览",{pageAttempt++})}
-                        androidx.compose.foundation.text.selection.SelectionContainer {Text(text?:"正在读取文字…")}
+                        androidx.compose.foundation.text.selection.SelectionContainer {Text(tr(text?:"正在读取文字…"))}
                         if(text=="")Caption("此页没有可提取的文字，可以下载原文件查看。")
                     }
-                }else bitmap?.getOrNull()?.let {ImageCanvas(it,rotationAllowed=false,preferWidth=pdf)}?:PreviewLoading("正在绘制第 ${page+1} 页…")
+                }else bitmap?.getOrNull()?.let {ImageCanvas(it,rotationAllowed=false,preferWidth=pdf)}?:PreviewLoading(localizedText({ "正在绘制第 ${page+1} 页…" }, { "正在繪製第 ${page+1} 頁…" }))
             }
         }
     }

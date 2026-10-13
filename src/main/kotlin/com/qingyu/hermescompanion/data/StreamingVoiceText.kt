@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.data
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 /** One turn only. Only stable complete sentences leave this buffer; repeated final events are harmless. */
 class StreamingVoiceText {
     private var committed = ""
@@ -54,8 +56,12 @@ internal fun voicePauseMillis(setting: String, sensitivity: String): Long = when
     else -> if (sensitivity == "noisy") 1_250L else 1_000L
 }
 
-internal fun spokenConversationPrompt(text: String): String = if (text.trimStart().startsWith('/')) text else """
+internal fun spokenConversationPrompt(text: String): String = if (text.trimStart().startsWith('/')) text else  localizedText({ """
     $text
 
     [当前交互方式：连续语音。请用自然、简短、适合听的口语回答，先说有用的第一句话，日常交流通常一两句即可；复杂问题再按需要展开。无需每次客套确认，不要朗读 Markdown、长网址或工具参数。涉及记忆、文件或任务时，可以先说明正在处理，但只有工具确认成功后才能说已记好或已完成。保留必要的核实、授权和复杂推理，不能为了快速回应跳过。]
-""".trimIndent()
+""" }, { """
+    $text
+
+    [當前互動方式：連續語音。請用自然、簡短、適合聽的口語回答，先說有用的第一句話，日常交流通常一兩句即可；複雜問題再按需要展開。無需每次客套確認，不要朗讀 Markdown、長網址或工具引數。涉及記憶、檔案或任務時，可以先說明正在處理，但只有工具確認成功後才能說已記好或已完成。保留必要的核實、授權和複雜推理，不能為了快速回應跳過。]
+""" }) .trimIndent()

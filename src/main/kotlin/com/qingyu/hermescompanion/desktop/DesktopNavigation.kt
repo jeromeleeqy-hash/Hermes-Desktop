@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -67,7 +69,7 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
     }
     Column(Modifier.fillMaxWidth().background(colors.surface.copy(alpha=.52f),RoundedCornerShape(10.dp))
         .border(1.dp,colors.surface.copy(alpha=.38f),RoundedCornerShape(10.dp)).padding(3.dp)) {
-        Hint("外观与账户 · "+c.nickname) {
+        Hint(tr("外观与账户 · ")+c.nickname) {
             Row(Modifier.fillMaxWidth().height(38.dp).desktopClick(shape=RoundedCornerShape(7.dp)) {c.settingsSection="外观与账户";c.loadSettings()}
                 .semantics {testTag="sidebar-profile";contentDescription=tr("外观与账户")}
                 .padding(horizontal=if(expanded)7.dp else 0.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=if(expanded)Arrangement.spacedBy(8.dp)else Arrangement.Center) {
@@ -93,12 +95,12 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
         if(recent.isNotEmpty()) {
             Text(tr("最近会话"),Modifier.padding(start=11.dp,bottom=8.dp),fontSize=11.sp,color=colors.onSurfaceVariant)
             recent.forEach {s->
-                Hint(s.title) {
+                Hint(sessionDisplayTitle(s.title)) {
                     Row(Modifier.fillMaxWidth().height(34.dp).desktopClick {c.openSession(s)}
                         .semantics {testTag="recent-shortcut:"+s.scopedId}.padding(horizontal=11.dp),
                         verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(9.dp)) {
                         Glyph(if(s.isPinned)"pin"else"history",Modifier.size(14.dp),colors.onSurfaceVariant)
-                        Text(s.title,Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
+                        Text(sessionDisplayTitle(s.title),Modifier.weight(1f),fontSize=12.sp,color=colors.onSurfaceVariant,maxLines=1,overflow=TextOverflow.Ellipsis)
                         if(s.scopedId in c.unread)Box(Modifier.size(5.dp).background(colors.primary,CircleShape))
                     }
                 }
@@ -111,7 +113,7 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
             }
             DeskMenu(open,{open=false},modifier=Modifier.width(250.dp)) {
                 MenuSectionLabel("最近会话")
-                recent.forEach {s->DeskMenuItem(text={Text(s.title,maxLines=1,overflow=TextOverflow.Ellipsis)},
+                recent.forEach {s->DeskMenuItem(text={Text(sessionDisplayTitle(s.title),maxLines=1,overflow=TextOverflow.Ellipsis)},
                     leadingIcon={Glyph(if(s.isPinned)"pin"else"history",Modifier.size(17.dp))},onClick={open=false;c.openSession(s)})}
             }
         }
@@ -170,7 +172,7 @@ internal fun shortcutKey()=if(DesktopHost.isWindows||System.getProperty("os.name
             SessionEmblem(s.title,Modifier.size(34.dp))
             Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(5.dp)) {
                 Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {
-                    Text(s.title,Modifier.weight(1f),fontSize=13.sp,fontWeight=if(active)FontWeight.Medium else FontWeight.Normal,maxLines=1,overflow=TextOverflow.Ellipsis)
+                    Text(sessionDisplayTitle(s.title),Modifier.weight(1f),fontSize=13.sp,fontWeight=if(active)FontWeight.Medium else FontWeight.Normal,maxLines=1,overflow=TextOverflow.Ellipsis)
                     if(s.updatedAt.isNotBlank())Text(conversationTime(s.updatedAt),fontSize=10.sp,color=colors.onSurfaceVariant,maxLines=1)
                     if(s.isPinned)Glyph("pin",Modifier.size(11.dp),colors.onSurfaceVariant)
                     if(s.scopedId in c.unread)Text(tr("未读"),fontSize=10.sp,fontWeight=FontWeight.Medium,color=colors.primary,
@@ -198,14 +200,14 @@ private fun conversationTime(value:String):String {
     var query by remember {mutableStateOf("")}
     val colors=MaterialTheme.colorScheme
     Box(Modifier.fillMaxWidth()) {
-        Hint("切换工作空间 · "+c.profile) {
+        Hint(tr("切换工作空间 · ")+c.profile) {
             Row(Modifier.fillMaxWidth().height(if(expanded)53.dp else 38.dp).background(if(integrated)Color.Transparent else colors.surface.copy(alpha=.45f),RoundedCornerShape(9.dp))
                 .desktopClick {open=true}.semantics {testTag="workspace-switcher";contentDescription=tr("切换工作空间")}.padding(horizontal=if(expanded)10.dp else 0.dp),
                 verticalAlignment=Alignment.CenterVertically,horizontalArrangement=if(expanded)Arrangement.spacedBy(8.dp)else Arrangement.Center) {
                 Glyph("workspace",Modifier.size(18.dp).semantics {testTag="workspace-switcher-icon"},colors.primary)
                 if(expanded) {
                     Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(2.dp)) {
-                        Text(if(c.profile=="default")tr("默认工作空间")else c.profile,fontSize=13.sp,fontWeight=FontWeight.Medium,maxLines=1,overflow=TextOverflow.Ellipsis)
+                        Text(tr(if(c.profile=="default")tr("默认工作空间")else c.profile),fontSize=13.sp,fontWeight=FontWeight.Medium,maxLines=1,overflow=TextOverflow.Ellipsis)
                         SubtleText(c.project?.name?:"全部项目")
                     }
                     Glyph("chevron-down",Modifier.size(12.dp),colors.onSurfaceVariant)
@@ -216,12 +218,12 @@ private fun conversationTime(value:String):String {
         DeskMenu(open,{open=false},modifier=Modifier.width(260.dp).heightIn(max=430.dp)) {
             Column(Modifier.padding(horizontal=12.dp,vertical=8.dp),verticalArrangement=Arrangement.spacedBy(10.dp)){Text(tr("工作空间"),fontSize=14.sp,fontWeight=FontWeight.SemiBold);CompactInput(query,{query=it},"搜索工作空间")}
             c.profiles.filter {it.name.contains(query,true)}.forEach {p->
-                DeskMenuItem(text={Text(if(p.name=="default")tr("默认工作空间")else p.name)},leadingIcon={Glyph("workspace",Modifier.size(17.dp))},
+                DeskMenuItem(text={Text(tr(if(p.name=="default")tr("默认工作空间")else p.name))},leadingIcon={Glyph("workspace",Modifier.size(17.dp))},
                     trailingIcon={if(p.name==c.profile)Glyph("check",Modifier.size(16.dp))},onClick={open=false;if(p.name!=c.profile){val change={c.loadProfile(p.name)};c.flushEditor?.invoke(change)?:change()}})
             }
             if(c.projects.isNotEmpty()&&query.isBlank()) {
                 MenuDivider();MenuSectionLabel("当前空间的项目")
-                (listOf<HermesProject?>(null)+c.projects).forEach {p->DeskMenuItem(text={Text(p?.name?:tr("全部项目"))},leadingIcon={Glyph(if(p==null)"dashboard"else"folder",Modifier.size(18.dp))},trailingIcon={if(p?.id==c.project?.id)Glyph("check",Modifier.size(16.dp))},onClick={open=false;c.chooseProject(p,navigate=false)})}
+                (listOf<HermesProject?>(null)+c.projects).forEach {p->DeskMenuItem(text={Text(tr(p?.name?:tr("全部项目")))},leadingIcon={Glyph(if(p==null)"dashboard"else"folder",Modifier.size(18.dp))},trailingIcon={if(p?.id==c.project?.id)Glyph("check",Modifier.size(16.dp))},onClick={open=false;c.chooseProject(p,navigate=false)})}
             }
         }
     }
@@ -261,12 +263,12 @@ internal fun quickEntries(c:DesktopController,query:String):List<QuickEntry> {
     return buildList {
         addAll(commands.filter {matches(it.title,it.detail)})
         addAll(c.sessions.filter {matches(it.title,c.sessionSummaries[it.scopedId]?:it.preview)}.sortedWith(compareByDescending<HermesSession>{it.isPinned}.thenByDescending {parseDesktopInstant(it.updatedAt)}).take(8).map {s->
-            QuickEntry("session:${s.scopedId}",s.title,conversationPreview(visibleUserText(c.sessionSummaries[s.scopedId]?:s.preview)),"history","会话"){c.openSession(s)}
+            QuickEntry("session:${s.scopedId}",sessionDisplayTitle(s.title),conversationPreview(visibleUserText(c.sessionSummaries[s.scopedId]?:s.preview)),"history","会话"){c.openSession(s)}
         })
         addAll(c.recentArtifacts.filter {it.profile==c.profile&&matches(it.name,it.sessionTitle)}.take(6).mapIndexed {i,a->
             QuickEntry("file:$i:${a.path}",a.name,a.sessionTitle,"document","文件"){c.openArtifact(a)}
         })
-        if(q.isNotBlank())add(QuickEntry("search","搜索会话内容：$q","继续查找消息正文","search","深入搜索"){c.sessionQuery=q;c.search(q);c.navigate(Page.SESSIONS)})
+        if(q.isNotBlank())add(QuickEntry("search", localizedText({ "搜索会话内容：$q" }, { "搜尋對話內容：$q" }) ,"继续查找消息正文","search","深入搜索"){c.sessionQuery=q;c.search(q);c.navigate(Page.SESSIONS)})
     }
 }
 

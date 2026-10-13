@@ -1,5 +1,7 @@
 package com.qingyu.hermescompanion.desktop
 
+import com.qingyu.hermescompanion.i18n.localizedText
+
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -17,7 +19,7 @@ internal fun presentUserText(raw:String,imageSources:List<String> = emptyList())
     val notices=mutableListOf<MessageNotice>()
     while(true) {
         val match=modelNotice.find(body)?:break
-        notices+=MessageNotice("已切换模型 · ${match.groupValues[1]}",match.value)
+        notices+=MessageNotice(localizedText({ "已切换模型 · ${match.groupValues[1]}" }, { "已切換模型 · ${match.groupValues[1]}" }),match.value)
         body=body.substring(match.range.last+1).trimStart('\r','\n',' ')
     }
     if(body.startsWith("[Hermes Desktop ·")&&body.contains("[原始问题]"))body=body.substringAfter("[原始问题]").trim()
@@ -44,7 +46,7 @@ internal fun presentAssistantText(raw:String):PresentedText {
             true
         }else {
             val match=if(fence==null)interruptedNotice.matchEntire(trimmed)else null
-            if(match!=null){notices+=MessageNotice("等待模型响应已中断 · ${match.groupValues[1]} 秒",line,true);false}else true
+            if(match!=null){notices+=MessageNotice(localizedText({ "等待模型响应已中断 · ${match.groupValues[1]} 秒" }, { "等待模型響應已中斷 · ${match.groupValues[1]} 秒" }),line,true);false}else true
         }
     }.joinToString("\n").trim()
     return PresentedText(body,notices)
@@ -62,7 +64,7 @@ internal fun insertComposerNewline(value:TextFieldValue):TextFieldValue {
     val start=value.selection.min;val end=value.selection.max
     return TextFieldValue(value.text.replaceRange(start,end,"\n"),TextRange(start+1))
 }
-internal fun sendKeyLabel(sendOnEnter:Boolean)=if(sendOnEnter)"Enter 发送 · Shift+Enter 换行"else"${shortcutKey()}+Enter 发送 · Enter 换行"
+internal fun sendKeyLabel(sendOnEnter:Boolean)=if(sendOnEnter)"Enter 发送 · Shift+Enter 换行"else localizedText({ "${shortcutKey()}+Enter 发送 · Enter 换行" }, { "${shortcutKey()}+Enter 傳送 · Enter 換行" })
 internal fun activityModeLabel(mode:String)=when(mode){"expanded"->"展开过程";"answer"->"仅看回答";else->"简洁记录"}
 internal fun runningSendLabel(mode:String)=when(mode){"steer"->"补充指令";"interrupt"->"停止后发送";else->"排队发送"}
 internal fun toolLabel(name:String)=mapOf("read_file" to "读取文件","write_file" to "写入文件","edit_file" to "修改文件","terminal" to "执行命令","web_search" to "搜索资料","web_extract" to "读取网页","browser" to "浏览网页","delegate_task" to "分配子任务","todo" to "更新任务清单")[name]?:name

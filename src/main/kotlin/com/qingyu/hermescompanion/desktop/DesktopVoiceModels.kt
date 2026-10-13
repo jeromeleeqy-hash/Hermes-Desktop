@@ -86,7 +86,7 @@ class DesktopVoiceModels(private val c:DesktopController){
             Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(12.dp)){
                 Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(5.dp)){
                     Text(if(recognition)"SenseVoice"else"Kokoro",fontSize=16.sp,fontWeight=FontWeight.SemiBold)
-                    SubtleText(spec.source+" · 约 "+(spec.bytes/1024/1024)+" MB",maxLines=2)
+                    SubtleText(spec.source+tr(" · 约 ")+(spec.bytes/1024/1024)+" MB",maxLines=2)
                 }
                 StatusPill(when{state.busy->"准备中";state.installed&&selected->"正在使用";state.installed->"已安装";else->"未安装"},muted=!selected)
             }
@@ -97,9 +97,9 @@ class DesktopVoiceModels(private val c:DesktopController){
                     "verify"->"正在校验模型完整性…";"install"->"正在安装…";"remove"->"正在移除…"
                     else->(if(state.phase=="import")"已导入 "else"已下载 ")+(state.downloaded/1024/1024)+" / "+(spec.bytes/1024/1024)+" MB"
                 })
-                if(models.activateWhenReady[spec.id]==true)SubtleText("安装完成后自动启用本地"+if(recognition)"识别"else"朗读")
+                if(models.activateWhenReady[spec.id]==true)SubtleText(tr("安装完成后自动启用本地")+tr(if(recognition)"识别"else"朗读"))
             }
-            if(state.message.isNotBlank())Text(state.message,fontSize=12.sp,color=if(state.phase=="error")MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+            if(state.message.isNotBlank())Text(tr(state.message),fontSize=12.sp,color=if(state.phase=="error")MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
             FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
                 when{
                     state.busy->SmallButton("暂停",{models.pause(spec)},enabled=state.phase!="remove")
@@ -113,9 +113,9 @@ class DesktopVoiceModels(private val c:DesktopController){
                     },enabled=!state.busy&&(!models.voiceWorking||(recognition&&c.recording)))
                     if(!recognition&&selected&&models.voiceWorking)SmallButton("停止试听",{c.voice.pause()})
                 }
-                if(!state.installed&&!state.busy)DeskTextButton(onClick={models.importModel(spec)}){Text("导入模型包",fontSize=12.sp)}
-                if((state.installed||state.downloaded>0)&&!state.busy)DeskTextButton(onClick={models.remove(spec)},enabled=!models.voiceWorking){Text("移除",fontSize=12.sp)}
-                if(!state.installed)DeskTextButton(onClick={runCatching {DesktopFiles.openLink(spec.url)}.onFailure {c.error=it.message}}){Text("手动下载",fontSize=12.sp)}
+                if(!state.installed&&!state.busy)DeskTextButton(onClick={models.importModel(spec)}){Text(tr("导入模型包"),fontSize=12.sp)}
+                if((state.installed||state.downloaded>0)&&!state.busy)DeskTextButton(onClick={models.remove(spec)},enabled=!models.voiceWorking){Text(tr("移除"),fontSize=12.sp)}
+                if(!state.installed)DeskTextButton(onClick={runCatching {DesktopFiles.openLink(spec.url)}.onFailure {c.error=it.message}}){Text(tr("手动下载"),fontSize=12.sp)}
             }
             if(selected&&c.voice.message.isNotBlank())SubtleText(c.voice.message,maxLines=3)
         }
