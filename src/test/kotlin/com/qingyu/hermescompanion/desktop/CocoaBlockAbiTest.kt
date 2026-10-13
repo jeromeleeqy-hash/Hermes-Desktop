@@ -26,5 +26,50 @@ class CocoaBlockAbiTest {
         completeCocoaBlock(block.pointer,26L)
         assertEquals(26L,received)
     }
+    @Test fun authorizationErrorIsCopiedBeforeTheNativeCallbackReturns(){
+        val queue=mutableListOf<()->Unit>()
+        var granted:Byte?=null
+        var failure:Throwable?=null
+        val error=Memory(64).apply {setString(0,"Notification authorization unavailable")}
+        val callback=snapshotNotificationAuthorizationCallback(
+            describeError={it.getString(0)},
+            enqueue={queue+=it},
+        ) {value,exception->granted=value;failure=exception}
+        val block=CocoaGlobalBlock(Pointer(1),callback,"v@?B@")
+        try {
+            completeCocoaBlock(block.pointer,0.toByte(),error)
+            assertNull(granted)
+            assertEquals(1,queue.size)
+            // The borrowed object is gone before the main queue gets to run.
+            error.clear();error.close()
+            queue.removeAt(0).invoke()
+            assertEquals(0.toByte(),granted)
+            assertEquals("Notification authorization unavailable",failure?.message)
+        }finally {error.close()}
+    }
+    @Test fun authorizationWithoutAnErrorPreservesBothGrantAndDenial(){
+        for(value in listOf(0.toByte(),1.toByte())) {
+            val queue=mutableListOf<()->Unit>()
+            var received:Byte?=null
+            val callback=snapshotNotificationAuthorizationCallback(
+                describeError={throw AssertionError("No error object was supplied")},
+                enqueue={queue+=it},
+            ) {granted,failure->received=granted;assertNull(failure)}
+            val block=CocoaGlobalBlock(Pointer(1),callback,"v@?B@")
+            completeCocoaBlock(block.pointer,value,Pointer(0))
+            assertNull(received)
+            queue.removeAt(0).invoke()
+            assertEquals(value,received)
+        }
+    }
+    @Test fun anErrorWithoutADescriptionStillPreventsDelivery(){
+        val queue=mutableListOf<()->Unit>()
+        var failure:Throwable?=null
+        val callback=snapshotNotificationAuthorizationCallback({null},{queue+=it}) {_,error->failure=error}
+        val block=CocoaGlobalBlock(Pointer(1),callback,"v@?B@")
+        completeCocoaBlock(block.pointer,1.toByte(),Pointer(1))
+        queue.removeAt(0).invoke()
+        assertTrue(failure is IllegalStateException)
+    }
     interface PresentationCallback:Callback {fun invoke(block:Pointer,options:Long)}
 }

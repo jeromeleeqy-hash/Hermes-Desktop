@@ -12,6 +12,18 @@ internal interface NotificationResponseCallback:Callback {
 internal interface NotificationAuthorizationCallback:Callback {fun invoke(block:Pointer,granted:Byte,error:Pointer?)}
 internal interface NotificationErrorCallback:Callback {fun invoke(block:Pointer,error:Pointer?)}
 
+/** Native NSError is borrowed only for the callback; queue Java-owned values instead. */
+internal fun snapshotNotificationAuthorizationCallback(
+    describeError:(Pointer)->String?,
+    enqueue:(()->Unit)->Unit,
+    onResult:(Byte,Throwable?)->Unit,
+):NotificationAuthorizationCallback=object:NotificationAuthorizationCallback {
+    override fun invoke(block:Pointer,granted:Byte,error:Pointer?) {
+        val failure=error?.let {IllegalStateException(describeError(it))}
+        enqueue {onResult(granted,failure)}
+    }
+}
+
 /** Apple Blocks ABI (64-bit). The owning singleton retains callbacks and memory for process life. */
 internal class CocoaGlobalBlock(isa:Pointer,val callback:Callback,signature:String) {
     private val signatureBytes=signature.toByteArray(Charsets.UTF_8)
@@ -65,14 +77,13 @@ internal object MacNativeNotifications {
             completeCocoaBlock(completion,26L)
         }
     }
-    private val authorizationCallback=object:NotificationAuthorizationCallback {
-        override fun invoke(block:Pointer,granted:Byte,error:Pointer?) {
-            MacAppKit.enqueue {
-                requesting=false
-                if(error!=null)log(IllegalStateException(text(pointer(error,"localizedDescription"))))
-                while(true){val message=pending.poll()?:break;if(granted.toInt()!=0&&error==null)deliver(message)}
-            }
-        }
+    private val authorizationCallback=snapshotNotificationAuthorizationCallback(
+        describeError={error->text(pointer(error,"localizedDescription"))},
+        enqueue={action->MacAppKit.enqueue(action)},
+    ) {granted,failure->
+        requesting=false
+        if(failure!=null)log(failure)
+        while(true){val message=pending.poll()?:break;if(granted.toInt()!=0&&failure==null)deliver(message)}
     }
     private val errorCallback=object:NotificationErrorCallback {
         override fun invoke(block:Pointer,error:Pointer?) {
